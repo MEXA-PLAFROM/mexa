@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080612">
   <title>Profil MEXA Hub</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -21,11 +22,6 @@
 
     * { box-sizing: border-box; }
 
-    html {
-      min-height: 100%;
-      background: var(--bg);
-    }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -38,11 +34,7 @@
     }
 
     a { color: inherit; text-decoration: none; }
-
-    button {
-      font: inherit;
-      cursor: pointer;
-    }
+    button { font: inherit; cursor: pointer; }
 
     .header {
       position: sticky;
@@ -68,11 +60,7 @@
     }
 
     .logo-m, .logo-a { color: #fff; }
-
-    .logo-x {
-      color: var(--blue);
-      text-shadow: 0 0 14px var(--blue);
-    }
+    .logo-x { color: var(--blue); text-shadow: 0 0 14px var(--blue); }
 
     .logo-e {
       display: flex;
@@ -91,11 +79,7 @@
       box-shadow: 0 0 8px var(--purple);
     }
 
-    .nav {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .nav { display: flex; align-items: center; gap: 8px; }
 
     .nav a, .btn {
       display: inline-flex;
@@ -111,14 +95,8 @@
       font-weight: 700;
     }
 
-    .nav a:hover, .btn:hover {
-      border-color: var(--blue);
-    }
-
-    .nav .home {
-      color: var(--blue);
-      border-color: #36cfff55;
-    }
+    .nav a:hover, .btn:hover { border-color: var(--blue); }
+    .nav .home { color: var(--blue); border-color: #36cfff55; }
 
     .wrap {
       width: min(960px, calc(100% - 28px));
@@ -141,6 +119,8 @@
         radial-gradient(ellipse at 80% 30%, #36cfff55, transparent 40%),
         linear-gradient(120deg, #210c3c, #0b1a35, #25103b);
       border-bottom: 1px solid var(--line);
+      background-size: cover;
+      background-position: center;
     }
 
     .cover::after {
@@ -154,9 +134,7 @@
       font-weight: 800;
     }
 
-    .body {
-      padding: 0 26px 26px;
-    }
+    .body { padding: 0 26px 26px; }
 
     .identity {
       display: flex;
@@ -175,6 +153,8 @@
       border: 4px solid #130d23;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--purple), var(--blue));
+      background-size: cover;
+      background-position: center;
       box-shadow: 0 0 25px #a855f755;
       color: white;
       font-size: 36px;
@@ -187,10 +167,7 @@
       overflow-wrap: anywhere;
     }
 
-    .username {
-      color: var(--muted);
-      font-size: 13px;
-    }
+    .username { color: var(--muted); font-size: 13px; }
 
     .actions {
       display: flex;
@@ -199,9 +176,7 @@
       margin-top: 23px;
     }
 
-    .btn {
-      min-height: 42px;
-    }
+    .btn { min-height: 42px; }
 
     .primary {
       background: linear-gradient(110deg, #8b35e8, #5944f5);
@@ -209,10 +184,7 @@
       box-shadow: 0 5px 18px #8738e833;
     }
 
-    .cyan {
-      color: var(--blue);
-      border-color: #36cfff55;
-    }
+    .cyan { color: var(--blue); border-color: #36cfff55; }
 
     .stats {
       display: grid;
@@ -228,10 +200,7 @@
       border-radius: 14px;
     }
 
-    .stat strong {
-      display: block;
-      font-size: 21px;
-    }
+    .stat strong { display: block; font-size: 21px; }
 
     .stat span {
       display: block;
@@ -248,16 +217,14 @@
       border-radius: 15px;
     }
 
-    .section h2 {
-      margin: 0 0 12px;
-      font-size: 15px;
-    }
+    .section h2 { margin: 0 0 12px; font-size: 15px; }
 
     .section p {
       margin: 0;
       color: #d7cde8;
       font-size: 14px;
       line-height: 1.7;
+      overflow-wrap: anywhere;
     }
 
     .tabs {
@@ -290,15 +257,8 @@
       background: #ffffff03;
     }
 
-    .empty .symbol {
-      color: var(--blue);
-      font-size: 30px;
-    }
-
-    .empty h3 {
-      margin: 12px 0 8px;
-      font-size: 16px;
-    }
+    .empty .symbol { color: var(--blue); font-size: 30px; }
+    .empty h3 { margin: 12px 0 8px; font-size: 16px; }
 
     .empty p {
       color: var(--muted);
@@ -316,9 +276,89 @@
       background: #36cfff10;
       font-size: 13px;
       line-height: 1.6;
+      overflow-wrap: anywhere;
     }
 
     .message.show { display: block; }
+
+    .editor-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: #05030bdc;
+      backdrop-filter: blur(10px);
+    }
+
+    .editor-overlay.show { display: flex; }
+
+    .editor {
+      width: min(560px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      padding: 22px;
+      border: 1px solid #67418a;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #1a102b, #0b0915);
+      box-shadow: 0 24px 90px #000b, 0 0 35px #a855f722;
+    }
+
+    .editor-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .editor-head h2 { margin: 0; font-size: 20px; }
+
+    .close-editor {
+      border: 1px solid var(--line);
+      background: #ffffff0a;
+      color: white;
+      border-radius: 10px;
+      padding: 8px 12px;
+    }
+
+    .field { display: grid; gap: 7px; margin: 13px 0; }
+
+    .field label {
+      color: #d7cde8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field input, .field textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border-radius: 11px;
+      border: 1px solid var(--line);
+      background: #080612;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+
+    .field input:focus, .field textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px #36cfff15;
+    }
+
+    .field textarea { min-height: 95px; resize: vertical; }
+
+    .editor-note, .loading {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .save-profile { width: 100%; margin-top: 8px; }
+    .loading { margin-top: 12px; }
+    .save-profile:disabled { opacity: .6; cursor: wait; }
 
     footer {
       padding: 20px;
@@ -342,6 +382,7 @@
       .stat strong { font-size: 18px; }
       .stat span { font-size: 11px; }
       .btn { padding: 10px 12px; }
+      .editor { padding: 17px; }
     }
   </style>
 </head>
@@ -350,9 +391,7 @@
   <header class="header">
     <a class="logo" href="./index.html" aria-label="MEXA">
       <span class="logo-m">M</span>
-      <span class="logo-e" aria-label="E">
-        <span></span><span></span><span></span>
-      </span>
+      <span class="logo-e" aria-label="E"><span></span><span></span><span></span></span>
       <span class="logo-x">X</span>
       <span class="logo-a">A</span>
     </a>
@@ -366,14 +405,14 @@
 
   <main class="wrap">
     <article class="card">
-      <div class="cover"></div>
+      <div class="cover" id="cover"></div>
 
       <div class="body">
         <div class="identity">
           <div class="avatar" id="avatar">M</div>
           <div>
-            <h1 id="displayName">Santri MEXA</h1>
-            <div class="username" id="username">@santrimexa</div>
+            <h1 id="displayName">Memuat profil...</h1>
+            <div class="username" id="username">@mexa</div>
           </div>
         </div>
 
@@ -397,7 +436,7 @@
 
         <section class="section">
           <h2>Ruang</h2>
-          <p id="bio">Selamat datang di ruang MEXA-ku. Terus terhubung, berbagi, dan berkarya.</p>
+          <p id="bio">Memuat bio...</p>
         </section>
 
         <section class="section">
@@ -409,7 +448,7 @@
           <div class="empty" id="postingan">
             <div class="symbol">✦</div>
             <h3>Ruang kreator</h3>
-            <p>Postingan akan muncul setelah profil dihubungkan ke database MEXA.</p>
+            <p>Postingan akan ditampilkan setelah fitur posting profil dihubungkan.</p>
           </div>
         </section>
       </div>
@@ -418,24 +457,88 @@
 
   <footer>© MEXA Hub · Ruang untuk terhubung dan berkarya.</footer>
 
+  <div class="editor-overlay" id="editorOverlay" role="dialog"
+       aria-modal="true" aria-labelledby="editorTitle">
+    <div class="editor">
+      <div class="editor-head">
+        <h2 id="editorTitle">Edit Profil MEXA</h2>
+        <button type="button" class="close-editor" id="closeEditor" aria-label="Tutup">✕</button>
+      </div>
+
+      <p class="editor-note">
+        Perubahan disimpan ke akun yang sedang login. Username harus unik.
+      </p>
+
+      <form id="profileForm">
+        <div class="field">
+          <label for="editDisplayName">Nama panggilan</label>
+          <input id="editDisplayName" maxlength="60" required
+                 placeholder="Nama yang terlihat di MEXA">
+        </div>
+
+        <div class="field">
+          <label for="editUsername">Username</label>
+          <input id="editUsername" maxlength="30"
+                 pattern="[A-Za-z0-9_.]{3,30}" required
+                 placeholder="contoh: santrimexa">
+        </div>
+
+        <div class="field">
+          <label for="editBio">Bio / Ruang</label>
+          <textarea id="editBio" maxlength="300"
+                    placeholder="Ceritakan sedikit tentang dirimu"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="editAvatarUrl">URL foto profil (opsional)</label>
+          <input id="editAvatarUrl" type="url" placeholder="https://...">
+        </div>
+
+        <div class="field">
+          <label for="editCoverUrl">URL foto sampul (opsional)</label>
+          <input id="editCoverUrl" type="url" placeholder="https://...">
+        </div>
+
+        <button type="submit" class="btn primary save-profile" id="saveProfile">
+          Simpan Perubahan
+        </button>
+        <div class="loading" id="editorStatus" role="status"></div>
+      </form>
+    </div>
+  </div>
+
   <script>
+    // HARUS sama dengan project Supabase yang digunakan Login.html dan Home.
+    const SUPABASE_URL = "https://yozylignolfvkemuhfse.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
+
+    const mexaSupabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
     const params = new URLSearchParams(location.search);
     const visitorMode = params.get("mode") === "visitor";
 
-    const profile = {
-      name: "Santri MEXA",
-      username: "santrimexa",
-      avatar: "M",
-      bio: "Selamat datang di ruang MEXA-ku. Terus terhubung, berbagi, dan berkarya."
-    };
-
-    document.getElementById("displayName").textContent = profile.name;
-    document.getElementById("username").textContent = "@" + profile.username;
-    document.getElementById("avatar").textContent = profile.avatar;
-    document.getElementById("bio").textContent = profile.bio;
-
     const actions = document.getElementById("actions");
     const message = document.getElementById("message");
+    const overlay = document.getElementById("editorOverlay");
+    const profileForm = document.getElementById("profileForm");
+    const editorStatus = document.getElementById("editorStatus");
+    const saveButton = document.getElementById("saveProfile");
+
+    let currentUser = null;
+    let currentProfile = null;
+
+    function inform(text) {
+      message.textContent = text;
+      message.classList.add("show");
+    }
+
+    function setEditorStatus(text, isError = false) {
+      editorStatus.textContent = text;
+      editorStatus.style.color = isError ? "#ff9eac" : "#9cecff";
+    }
 
     function addButton(label, className, callback) {
       const button = document.createElement("button");
@@ -446,32 +549,280 @@
       actions.appendChild(button);
     }
 
-    function inform(text) {
-      message.textContent = text;
-      message.classList.add("show");
+    function initials(name) {
+      const cleaned = (name || "MEXA").trim();
+      return cleaned ? cleaned.charAt(0).toUpperCase() : "M";
     }
 
-    if (visitorMode) {
-      addButton("+ Ikuti", "primary", () => {
-        inform("Follow belum tersambung ke database. Akun perlu divalidasi sebelum mengikuti profil.");
-      });
-      addButton("✉ Pesan", "", () => {
-        inform("Fitur Pesan akan dihubungkan pada tahap berikutnya.");
-      });
-      addButton("••• Menu", "", () => {
-        inform("Menu profil akan tersedia setelah fungsi profil dihubungkan.");
-      });
-    } else {
-      addButton("✎ Edit Profil", "primary", () => {
-        inform("Editor profil akan dihubungkan ke akun MEXA.");
-      });
-      addButton("+ Reels", "cyan", () => {
-        location.href = "./reels.html";
-      });
-      addButton("🔒 Live", "", () => {
-        inform("Fitur Live memerlukan pemeriksaan kelayakan akun.");
-      });
+    function renderProfile(profile, metadata = {}) {
+      const name =
+        profile?.display_name ||
+        metadata.display_name ||
+        metadata.full_name ||
+        "Pengguna MEXA";
+
+      const username =
+        profile?.username ||
+        metadata.username ||
+        "mexauser";
+
+      const bio =
+        profile?.bio ||
+        "Selamat datang di ruang MEXA-ku. Terus terhubung, berbagi, dan berkarya.";
+
+      const avatarUrl = profile?.avatar_url || metadata.avatar_url || "";
+      const coverUrl = profile?.cover_url || "";
+
+      document.getElementById("displayName").textContent = name;
+      document.getElementById("username").textContent = "@" + username;
+      document.getElementById("bio").textContent = bio;
+
+      const avatar = document.getElementById("avatar");
+      avatar.textContent = initials(name);
+      avatar.style.backgroundImage =
+        "linear-gradient(135deg, var(--purple), var(--blue))";
+
+      if (avatarUrl) {
+        avatar.style.backgroundImage =
+          "url(" + JSON.stringify(avatarUrl).slice(1, -1) + ")";
+      }
+
+      const cover = document.getElementById("cover");
+      cover.style.backgroundImage = coverUrl
+        ? "linear-gradient(90deg, #08061244, #08061222), url(" +
+          JSON.stringify(coverUrl).slice(1, -1) + ")"
+        : "";
+
+      currentProfile = {
+        id: currentUser?.id,
+        username,
+        display_name: name,
+        avatar_url: avatarUrl,
+        cover_url: coverUrl,
+        bio: profile?.bio || ""
+      };
     }
+
+    function openEditor() {
+      if (!currentUser || !currentProfile) {
+        inform("Profil belum siap. Muat ulang halaman dan pastikan kamu sudah login.");
+        return;
+      }
+
+      document.getElementById("editDisplayName").value =
+        currentProfile.display_name || "";
+      document.getElementById("editUsername").value =
+        currentProfile.username || "";
+      document.getElementById("editBio").value =
+        currentProfile.bio || "";
+      document.getElementById("editAvatarUrl").value =
+        currentProfile.avatar_url || "";
+      document.getElementById("editCoverUrl").value =
+        currentProfile.cover_url || "";
+
+      setEditorStatus("");
+      overlay.classList.add("show");
+    }
+
+    function closeEditor() {
+      overlay.classList.remove("show");
+    }
+
+    document.getElementById("closeEditor").addEventListener("click", closeEditor);
+
+    overlay.addEventListener("click", event => {
+      if (event.target === overlay) closeEditor();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeEditor();
+    });
+
+    async function loadProfile() {
+      const { data: sessionData, error: sessionError } =
+        await mexaSupabase.auth.getSession();
+
+      if (sessionError) throw sessionError;
+
+      const session = sessionData?.session;
+
+      if (!session?.user) {
+        location.replace("./Login.html");
+        return;
+      }
+
+      currentUser = session.user;
+      const metadata = currentUser.user_metadata || {};
+
+      const { data, error } = await mexaSupabase
+        .from("profiles")
+        .select("id, username, display_name, avatar_url, cover_url, bio")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        renderProfile(data, metadata);
+      } else {
+        const seedName =
+          metadata.display_name ||
+          metadata.full_name ||
+          "Pengguna MEXA";
+
+        const seedUsername = (
+          metadata.username ||
+          (currentUser.email || "mexauser").split("@")[0]
+        )
+          .toLowerCase()
+          .replace(/[^a-z0-9_.]/g, "")
+          .slice(0, 30) || ("mexa" + currentUser.id.slice(0, 6));
+
+        const initialProfile = {
+          id: currentUser.id,
+          username: seedUsername,
+          display_name: seedName,
+          avatar_url: metadata.avatar_url || null,
+          cover_url: null,
+          bio: ""
+        };
+
+        const { data: inserted, error: insertError } = await mexaSupabase
+          .from("profiles")
+          .upsert(initialProfile, { onConflict: "id" })
+          .select("id, username, display_name, avatar_url, cover_url, bio")
+          .single();
+
+        if (insertError) {
+          renderProfile(initialProfile, metadata);
+          inform(
+            "Profil tampil, tetapi belum tersimpan di database: " +
+            insertError.message
+          );
+        } else {
+          renderProfile(inserted, metadata);
+        }
+      }
+
+      // Angka ini tetap placeholder sampai tabel relasi dan postingan dihubungkan.
+      document.getElementById("followers").textContent = "—";
+      document.getElementById("friends").textContent = "—";
+      document.getElementById("posts").textContent = "0";
+
+      actions.innerHTML = "";
+
+      if (visitorMode) {
+        addButton("+ Ikuti", "primary", () => {
+          inform("Fitur Ikuti belum terhubung ke tabel relasi.");
+        });
+
+        addButton("✉ Pesan", "", () => {
+          inform("Fitur Pesan akan dihubungkan pada tahap berikutnya.");
+        });
+
+        addButton("••• Menu", "", () => {
+          inform("Menu profil akan tersedia pada tahap berikutnya.");
+        });
+      } else {
+        addButton("✎ Edit Profil", "primary", openEditor);
+
+        addButton("+ Reels", "cyan", () => {
+          location.href = "./reels.html";
+        });
+
+        addButton("🔒 Live", "", () => {
+          inform("Fitur Live memerlukan pemeriksaan kelayakan akun.");
+        });
+      }
+    }
+
+    profileForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!currentUser) {
+        setEditorStatus("Sesi login tidak ditemukan. Silakan login ulang.", true);
+        return;
+      }
+
+      const displayName =
+        document.getElementById("editDisplayName").value.trim();
+
+      const username =
+        document.getElementById("editUsername").value.trim().toLowerCase();
+
+      const bio =
+        document.getElementById("editBio").value.trim();
+
+      const avatarUrl =
+        document.getElementById("editAvatarUrl").value.trim();
+
+      const coverUrl =
+        document.getElementById("editCoverUrl").value.trim();
+
+      if (!displayName || !username) {
+        setEditorStatus("Nama panggilan dan username wajib diisi.", true);
+        return;
+      }
+
+      if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
+        setEditorStatus(
+          "Username harus 3–30 karakter: huruf, angka, titik, atau garis bawah.",
+          true
+        );
+        return;
+      }
+
+      saveButton.disabled = true;
+      saveButton.textContent = "Menyimpan...";
+      setEditorStatus("Sedang menyimpan profil...");
+
+      const payload = {
+        id: currentUser.id,
+        username,
+        display_name: displayName,
+        bio: bio || null,
+        avatar_url: avatarUrl || null,
+        cover_url: coverUrl || null,
+        updated_at: new Date().toISOString()
+      };
+
+      try {
+        const { data, error } = await mexaSupabase
+          .from("profiles")
+          .upsert(payload, { onConflict: "id" })
+          .select("id, username, display_name, avatar_url, cover_url, bio")
+          .single();
+
+        if (error) throw error;
+
+        renderProfile(data, currentUser.user_metadata || {});
+        closeEditor();
+        inform("Profil berhasil disimpan ke akun MEXA.");
+      } catch (error) {
+        const errorMessage =
+          error?.message || "Kesalahan tidak diketahui.";
+
+        if (/duplicate key|unique constraint/i.test(errorMessage)) {
+          setEditorStatus(
+            "Username itu sudah digunakan. Coba username lain.",
+            true
+          );
+        } else {
+          setEditorStatus("Gagal menyimpan: " + errorMessage, true);
+        }
+      } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = "Simpan Perubahan";
+      }
+    });
+
+    loadProfile().catch(error => {
+      console.error("MEXA profile error:", error);
+      inform(
+        "Gagal memuat profil: " +
+        (error?.message || "Periksa koneksi dan izin tabel profiles.")
+      );
+    });
   </script>
 </body>
 </html>
