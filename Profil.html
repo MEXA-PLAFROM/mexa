@@ -704,11 +704,11 @@ function renderProfile(profile, metadata = {}) {
         currentProfile.username || "";
       document.getElementById("editBio").value =
         currentProfile.bio || "";
-      document.getElementById("editAvatarUrl").value =
-        currentProfile.avatar_url || "";
-      document.getElementById("editCoverUrl").value =
-        currentProfile.cover_url || "";
+      avatarFileInput.value = "";
+        coverFileInput.value = "";
 
+      avatarPreview.style.display = "none";
+       coverPreview.style.display = "none";
       setEditorStatus("");
       overlay.classList.add("show");
     }
