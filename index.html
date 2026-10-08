@@ -3,1095 +3,1143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>MEXA — Home</title>
 
+  <!-- Supabase CDN — jangan dihapus -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    :root{
-      --primary:#635bff;
-      --primary-dark:#5148e8;
-      --accent:#ff4d8d;
-      --text:#171923;
-      --muted:#777b88;
-      --line:#ececf2;
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --success:#22b573;
-      --danger:#ef4444;
-      --shadow:0 8px 30px rgba(25,25,50,.06);
-      --radius:20px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
+    :root {
+      --mx-primary: #111827;
+      --mx-accent: #ff3b30;
+      --mx-blue: #2563eb;
+      --mx-bg: #f4f6f8;
+      --mx-card: #ffffff;
+      --mx-border: #e5e7eb;
+      --mx-text: #111827;
+      --mx-muted: #6b7280;
+      --mx-hover: #f3f4f6;
+      --mx-radius: 18px;
     }
 
-    html{
-      scroll-behavior:smooth;
+    body {
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      background: var(--mx-bg);
+      color: var(--mx-text);
     }
 
-    body{
-      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      min-height:100vh;
+    button,
+    input,
+    textarea {
+      font: inherit;
     }
 
-    button,input,textarea{
-      font:inherit;
-    }
-
-    button{
-      border:0;
-      cursor:pointer;
+    button {
+      cursor: pointer;
     }
 
     /* =========================
-       LOGO
-    ========================== */
+       MEXA LOGO
+    ========================= */
 
-    .mexa-logo{
-      display:flex;
-      align-items:center;
-      gap:2px;
-      font-weight:900;
-      letter-spacing:-2px;
-      user-select:none;
+    .mexa-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      font-weight: 900;
+      letter-spacing: -2px;
+      font-size: 30px;
+      line-height: 1;
     }
 
     .logo-m,
-    .logo-a{
-      color:var(--primary);
+    .logo-a {
+      color: #111827;
     }
 
-    .logo-x{
-      color:var(--accent);
+    .logo-x {
+      color: #ff3b30;
     }
 
-    .logo-e{
-      width:22px;
-      height:20px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      margin-right:1px;
+    .logo-e {
+      width: 23px;
+      height: 21px;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-right: 1px;
     }
 
-    .logo-e span{
-      display:block;
-      height:4px;
-      border-radius:4px;
-      background:var(--primary);
-    }
-
-    .logo-e span:nth-child(2){
-      background:var(--accent);
-    }
-
-    .logo-e span:nth-child(3){
-      background:var(--primary);
+    .logo-e span {
+      display: block;
+      height: 4px;
+      width: 23px;
+      border-radius: 4px;
+      background: #111827;
     }
 
     /* =========================
-       HEADER
-    ========================== */
+       TOPBAR
+    ========================= */
 
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:100;
-      height:72px;
-      background:rgba(255,255,255,.94);
-      backdrop-filter:blur(16px);
-      border-bottom:1px solid var(--line);
+    .mx-topbar {
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid var(--mx-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
     }
 
-    .topbar-inner{
-      max-width:1450px;
-      height:100%;
-      margin:auto;
-      padding:0 24px;
-      display:flex;
-      align-items:center;
-      gap:22px;
+    .mx-topbar-inner {
+      width: min(1380px, calc(100% - 32px));
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
     }
 
-    .brand{
-      flex-shrink:0;
-      font-size:30px;
-      line-height:1;
+    .mx-brand {
+      display: flex;
+      align-items: center;
+      min-width: 190px;
     }
 
-    .search{
-      width:300px;
-      height:42px;
-      background:#f3f4f8;
-      border-radius:13px;
-      display:flex;
-      align-items:center;
-      padding:0 14px;
-      gap:10px;
-      color:var(--muted);
+    .mx-search {
+      flex: 1;
+      max-width: 550px;
+      position: relative;
     }
 
-    .search svg{
-      width:18px;
-      height:18px;
-      flex-shrink:0;
+    .mx-search input {
+      width: 100%;
+      border: 1px solid #e5e7eb;
+      background: #f5f6f8;
+      border-radius: 14px;
+      padding: 12px 16px 12px 42px;
+      outline: none;
+      transition: .2s;
     }
 
-    .search input{
-      width:100%;
-      border:0;
-      outline:0;
-      background:transparent;
-      color:var(--text);
-      font-size:14px;
+    .mx-search input:focus {
+      border-color: #cbd5e1;
+      background: #fff;
     }
 
-    .top-actions{
-      margin-left:auto;
-      display:flex;
-      align-items:center;
-      gap:8px;
+    .mx-search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      font-size: 17px;
     }
 
-    .icon-btn{
-      width:42px;
-      height:42px;
-      border-radius:13px;
-      background:#f4f4f8;
-      display:grid;
-      place-items:center;
-      color:#454857;
-      transition:.2s;
+    .mx-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .icon-btn:hover{
-      background:#e9e9f3;
-      transform:translateY(-1px);
+    .mx-icon-btn {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      background: #f3f4f6;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      transition: .2s;
     }
 
-    .avatar-small{
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      background:linear-gradient(135deg,var(--primary),#938cff);
-      color:white;
-      display:grid;
-      place-items:center;
-      font-weight:800;
-      overflow:hidden;
+    .mx-icon-btn:hover {
+      background: #e5e7eb;
     }
 
-    .avatar-small img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
+    .mx-user-mini {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-left: 4px;
+      padding: 5px 8px;
+      border-radius: 12px;
+    }
+
+    .mx-user-mini:hover {
+      background: #f3f4f6;
     }
 
     /* =========================
-       LAYOUT
-    ========================== */
+       AVATAR
+    ========================= */
 
-    .page{
-      max-width:1450px;
-      margin:auto;
-      padding:24px;
-      display:grid;
-      grid-template-columns:245px minmax(420px,680px) 285px;
-      justify-content:center;
-      gap:24px;
-      align-items:start;
+    .mx-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: linear-gradient(135deg, #111827, #374151);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      flex-shrink: 0;
+      overflow: hidden;
     }
 
-    .left-column,
-    .right-column{
-      position:sticky;
-      top:96px;
+    .mx-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mx-avatar-sm {
+      width: 34px;
+      height: 34px;
+      font-size: 13px;
+    }
+
+    .mx-avatar-lg {
+      width: 54px;
+      height: 54px;
+      font-size: 18px;
     }
 
     /* =========================
-       LEFT
-    ========================== */
+       MAIN LAYOUT
+    ========================= */
 
-    .profile-card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:20px;
-      box-shadow:var(--shadow);
-      margin-bottom:16px;
+    .mx-page {
+      width: min(1380px, calc(100% - 32px));
+      margin: 22px auto 90px;
+      display: grid;
+      grid-template-columns: 245px minmax(0, 650px) 270px;
+      gap: 22px;
+      align-items: start;
     }
 
-    .profile-main{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:18px;
+    /* =========================
+       LEFT SIDEBAR
+    ========================= */
+
+    .mx-sidebar {
+      position: sticky;
+      top: 90px;
     }
 
-    .profile-avatar{
-      width:52px;
-      height:52px;
-      border-radius:50%;
-      background:linear-gradient(135deg,var(--primary),#938cff);
-      color:white;
-      display:grid;
-      place-items:center;
-      font-size:20px;
-      font-weight:800;
-      overflow:hidden;
-      flex-shrink:0;
+    .mx-profile-card,
+    .mx-menu-card,
+    .mx-right-card,
+    .mx-create-card,
+    .mx-stories-card,
+    .mx-post {
+      background: #fff;
+      border: 1px solid var(--mx-border);
+      border-radius: var(--mx-radius);
     }
 
-    .profile-avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
+    .mx-profile-card {
+      padding: 18px;
+      margin-bottom: 14px;
     }
 
-    .profile-name{
-      font-weight:800;
-      font-size:15px;
+    .mx-profile-head {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 15px;
     }
 
-    .profile-username{
-      color:var(--muted);
-      font-size:12px;
-      margin-top:3px;
+    .mx-profile-name {
+      font-weight: 800;
+      font-size: 15px;
     }
 
-    .menu{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
+    .mx-profile-username {
+      color: var(--mx-muted);
+      font-size: 12px;
+      margin-top: 2px;
     }
 
-    .menu-item{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-height:44px;
-      padding:0 12px;
-      border-radius:12px;
-      color:#555866;
-      font-size:14px;
-      font-weight:600;
-      background:transparent;
-      text-align:left;
-      transition:.2s;
-      width:100%;
+    .mx-profile-link {
+      border: 0;
+      background: transparent;
+      color: var(--mx-blue);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 0;
     }
 
-    .menu-item svg{
-      width:19px;
-      height:19px;
-      flex-shrink:0;
+    .mx-menu-card {
+      padding: 8px;
     }
 
-    .menu-item:hover{
-      background:#f4f4fa;
-      color:var(--primary);
+    .mx-menu-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: left;
+      color: #374151;
+      font-weight: 650;
+      font-size: 14px;
     }
 
-    .menu-item.active{
-      color:var(--primary);
-      background:#f0efff;
+    .mx-menu-item:hover,
+    .mx-menu-item.active {
+      background: #f3f4f6;
+      color: #111827;
     }
 
-    .left-footer{
-      color:#a0a2ad;
-      font-size:11px;
-      line-height:1.7;
-      padding:8px 12px;
+    .mx-menu-icon {
+      width: 22px;
+      text-align: center;
+      font-size: 18px;
     }
 
     /* =========================
        CENTER
-    ========================== */
+    ========================= */
 
-    .section-title{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:12px;
-    }
-
-    .section-title h2{
-      font-size:17px;
-      font-weight:800;
-    }
-
-    .section-title span{
-      color:var(--muted);
-      font-size:12px;
+    .mx-center {
+      min-width: 0;
     }
 
     /* =========================
        STORIES
-    ========================== */
+    ========================= */
 
-    .stories{
-      display:flex;
-      gap:10px;
-      overflow-x:auto;
-      scrollbar-width:none;
-      padding-bottom:4px;
-      margin-bottom:18px;
+    .mx-stories-card {
+      padding: 14px;
+      margin-bottom: 15px;
+      overflow: hidden;
     }
 
-    .stories::-webkit-scrollbar{
-      display:none;
+    .mx-section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
     }
 
-    .story{
-      min-width:104px;
-      height:142px;
-      border-radius:18px;
-      position:relative;
-      overflow:hidden;
-      background:linear-gradient(160deg,#dadcf0,#9b9fb6);
-      flex-shrink:0;
-      cursor:pointer;
+    .mx-section-title {
+      font-size: 17px;
+      font-weight: 850;
     }
 
-    .story::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(transparent 30%,rgba(0,0,0,.65));
+    .mx-section-link {
+      border: 0;
+      background: transparent;
+      color: var(--mx-blue);
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .story-add{
-      background:white;
-      border:1px solid var(--line);
-      color:var(--text);
+    .mx-stories-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
     }
 
-    .story-add::after{
-      display:none;
+    .mx-stories-scroll::-webkit-scrollbar {
+      display: none;
     }
 
-    .story-add-content{
-      position:absolute;
-      inset:0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:9px;
+    .mx-story {
+      min-width: 104px;
+      width: 104px;
+      height: 155px;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+      border: 1px solid #e5e7eb;
+      background: #eef0f3;
+      cursor: pointer;
     }
 
-    .story-add-icon{
-      width:40px;
-      height:40px;
-      border-radius:50%;
-      background:#f0efff;
-      color:var(--primary);
-      display:grid;
-      place-items:center;
-      font-size:23px;
-      font-weight:700;
+    .mx-story-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
-    .story-add-content strong{
-      font-size:12px;
+    .mx-story-text-bg {
+      width: 100%;
+      height: 100%;
+      padding: 12px 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 800;
+      font-size: 13px;
+      line-height: 1.35;
+      background: linear-gradient(145deg, #f9fafb, #dfe3e8);
     }
 
-    .story-avatar{
-      position:absolute;
-      z-index:2;
-      top:10px;
-      left:10px;
-      width:34px;
-      height:34px;
-      border-radius:50%;
-      background:var(--primary);
-      color:white;
-      display:grid;
-      place-items:center;
-      font-size:12px;
-      font-weight:800;
-      border:2px solid white;
+    .mx-story-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        transparent 35%,
+        rgba(0,0,0,.7)
+      );
     }
 
-    .story-name{
-      position:absolute;
-      z-index:2;
-      bottom:11px;
-      left:11px;
-      right:8px;
-      color:white;
-      font-size:12px;
-      font-weight:700;
+    .mx-story-avatar {
+      position: absolute;
+      left: 9px;
+      top: 9px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      overflow: hidden;
+      background: #111827;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .mx-story-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mx-story-name {
+      position: absolute;
+      left: 9px;
+      right: 7px;
+      bottom: 9px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      z-index: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mx-story-add {
+      background: #fff;
+    }
+
+    .mx-story-add-top {
+      height: 68%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mx-add-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #111827;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+    }
+
+    .mx-story-add-bottom {
+      height: 32%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .mx-story-empty {
+      min-width: 100%;
+      padding: 25px 10px;
+      text-align: center;
+      color: var(--mx-muted);
+      font-size: 13px;
     }
 
     /* =========================
        CREATE POST
-    ========================== */
+    ========================= */
 
-    .create-card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:17px;
-      box-shadow:var(--shadow);
-      margin-bottom:18px;
+    .mx-create-card {
+      padding: 15px;
+      margin-bottom: 15px;
     }
 
-    .create-top{
-      display:flex;
-      align-items:center;
-      gap:12px;
+    .mx-create-row {
+      display: flex;
+      gap: 11px;
+      align-items: center;
     }
 
-    .create-input{
-      flex:1;
-      height:44px;
-      border-radius:14px;
-      background:#f5f5f8;
-      display:flex;
-      align-items:center;
-      padding:0 15px;
-      color:#9295a0;
-      font-size:14px;
-      cursor:pointer;
+    .mx-create-input {
+      flex: 1;
+      border: 1px solid #e5e7eb;
+      background: #f5f6f8;
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 14px;
     }
 
-    .create-actions{
-      display:flex;
-      gap:6px;
-      margin-top:13px;
-      padding-top:13px;
-      border-top:1px solid #f0f0f4;
+    .mx-create-options {
+      display: flex;
+      border-top: 1px solid #edf0f2;
+      margin-top: 14px;
+      padding-top: 12px;
+      gap: 5px;
     }
 
-    .create-action{
-      flex:1;
-      height:40px;
-      background:transparent;
-      color:#646775;
-      border-radius:11px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:7px;
-      font-size:12px;
-      font-weight:700;
+    .mx-create-option {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 9px 5px;
+      border-radius: 10px;
+      color: #4b5563;
+      font-weight: 700;
+      font-size: 13px;
     }
 
-    .create-action:hover{
-      background:#f5f5f8;
+    .mx-create-option:hover {
+      background: #f3f4f6;
     }
 
     /* =========================
-       POST
-    ========================== */
+       POSTS
+    ========================= */
 
-    .post{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:18px;
-      box-shadow:var(--shadow);
-      margin-bottom:16px;
+    .mx-post {
+      margin-bottom: 15px;
+      overflow: hidden;
     }
 
-    .post-head{
-      display:flex;
-      align-items:center;
-      gap:11px;
+    .mx-post-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 16px 10px;
     }
 
-    .post-avatar{
-      width:43px;
-      height:43px;
-      border-radius:50%;
-      background:linear-gradient(135deg,var(--primary),#9a94ff);
-      color:white;
-      display:grid;
-      place-items:center;
-      font-size:15px;
-      font-weight:800;
-      flex-shrink:0;
-      overflow:hidden;
+    .mx-post-user {
+      flex: 1;
+      min-width: 0;
     }
 
-    .post-avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
+    .mx-post-name {
+      font-size: 14px;
+      font-weight: 850;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    .post-author{
-      min-width:0;
-      flex:1;
+    .mx-verified {
+      font-size: 11px;
+      color: #2563eb;
     }
 
-    .post-author strong{
-      display:block;
-      font-size:14px;
+    .mx-post-username {
+      color: var(--mx-muted);
+      font-size: 11px;
+      margin-top: 2px;
     }
 
-    .post-meta{
-      color:var(--muted);
-      font-size:11px;
-      margin-top:3px;
+    .mx-post-time {
+      color: var(--mx-muted);
+      font-size: 11px;
+      margin-top: 2px;
     }
 
-    .post-menu{
-      width:34px;
-      height:34px;
-      border-radius:10px;
-      background:transparent;
-      color:#888b96;
-      font-size:20px;
+    .mx-post-menu {
+      border: 0;
+      background: transparent;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 21px;
+      color: #6b7280;
     }
 
-    .post-menu:hover{
-      background:#f2f2f6;
+    .mx-post-menu:hover {
+      background: #f3f4f6;
     }
 
-    .post-content{
-      margin-top:14px;
-      font-size:14px;
-      line-height:1.65;
-      color:#30323c;
-      white-space:pre-wrap;
-      word-break:break-word;
+    .mx-post-body {
+      padding: 5px 16px 12px;
     }
 
-    .post-image{
-      width:100%;
-      max-height:480px;
-      object-fit:cover;
-      border-radius:16px;
-      margin-top:14px;
-      display:block;
+    .mx-post-content {
+      font-size: 14px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
 
-    .post-stats{
-      display:flex;
-      justify-content:space-between;
-      color:#8b8e99;
-      font-size:11px;
-      padding:13px 2px 10px;
+    .mx-feeling-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 8px;
+      padding: 5px 9px;
+      background: #f3f4f6;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #4b5563;
+      font-weight: 700;
     }
 
-    .post-actions{
-      border-top:1px solid #f0f0f4;
-      display:flex;
-      gap:5px;
-      padding-top:9px;
+    .mx-post-media {
+      margin-top: 12px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f3f4f6;
     }
 
-    .post-action{
-      flex:1;
-      height:38px;
-      border-radius:10px;
-      background:transparent;
-      color:#666976;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:7px;
-      font-size:12px;
-      font-weight:700;
+    .mx-post-media img {
+      display: block;
+      width: 100%;
+      max-height: 520px;
+      object-fit: cover;
     }
 
-    .post-action:hover{
-      background:#f5f5f8;
-      color:var(--primary);
+    .mx-post-media video {
+      display: block;
+      width: 100%;
+      max-height: 520px;
+      background: #000;
     }
 
-    .empty-state{
-      background:white;
-      border:1px dashed #dcdde5;
-      border-radius:20px;
-      padding:40px 20px;
-      text-align:center;
-      color:var(--muted);
+    .mx-post-stats {
+      display: flex;
+      justify-content: space-between;
+      color: var(--mx-muted);
+      font-size: 12px;
+      padding: 0 16px 9px;
     }
 
-    .empty-state .empty-icon{
-      font-size:36px;
-      margin-bottom:10px;
+    .mx-post-actions {
+      border-top: 1px solid #edf0f2;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 5px 8px;
     }
 
-    .empty-state strong{
-      display:block;
-      color:var(--text);
-      margin-bottom:5px;
+    .mx-post-action {
+      border: 0;
+      background: transparent;
+      padding: 9px 4px;
+      border-radius: 10px;
+      color: #4b5563;
+      font-weight: 700;
+      font-size: 13px;
     }
 
-    .error-details{
-      display:block;
-      margin-top:8px;
-      font-size:11px;
-      color:#999;
-      word-break:break-word;
+    .mx-post-action:hover {
+      background: #f3f4f6;
+    }
+
+    .mx-post-action.liked {
+      color: #2563eb;
+    }
+
+    .mx-feed-empty {
+      background: #fff;
+      border: 1px solid var(--mx-border);
+      border-radius: var(--mx-radius);
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--mx-muted);
+    }
+
+    .mx-feed-loading {
+      background: #fff;
+      border: 1px solid var(--mx-border);
+      border-radius: var(--mx-radius);
+      padding: 35px;
+      text-align: center;
+      color: var(--mx-muted);
     }
 
     /* =========================
        RIGHT
-    ========================== */
+    ========================= */
 
-    .side-card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:18px;
-      box-shadow:var(--shadow);
-      margin-bottom:16px;
+    .mx-rightbar {
+      position: sticky;
+      top: 90px;
     }
 
-    .side-title{
-      font-size:15px;
-      font-weight:800;
-      margin-bottom:15px;
+    .mx-right-card {
+      padding: 17px;
+      margin-bottom: 14px;
     }
 
-    .trend{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:11px 0;
-      border-bottom:1px solid #f1f1f4;
+    .mx-right-title {
+      font-size: 15px;
+      font-weight: 850;
+      margin-bottom: 13px;
     }
 
-    .trend:last-child{
-      border-bottom:0;
+    .mx-trend {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid #f0f1f2;
     }
 
-    .trend-name{
-      font-size:13px;
-      font-weight:700;
+    .mx-trend:last-child {
+      border-bottom: 0;
     }
 
-    .trend-count{
-      font-size:11px;
-      color:var(--muted);
-      margin-top:3px;
+    .mx-trend-tag {
+      font-weight: 750;
+      font-size: 13px;
     }
 
-    .trend-arrow{
-      color:#aaa;
+    .mx-trend-count {
+      color: var(--mx-muted);
+      font-size: 11px;
     }
 
-    .creator-box{
-      text-align:center;
-      padding:6px 2px;
+    .mx-creator-box {
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 13px;
     }
 
-    .creator-icon{
-      width:52px;
-      height:52px;
-      border-radius:16px;
-      margin:0 auto 12px;
-      display:grid;
-      place-items:center;
-      background:#f0efff;
-      color:var(--primary);
-      font-size:23px;
+    .mx-creator-box strong {
+      font-size: 14px;
     }
 
-    .creator-box strong{
-      display:block;
-      font-size:14px;
-      margin-bottom:6px;
-    }
-
-    .creator-box p{
-      color:var(--muted);
-      font-size:11px;
-      line-height:1.6;
-      margin-bottom:14px;
-    }
-
-    .creator-btn{
-      width:100%;
-      height:38px;
-      border-radius:11px;
-      background:var(--primary);
-      color:white;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .creator-btn:hover{
-      background:var(--primary-dark);
+    .mx-creator-box p {
+      color: var(--mx-muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 5px;
     }
 
     /* =========================
        MODAL
-    ========================== */
+    ========================= */
 
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      z-index:300;
-      background:rgba(15,16,25,.5);
-      backdrop-filter:blur(5px);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
+    .mx-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.55);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
     }
 
-    .modal-backdrop.show{
-      display:flex;
+    .mx-modal.show {
+      display: flex;
     }
 
-    .modal{
-      width:min(560px,100%);
-      max-height:90vh;
-      overflow:auto;
-      background:white;
-      border-radius:24px;
-      box-shadow:0 25px 80px rgba(0,0,0,.2);
+    .mx-modal-box {
+      width: min(560px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
     }
 
-    .modal-head{
-      height:64px;
-      padding:0 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      border-bottom:1px solid var(--line);
+    .mx-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 17px 18px;
+      border-bottom: 1px solid #edf0f2;
     }
 
-    .modal-head h3{
-      font-size:17px;
+    .mx-modal-title {
+      font-weight: 850;
+      font-size: 17px;
     }
 
-    .close-btn{
-      width:36px;
-      height:36px;
-      border-radius:10px;
-      background:#f3f3f6;
-      color:#666;
-      font-size:20px;
+    .mx-close {
+      border: 0;
+      background: #f3f4f6;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 18px;
     }
 
-    .modal-body{
-      padding:20px;
+    .mx-modal-body {
+      padding: 18px;
     }
 
-    .modal-user{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:15px;
+    .mx-post-textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border: 0;
+      outline: none;
+      font-size: 17px;
+      line-height: 1.5;
     }
 
-    .modal-user-avatar{
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      background:var(--primary);
-      color:white;
-      display:grid;
-      place-items:center;
-      font-weight:800;
-      overflow:hidden;
+    .mx-selected-feeling {
+      display: none;
+      margin-bottom: 12px;
+      padding: 8px 11px;
+      border-radius: 10px;
+      background: #f3f4f6;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .modal-user-avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
+    .mx-selected-feeling.show {
+      display: inline-flex;
     }
 
-    .modal-user strong{
-      font-size:14px;
+    .mx-modal-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 0;
+      border-top: 1px solid #edf0f2;
+      border-bottom: 1px solid #edf0f2;
     }
 
-    .modal-user span{
-      display:block;
-      color:var(--muted);
-      font-size:11px;
-      margin-top:2px;
+    .mx-tool-btn {
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    #postText{
-      width:100%;
-      min-height:170px;
-      resize:vertical;
-      border:0;
-      outline:0;
-      font-size:15px;
-      line-height:1.6;
-      color:var(--text);
+    .mx-tool-btn:hover {
+      background: #f3f4f6;
     }
 
-    #postText::placeholder{
-      color:#aaaeb8;
+    .mx-feelings {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-top: 10px;
     }
 
-    .modal-tools{
-      display:flex;
-      gap:8px;
-      padding:12px 0;
-      border-top:1px solid #f0f0f4;
-      border-bottom:1px solid #f0f0f4;
+    .mx-feelings.show {
+      display: grid;
     }
 
-    .modal-tool{
-      height:36px;
-      padding:0 12px;
-      border-radius:10px;
-      background:#f5f5f8;
-      color:#626572;
-      font-size:11px;
-      font-weight:700;
+    .mx-feeling-btn {
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      padding: 10px 5px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .modal-footer{
-      padding-top:14px;
-      display:flex;
-      justify-content:flex-end;
+    .mx-feeling-btn:hover {
+      background: #f3f4f6;
     }
 
-    .publish-btn{
-      min-width:110px;
-      height:40px;
-      border-radius:11px;
-      background:var(--primary);
-      color:white;
-      font-size:12px;
-      font-weight:800;
+    .mx-file-name {
+      display: none;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6b7280;
     }
 
-    .publish-btn:disabled{
-      opacity:.5;
-      cursor:not-allowed;
+    .mx-file-name.show {
+      display: block;
+    }
+
+    .mx-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 13px 18px;
+    }
+
+    .mx-btn {
+      border: 0;
+      border-radius: 11px;
+      padding: 10px 17px;
+      font-weight: 750;
+    }
+
+    .mx-btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .mx-btn-primary {
+      background: #111827;
+      color: #fff;
     }
 
     /* =========================
-       LOADING
-    ========================== */
+       STORY VIEWER
+    ========================= */
 
-    .loading{
-      padding:35px;
-      text-align:center;
-      color:var(--muted);
-      font-size:13px;
+    .mx-story-viewer {
+      position: fixed;
+      inset: 0;
+      background: #050505;
+      z-index: 800;
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
 
-    .spinner{
-      width:26px;
-      height:26px;
-      border:3px solid #e8e8ee;
-      border-top-color:var(--primary);
-      border-radius:50%;
-      animation:spin .8s linear infinite;
-      margin:0 auto 10px;
+    .mx-story-viewer.show {
+      display: flex;
     }
 
-    @keyframes spin{
-      to{
-        transform:rotate(360deg);
-      }
+    .mx-story-viewer-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      font-size: 22px;
+      z-index: 3;
+    }
+
+    .mx-story-viewer-card {
+      width: min(500px, 100%);
+      height: min(800px, 92vh);
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #111;
+    }
+
+    .mx-story-viewer-media {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #111;
+    }
+
+    .mx-story-viewer-text {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 35px;
+      text-align: center;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.45;
+      background: linear-gradient(145deg, #1f2937, #111827);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .mx-story-viewer-info {
+      position: absolute;
+      left: 15px;
+      right: 15px;
+      top: 15px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      z-index: 2;
+    }
+
+    .mx-story-viewer-name {
+      font-weight: 800;
+      font-size: 13px;
     }
 
     /* =========================
        TOAST
-    ========================== */
+    ========================= */
 
-    .toast{
-      position:fixed;
-      z-index:500;
-      left:50%;
-      bottom:85px;
-      transform:translate(-50%,20px);
-      background:#1d1f29;
-      color:white;
-      padding:11px 16px;
-      border-radius:12px;
-      font-size:12px;
-      opacity:0;
-      pointer-events:none;
-      transition:.25s;
-      max-width:90%;
-      text-align:center;
+    .mx-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translate(-50%, 20px);
+      background: #111827;
+      color: #fff;
+      padding: 11px 17px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      z-index: 1000;
     }
 
-    .toast.show{
-      opacity:1;
-      transform:translate(-50%,0);
+    .mx-toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
     }
 
     /* =========================
        MOBILE NAV
-    ========================== */
+    ========================= */
 
-    .mobile-nav{
-      display:none;
+    .mx-mobile-nav {
+      display: none;
     }
 
-    /* =========================
-       RESPONSIVE
-    ========================== */
-
-    @media(max-width:1100px){
-      .page{
-        grid-template-columns:210px minmax(400px,680px);
+    @media (max-width: 1100px) {
+      .mx-page {
+        grid-template-columns: 210px minmax(0, 1fr);
       }
 
-      .right-column{
-        display:none;
-      }
-
-      .search{
-        width:240px;
+      .mx-rightbar {
+        display: none;
       }
     }
 
-    @media(max-width:760px){
-      body{
-        padding-bottom:70px;
+    @media (max-width: 760px) {
+      .mx-topbar {
+        height: 60px;
       }
 
-      .topbar{
-        height:62px;
+      .mx-topbar-inner {
+        width: calc(100% - 20px);
       }
 
-      .topbar-inner{
-        padding:0 14px;
-        gap:10px;
+      .mx-brand {
+        min-width: auto;
       }
 
-      .brand{
-        font-size:25px;
+      .mx-brand .mexa-logo {
+        font-size: 25px;
       }
 
-      .search{
-        flex:1;
-        width:auto;
-        height:38px;
+      .mx-search {
+        display: none;
       }
 
-      .top-actions{
-        margin-left:0;
+      .mx-user-mini {
+        display: none;
       }
 
-      .top-actions .icon-btn:nth-child(1),
-      .top-actions .icon-btn:nth-child(2){
-        display:none;
+      .mx-page {
+        display: block;
+        width: 100%;
+        margin: 10px auto 80px;
       }
 
-      .avatar-small{
-        width:38px;
-        height:38px;
+      .mx-sidebar {
+        display: none;
       }
 
-      .page{
-        display:block;
-        padding:14px 12px 20px;
+      .mx-center {
+        width: 100%;
       }
 
-      .left-column{
-        display:none;
+      .mx-stories-card,
+      .mx-create-card,
+      .mx-post {
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
       }
 
-      .center-column{
-        width:100%;
+      .mx-stories-card {
+        padding: 12px 12px 14px;
       }
 
-      .stories{
-        margin-left:-12px;
-        margin-right:-12px;
-        padding-left:12px;
-        padding-right:12px;
+      .mx-create-card {
+        padding: 13px;
       }
 
-      .story{
-        min-width:94px;
-        height:130px;
+      .mx-post {
+        margin-bottom: 9px;
       }
 
-      .create-card,
-      .post{
-        border-radius:17px;
+      .mx-mobile-nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 64px;
+        background: rgba(255,255,255,.97);
+        border-top: 1px solid #e5e7eb;
+        z-index: 300;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        padding-bottom: env(safe-area-inset-bottom);
       }
 
-      .post{
-        padding:15px;
+      .mx-mobile-item {
+        border: 0;
+        background: transparent;
+        color: #6b7280;
+        font-size: 10px;
+        font-weight: 700;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
       }
 
-      .mobile-nav{
-        position:fixed;
-        left:0;
-        right:0;
-        bottom:0;
-        z-index:200;
-        height:64px;
-        background:rgba(255,255,255,.96);
-        backdrop-filter:blur(15px);
-        border-top:1px solid var(--line);
-        display:flex;
-        align-items:center;
-        justify-content:space-around;
+      .mx-mobile-item span:first-child {
+        font-size: 19px;
       }
 
-      .mobile-nav-item{
-        width:20%;
-        height:58px;
-        background:transparent;
-        color:#858894;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        gap:4px;
-        font-size:9px;
-        font-weight:700;
+      .mx-mobile-item.active {
+        color: #111827;
       }
 
-      .mobile-nav-item svg{
-        width:20px;
-        height:20px;
+      .mx-modal {
+        padding: 0;
+        align-items: flex-end;
       }
 
-      .mobile-nav-item.active{
-        color:var(--primary);
-      }
-
-      .mobile-create{
-        width:43px;
-        height:43px;
-        border-radius:14px;
-        background:var(--primary);
-        color:white;
-        margin-top:-16px;
-        box-shadow:0 8px 20px rgba(99,91,255,.3);
-      }
-    }
-
-    @media(max-width:420px){
-      .search{
-        display:none;
-      }
-
-      .top-actions{
-        margin-left:auto;
-      }
-
-      .stories{
-        gap:8px;
-      }
-
-      .story{
-        min-width:88px;
-      }
-
-      .create-action{
-        font-size:11px;
+      .mx-modal-box {
+        border-radius: 20px 20px 0 0;
+        max-height: 92vh;
       }
     }
   </style>
@@ -1099,163 +1147,121 @@
 
 <body>
 
-  <!-- TOPBAR -->
+  <!-- =========================
+       TOPBAR
+  ========================== -->
 
-  <header class="topbar">
-    <div class="topbar-inner">
+  <header class="mx-topbar">
+    <div class="mx-topbar-inner">
 
-      <div class="mexa-logo brand" aria-label="MEXA">
-        <span class="logo-m">M</span>
-
-        <div class="logo-e">
-          <span></span>
-          <span></span>
-          <span></span>
+      <div class="mx-brand">
+        <div class="mexa-logo">
+          <span class="logo-m">M</span>
+          <span class="logo-e">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span class="logo-x">X</span>
+          <span class="logo-a">A</span>
         </div>
-
-        <span class="logo-x">X</span>
-        <span class="logo-a">A</span>
       </div>
 
-      <div class="search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="7"></circle>
-          <path d="m20 20-4-4"></path>
-        </svg>
-
+      <div class="mx-search">
+        <span class="mx-search-icon">⌕</span>
         <input
           id="searchInput"
-          type="text"
+          type="search"
           placeholder="Cari di MEXA..."
         >
       </div>
 
-      <div class="top-actions">
+      <div class="mx-top-actions">
+        <button class="mx-icon-btn" onclick="showToast('Notifikasi MEXA')">♢</button>
+        <button class="mx-icon-btn" onclick="showToast('Pesan MEXA')">▢</button>
 
-        <button class="icon-btn" title="Notifikasi">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-            <path d="M10 21h4"></path>
-          </svg>
-        </button>
-
-        <button class="icon-btn" title="Pesan">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.8L4 20l1.8-3.6A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7z"></path>
-          </svg>
-        </button>
-
-        <button class="avatar-small" id="topAvatar" title="Profil">
-          M
-        </button>
-
+        <div class="mx-user-mini">
+          <div class="mx-avatar mx-avatar-sm" id="topAvatar">M</div>
+          <strong id="topDisplayName">MEXA</strong>
+        </div>
       </div>
+
     </div>
   </header>
 
 
-  <!-- MAIN -->
+  <!-- =========================
+       PAGE
+  ========================== -->
 
-  <main class="page">
+  <main class="mx-page">
 
     <!-- LEFT -->
 
-    <aside class="left-column">
+    <aside class="mx-sidebar">
 
-      <div class="profile-card">
-
-        <div class="profile-main">
-
-          <div class="profile-avatar" id="profileAvatar">
-            M
-          </div>
+      <div class="mx-profile-card">
+        <div class="mx-profile-head">
+          <div class="mx-avatar mx-avatar-lg" id="sideAvatar">M</div>
 
           <div>
-            <div class="profile-name" id="profileName">
-              Memuat...
+            <div class="mx-profile-name" id="sideDisplayName">
+              MEXA User
             </div>
 
-            <div class="profile-username" id="profileUsername">
+            <div class="mx-profile-username" id="sideUsername">
               @mexa
             </div>
           </div>
-
         </div>
 
-        <nav class="menu">
-
-          <button class="menu-item active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m3 11 9-8 9 8"></path>
-              <path d="M5 10v10h14V10"></path>
-            </svg>
-            Beranda
-          </button>
-
-          <button class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="8" r="4"></circle>
-              <path d="M4 21a8 8 0 0 1 16 0"></path>
-            </svg>
-            Profil
-          </button>
-
-          <button class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="5" y="3" width="14" height="18" rx="3"></rect>
-              <path d="m10 8 5 4-5 4z"></path>
-            </svg>
-            Reels
-          </button>
-
-          <button class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 7h16"></path>
-              <path d="M4 12h16"></path>
-              <path d="M4 17h10"></path>
-            </svg>
-            Grup
-          </button>
-
-          <button class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="8"></circle>
-              <path d="M12 8v8M8 12h8"></path>
-            </svg>
-            Komunitas
-          </button>
-
-          <button class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 20V10l8-6 8 6v10"></path>
-              <path d="M9 20v-6h6v6"></path>
-            </svg>
-            Halaman
-          </button>
-
-          <button class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 3v18"></path>
-              <path d="M3 12h18"></path>
-            </svg>
-            Kreator
-          </button>
-
-          <button class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1-1.6 1.6-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1.1 1.7V20h-2.3v-.1a1.8 1.8 0 0 0-1.1-1.7 1.8 1.8 0 0 0-2 .4l-.1.1L8 17.1l.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.7-1.1H6v-2.3h.1a1.8 1.8 0 0 0 1.7-1.1 1.8 1.8 0 0 0-.4-2L7.3 8.4 9 6.8l.1.1a1.8 1.8 0 0 0 2 .4A1.8 1.8 0 0 0 12.2 5V4h2.3v1a1.8 1.8 0 0 0 1.1 1.7 1.8 1.8 0 0 0 2-.4l.1-.1 1.6 1.6-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.7 1.1h.1v2.3h-.1a1.8 1.8 0 0 0-1.1 1.7z"></path>
-            </svg>
-            Pengaturan
-          </button>
-
-        </nav>
-
+        <button class="mx-profile-link" onclick="showToast('Profil MEXA segera hadir')">
+          Lihat profil
+        </button>
       </div>
 
-      <div class="left-footer">
-        © 2026 MEXA<br>
-        Platform sosial generasi baru.
+      <div class="mx-menu-card">
+
+        <button class="mx-menu-item active">
+          <span class="mx-menu-icon">⌂</span>
+          <span>Beranda</span>
+        </button>
+
+        <button class="mx-menu-item" onclick="showToast('Profil segera hadir')">
+          <span class="mx-menu-icon">◯</span>
+          <span>Profil</span>
+        </button>
+
+        <button class="mx-menu-item" onclick="showToast('Reels segera hadir')">
+          <span class="mx-menu-icon">▶</span>
+          <span>Reels</span>
+        </button>
+
+        <button class="mx-menu-item" onclick="showToast('Grup segera hadir')">
+          <span class="mx-menu-icon">♧</span>
+          <span>Grup</span>
+        </button>
+
+        <button class="mx-menu-item" onclick="showToast('Komunitas segera hadir')">
+          <span class="mx-menu-icon">◎</span>
+          <span>Komunitas</span>
+        </button>
+
+        <button class="mx-menu-item" onclick="showToast('Halaman segera hadir')">
+          <span class="mx-menu-icon">▣</span>
+          <span>Halaman</span>
+        </button>
+
+        <button class="mx-menu-item" onclick="showToast('Creator Center segera hadir')">
+          <span class="mx-menu-icon">✦</span>
+          <span>Kreator</span>
+        </button>
+
+        <button class="mx-menu-item" onclick="showToast('Pengaturan segera hadir')">
+          <span class="mx-menu-icon">⚙</span>
+          <span>Pengaturan</span>
+        </button>
+
       </div>
 
     </aside>
@@ -1263,103 +1269,94 @@
 
     <!-- CENTER -->
 
-    <section class="center-column">
+    <section class="mx-center">
 
-      <div class="section-title">
-        <h2>Cerita</h2>
-        <span>Lihat semua</span>
-      </div>
+      <!-- =========================
+           STORIES
+           OTOMATIS DARI POSTS
+      ========================== -->
 
-      <div class="stories">
+      <section class="mx-stories-card">
 
-        <div class="story story-add" id="storyAdd">
+        <div class="mx-section-head">
+          <h2 class="mx-section-title">Cerita</h2>
 
-          <div class="story-add-content">
+          <button
+            class="mx-section-link"
+            onclick="loadStories()"
+          >
+            Segarkan
+          </button>
+        </div>
 
-            <div class="story-add-icon">
-              +
-            </div>
-
-            <strong>
-              Buat cerita
-            </strong>
-
+        <div
+          class="mx-stories-scroll"
+          id="storiesContainer"
+        >
+          <div class="mx-story-empty">
+            Memuat cerita...
           </div>
-
         </div>
 
-        <div class="story">
-          <div class="story-avatar">A</div>
-          <div class="story-name">Andi</div>
-        </div>
-
-        <div class="story">
-          <div class="story-avatar">R</div>
-          <div class="story-name">Rina</div>
-        </div>
-
-        <div class="story">
-          <div class="story-avatar">D</div>
-          <div class="story-name">Dika</div>
-        </div>
-
-        <div class="story">
-          <div class="story-avatar">S</div>
-          <div class="story-name">Sinta</div>
-        </div>
-
-      </div>
+      </section>
 
 
       <!-- CREATE POST -->
 
-      <div class="create-card">
+      <section class="mx-create-card">
 
-        <div class="create-top">
+        <div class="mx-create-row">
 
-          <div class="profile-avatar" id="createAvatar">
+          <div
+            class="mx-avatar"
+            id="createAvatar"
+          >
             M
           </div>
 
-          <div class="create-input" id="openCreatePost">
+          <div
+            class="mx-create-input"
+            onclick="openCreateModal()"
+          >
             Apa yang ingin kamu bagikan?
           </div>
 
         </div>
 
-        <div class="create-actions">
+        <div class="mx-create-options">
 
-          <button class="create-action" id="createPhoto">
+          <button
+            class="mx-create-option"
+            onclick="openCreateModal('photo')"
+          >
             📷 Foto
           </button>
 
-          <button class="create-action" id="createVideo">
+          <button
+            class="mx-create-option"
+            onclick="openCreateModal('video')"
+          >
             🎬 Video
           </button>
 
-          <button class="create-action" id="createFeeling">
+          <button
+            class="mx-create-option"
+            onclick="openCreateModal('feeling')"
+          >
             😊 Perasaan
           </button>
 
         </div>
 
-      </div>
+      </section>
 
 
       <!-- FEED -->
 
-      <div class="section-title">
-        <h2>Beranda</h2>
-        <span>Terbaru</span>
-      </div>
-
-      <div id="feed">
-
-        <div class="loading">
-          <div class="spinner"></div>
-          Memuat postingan...
+      <div id="feedContainer">
+        <div class="mx-feed-loading">
+          Memuat postingan MEXA...
         </div>
-
       </div>
 
     </section>
@@ -1367,116 +1364,53 @@
 
     <!-- RIGHT -->
 
-    <aside class="right-column">
+    <aside class="mx-rightbar">
 
-      <div class="side-card">
+      <div class="mx-right-card">
 
-        <div class="side-title">
-          🔥 Tren MEXA
+        <div class="mx-right-title">
+          Tren MEXA
         </div>
 
-        <div class="trend">
-
+        <div class="mx-trend">
           <div>
-            <div class="trend-name">
-              #MEXA
-            </div>
-
-            <div class="trend-count">
-              12K postingan
-            </div>
+            <div class="mx-trend-tag">#MEXAV2</div>
+            <div class="mx-trend-count">Topik populer</div>
           </div>
-
-          <div class="trend-arrow">
-            ›
-          </div>
-
+          <strong>12K</strong>
         </div>
 
-        <div class="trend">
-
+        <div class="mx-trend">
           <div>
-            <div class="trend-name">
-              #Gaming
-            </div>
-
-            <div class="trend-count">
-              8K postingan
-            </div>
+            <div class="mx-trend-tag">#Gaming</div>
+            <div class="mx-trend-count">Topik populer</div>
           </div>
-
-          <div class="trend-arrow">
-            ›
-          </div>
-
+          <strong>8K</strong>
         </div>
 
-        <div class="trend">
-
+        <div class="mx-trend">
           <div>
-            <div class="trend-name">
-              #Kreator
-            </div>
-
-            <div class="trend-count">
-              5K postingan
-            </div>
+            <div class="mx-trend-tag">#Kreator</div>
+            <div class="mx-trend-count">Topik populer</div>
           </div>
-
-          <div class="trend-arrow">
-            ›
-          </div>
-
+          <strong>5K</strong>
         </div>
 
       </div>
 
+      <div class="mx-right-card">
 
-      <div class="side-card">
+        <div class="mx-right-title">
+          Creator Center
+        </div>
 
-        <div class="creator-box">
-
-          <div class="creator-icon">
-            ✦
-          </div>
-
-          <strong>
-            Creator Center
-          </strong>
+        <div class="mx-creator-box">
+          <strong>Mulai jadi Kreator</strong>
 
           <p>
-            Kelola konten dan bangun komunitasmu di MEXA.
+            Bangun komunitasmu dan kembangkan konten di MEXA.
           </p>
-
-          <button class="creator-btn">
-            Buka Creator Center
-          </button>
-
         </div>
-
-      </div>
-
-
-      <div class="side-card">
-
-        <div class="mexa-logo" style="font-size:23px;">
-
-          <span class="logo-m">M</span>
-
-          <div class="logo-e">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-          <span class="logo-x">X</span>
-          <span class="logo-a">A</span>
-
-        </div>
-
-        <p style="font-size:11px;color:#9699a4;line-height:1.6;margin-top:9px;">
-          MEXA adalah ruang sosial baru untuk berbagi, berkarya, dan terhubung.
-        </p>
 
       </div>
 
@@ -1485,142 +1419,183 @@
   </main>
 
 
-  <!-- MOBILE NAV -->
+  <!-- =========================
+       MOBILE NAV
+  ========================== -->
 
-  <nav class="mobile-nav">
+  <nav class="mx-mobile-nav">
 
-    <button class="mobile-nav-item active">
-
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="m3 11 9-8 9 8"></path>
-        <path d="M5 10v10h14V10"></path>
-      </svg>
-
-      Home
-
+    <button class="mx-mobile-item active">
+      <span>⌂</span>
+      <span>Home</span>
     </button>
 
-    <button class="mobile-nav-item">
-
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="5" y="3" width="14" height="18" rx="3"></rect>
-        <path d="m10 8 5 4-5 4z"></path>
-      </svg>
-
-      Reels
-
+    <button
+      class="mx-mobile-item"
+      onclick="showToast('Reels segera hadir')"
+    >
+      <span>▶</span>
+      <span>Reels</span>
     </button>
 
-    <button class="mobile-nav-item mobile-create" id="mobileCreate">
-
-      <span style="font-size:23px;line-height:1;">
-        +
-      </span>
-
-      <span style="font-size:9px;">
-        Buat
-      </span>
-
+    <button
+      class="mx-mobile-item"
+      onclick="openCreateModal()"
+    >
+      <span>＋</span>
+      <span>Buat</span>
     </button>
 
-    <button class="mobile-nav-item">
-
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 7h16"></path>
-        <path d="M4 12h16"></path>
-        <path d="M4 17h10"></path>
-      </svg>
-
-      Grup
-
+    <button
+      class="mx-mobile-item"
+      onclick="showToast('Grup segera hadir')"
+    >
+      <span>♧</span>
+      <span>Grup</span>
     </button>
 
-    <button class="mobile-nav-item">
-
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="8" r="4"></circle>
-        <path d="M4 21a8 8 0 0 1 16 0"></path>
-      </svg>
-
-      Profil
-
+    <button
+      class="mx-mobile-item"
+      onclick="showToast('Profil segera hadir')"
+    >
+      <span>◯</span>
+      <span>Profil</span>
     </button>
 
   </nav>
 
 
-  <!-- CREATE POST MODAL -->
+  <!-- =========================
+       CREATE POST MODAL
+  ========================== -->
 
-  <div class="modal-backdrop" id="postModal">
+  <div
+    class="mx-modal"
+    id="createModal"
+    onclick="closeModalOutside(event)"
+  >
 
-    <div class="modal">
+    <div class="mx-modal-box">
 
-      <div class="modal-head">
+      <div class="mx-modal-head">
 
-        <h3>
+        <div class="mx-modal-title">
           Buat postingan
-        </h3>
+        </div>
 
-        <button class="close-btn" id="closeModal">
+        <button
+          class="mx-close"
+          onclick="closeCreateModal()"
+        >
           ×
         </button>
 
       </div>
 
-      <div class="modal-body">
+      <div class="mx-modal-body">
 
-        <div class="modal-user">
-
-          <div class="modal-user-avatar" id="modalAvatar">
-            M
-          </div>
-
-          <div>
-
-            <strong id="modalName">
-              Memuat...
-            </strong>
-
-            <span>
-              Posting ke MEXA
-            </span>
-
-          </div>
-
-        </div>
+        <div
+          class="mx-selected-feeling"
+          id="selectedFeeling"
+        ></div>
 
         <textarea
-          id="postText"
+          id="postContent"
+          class="mx-post-textarea"
           placeholder="Apa yang ingin kamu bagikan?"
         ></textarea>
 
-        <div class="modal-tools">
+        <div class="mx-modal-tools">
 
-          <button class="modal-tool" id="modalPhoto">
+          <button
+            class="mx-tool-btn"
+            onclick="document.getElementById('photoInput').click()"
+          >
             📷 Foto
           </button>
 
-          <button class="modal-tool">
+          <button
+            class="mx-tool-btn"
+            onclick="document.getElementById('videoInput').click()"
+          >
             🎬 Video
           </button>
 
-          <button class="modal-tool">
+          <button
+            class="mx-tool-btn"
+            onclick="toggleFeelings()"
+          >
             😊 Perasaan
           </button>
 
         </div>
 
-        <div class="modal-footer">
+        <div
+          class="mx-feelings"
+          id="feelingsBox"
+        >
 
-          <button
-            class="publish-btn"
-            id="publishPost"
-            disabled
-          >
-            Posting
+          <button class="mx-feeling-btn" onclick="selectFeeling('😀 Senang')">
+            😀 Senang
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('😍 Bahagia')">
+            😍 Bahagia
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('😂 Terhibur')">
+            😂 Terhibur
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('😢 Sedih')">
+            😢 Sedih
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('😡 Kesal')">
+            😡 Kesal
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('🤩 Bersemangat')">
+            🤩 Bersemangat
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('😴 Mengantuk')">
+            😴 Mengantuk
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('🙏 Bersyukur')">
+            🙏 Bersyukur
+          </button>
+
+          <button class="mx-feeling-btn" onclick="selectFeeling('🔥 Termotivasi')">
+            🔥 Termotivasi
           </button>
 
         </div>
+
+        <div
+          class="mx-file-name"
+          id="selectedFileName"
+        ></div>
+
+      </div>
+
+      <div class="mx-modal-footer">
+
+        <button
+          class="mx-btn mx-btn-secondary"
+          onclick="closeCreateModal()"
+        >
+          Batal
+        </button>
+
+        <button
+          class="mx-btn mx-btn-primary"
+          id="publishButton"
+          onclick="publishPost()"
+        >
+          Posting
+        </button>
 
       </div>
 
@@ -1629,16 +1604,72 @@
   </div>
 
 
-  <div class="toast" id="toast"></div>
+  <!-- FILE INPUT -->
+
+  <input
+    id="photoInput"
+    type="file"
+    accept="image/*"
+    hidden
+    onchange="handleFileSelect(this,'photo')"
+  >
+
+  <input
+    id="videoInput"
+    type="file"
+    accept="video/*"
+    hidden
+    onchange="handleFileSelect(this,'video')"
+  >
 
 
-  <!-- JAVASCRIPT -->
+  <!-- =========================
+       STORY VIEWER
+  ========================== -->
+
+  <div
+    class="mx-story-viewer"
+    id="storyViewer"
+  >
+
+    <button
+      class="mx-story-viewer-close"
+      onclick="closeStoryViewer()"
+    >
+      ×
+    </button>
+
+    <div class="mx-story-viewer-card">
+
+      <div
+        class="mx-story-viewer-info"
+        id="storyViewerInfo"
+      ></div>
+
+      <div id="storyViewerContent"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- TOAST -->
+
+  <div
+    class="mx-toast"
+    id="toast"
+  ></div>
+
+
+  <!-- =========================
+       MEXA SCRIPT
+  ========================== -->
 
   <script>
 
-    /* =====================================
-       MEXA SUPABASE
-    ====================================== */
+    /* ==========================================
+       SUPABASE
+    ========================================== */
 
     const MEXA_SUPABASE_URL =
       "https://yozylignolfvkemuhfse.supabase.co";
@@ -1653,414 +1684,273 @@
       );
 
 
-    /* =====================================
-       ELEMENTS
-    ====================================== */
-
-    const feed =
-      document.getElementById("feed");
-
-    const postModal =
-      document.getElementById("postModal");
-
-    const openCreatePost =
-      document.getElementById("openCreatePost");
-
-    const closeModal =
-      document.getElementById("closeModal");
-
-    const mobileCreate =
-      document.getElementById("mobileCreate");
-
-    const postText =
-      document.getElementById("postText");
-
-    const publishPost =
-      document.getElementById("publishPost");
-
-    const profileName =
-      document.getElementById("profileName");
-
-    const profileUsername =
-      document.getElementById("profileUsername");
-
-    const profileAvatar =
-      document.getElementById("profileAvatar");
-
-    const createAvatar =
-      document.getElementById("createAvatar");
-
-    const modalAvatar =
-      document.getElementById("modalAvatar");
-
-    const topAvatar =
-      document.getElementById("topAvatar");
-
-    const modalName =
-      document.getElementById("modalName");
-
+    /* ==========================================
+       STATE
+    ========================================== */
 
     let currentUser = null;
     let currentProfile = null;
+    let currentPosts = [];
+
+    let selectedFeeling = "";
+    let selectedFile = null;
+    let selectedFileType = "";
+
+    let toastTimer = null;
 
 
-    /* =====================================
-       TOAST
-    ====================================== */
+    /* ==========================================
+       INIT
+    ========================================== */
 
-    function showToast(message){
+    document.addEventListener("DOMContentLoaded", async () => {
 
-      const toast =
-        document.getElementById("toast");
+      await checkSession();
 
-      toast.textContent = message;
-
-      toast.classList.add("show");
-
-      clearTimeout(window.mexaToastTimer);
-
-      window.mexaToastTimer =
-        setTimeout(() => {
-
-          toast.classList.remove("show");
-
-        },2500);
-    }
+    });
 
 
-    /* =====================================
-       ESCAPE HTML
-    ====================================== */
-
-    function escapeHtml(value){
-
-      return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-
-    /* =====================================
-       AVATAR
-    ====================================== */
-
-    function getInitial(name){
-
-      if(!name){
-        return "M";
-      }
-
-      return name
-        .trim()
-        .charAt(0)
-        .toUpperCase();
-    }
-
-
-    function setAvatar(element,profile){
-
-      if(!element){
-        return;
-      }
-
-      if(profile && profile.avatar_url){
-
-        element.innerHTML =
-          `<img src="${escapeHtml(profile.avatar_url)}" alt="Avatar">`;
-
-      }else{
-
-        element.textContent =
-          getInitial(
-            profile?.display_name ||
-            profile?.username
-          );
-
-      }
-    }
-
-
-    /* =====================================
-       TIME
-    ====================================== */
-
-    function formatMexaTime(dateString){
-
-      const date =
-        new Date(dateString);
-
-      if(Number.isNaN(date.getTime())){
-        return "";
-      }
-
-      const now =
-        new Date();
-
-      const seconds =
-        Math.floor(
-          (now - date) / 1000
-        );
-
-      if(seconds < 60){
-        return "baru saja";
-      }
-
-      const minutes =
-        Math.floor(seconds / 60);
-
-      if(minutes < 60){
-        return `${minutes} menit lalu`;
-      }
-
-      const hours =
-        Math.floor(minutes / 60);
-
-      if(hours < 24){
-        return `${hours} jam lalu`;
-      }
-
-      const days =
-        Math.floor(hours / 24);
-
-      if(days < 7){
-        return `${days} hari lalu`;
-      }
-
-      return date.toLocaleDateString(
-        "id-ID",
-        {
-          day:"numeric",
-          month:"short",
-          year:"numeric"
-        }
-      );
-    }
-
-
-    /* =====================================
+    /* ==========================================
        SESSION
-    ====================================== */
+    ========================================== */
 
-    async function checkSession(){
+    async function checkSession() {
 
       const {
-        data,
+        data: sessionData,
         error
-      } =
-        await supabaseClient.auth.getSession();
+      } = await supabaseClient.auth.getSession();
 
-      if(error){
-
-        console.error(
-          "Session error:",
-          error
-        );
-
-        window.location.href =
-          "Login.html";
-
-        return null;
-      }
-
-      const session =
-        data?.session;
-
-      if(!session){
-
-        window.location.href =
-          "Login.html";
-
-        return null;
+      if (error) {
+        console.error(error);
       }
 
       currentUser =
-        session.user;
+        sessionData?.session?.user || null;
 
-      return currentUser;
+      if (!currentUser) {
+
+        window.location.href = "Login.html";
+
+        return;
+      }
+
+      await loadCurrentProfile();
+
+      await loadPosts();
+
+      /*
+        INI YANG PENTING:
+
+        Setelah postingan dimuat,
+        Stories juga mengambil data
+        yang sama dari Supabase.
+      */
+
+      await loadStories();
+
     }
 
 
-    /* =====================================
-       PROFILE
-    ====================================== */
+    /* ==========================================
+       CURRENT PROFILE
+    ========================================== */
 
-    async function loadProfile(){
+    async function loadCurrentProfile() {
 
-      if(!currentUser){
-        return;
-      }
+      if (!currentUser) return;
 
       const {
         data,
         error
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(
-            "id, username, display_name, avatar_url"
-          )
-          .eq(
-            "id",
-            currentUser.id
-          )
-          .maybeSingle();
+      } = await supabaseClient
+        .from("profiles")
+        .select(`
+          id,
+          username,
+          display_name,
+          avatar_url
+        `)
+        .eq("id", currentUser.id)
+        .maybeSingle();
 
-      if(error){
+      if (error) {
 
         console.error(
-          "Profile error:",
+          "Gagal mengambil profil:",
           error
         );
 
-        showToast(
-          "Profil belum bisa dimuat."
-        );
+        currentProfile = {
+          id: currentUser.id,
+          username: "mexa",
+          display_name: "MEXA User",
+          avatar_url: ""
+        };
 
-        return;
+      } else {
+
+        currentProfile = data || {
+          id: currentUser.id,
+          username: "mexa",
+          display_name: "MEXA User",
+          avatar_url: ""
+        };
+
       }
 
-      currentProfile =
-        data;
+      updateProfileUI();
 
-      const displayName =
-        data?.display_name ||
-        currentUser.user_metadata?.display_name ||
-        "MEXA User";
-
-      const username =
-        data?.username ||
-        currentUser.user_metadata?.username ||
-        "mexauser";
-
-      profileName.textContent =
-        displayName;
-
-      profileUsername.textContent =
-        "@" + username;
-
-      modalName.textContent =
-        displayName;
-
-      setAvatar(
-        profileAvatar,
-        data
-      );
-
-      setAvatar(
-        createAvatar,
-        data
-      );
-
-      setAvatar(
-        modalAvatar,
-        data
-      );
-
-      setAvatar(
-        topAvatar,
-        data
-      );
     }
 
 
-    /* =====================================
-       LOAD POSTS
-       VERSI PERBAIKAN
-    ====================================== */
+    /* ==========================================
+       PROFILE UI
+    ========================================== */
 
-    async function loadPosts(){
+    function updateProfileUI() {
+
+      if (!currentProfile) return;
+
+      const displayName =
+        currentProfile.display_name ||
+        "MEXA User";
+
+      const username =
+        currentProfile.username ||
+        "mexa";
+
+      document.getElementById(
+        "topDisplayName"
+      ).textContent = displayName;
+
+      document.getElementById(
+        "sideDisplayName"
+      ).textContent = displayName;
+
+      document.getElementById(
+        "sideUsername"
+      ).textContent =
+        "@" + username;
+
+      setAvatar(
+        document.getElementById("topAvatar"),
+        currentProfile
+      );
+
+      setAvatar(
+        document.getElementById("sideAvatar"),
+        currentProfile
+      );
+
+      setAvatar(
+        document.getElementById("createAvatar"),
+        currentProfile
+      );
+
+    }
+
+
+    /* ==========================================
+       AVATAR
+    ========================================== */
+
+    function setAvatar(element, profile) {
+
+      if (!element) return;
+
+      const name =
+        profile?.display_name ||
+        profile?.username ||
+        "M";
+
+      const initial =
+        name
+          .trim()
+          .charAt(0)
+          .toUpperCase() || "M";
+
+      if (profile?.avatar_url) {
+
+        element.innerHTML =
+          `<img
+             src="${escapeAttribute(profile.avatar_url)}"
+             alt=""
+           >`;
+
+      } else {
+
+        element.textContent = initial;
+
+      }
+
+    }
+
+
+    /* ==========================================
+       LOAD POSTS
+    ========================================== */
+
+    async function loadPosts() {
+
+      const feed =
+        document.getElementById(
+          "feedContainer"
+        );
 
       feed.innerHTML = `
-        <div class="loading">
-          <div class="spinner"></div>
-          Memuat postingan...
+        <div class="mx-feed-loading">
+          Memuat postingan MEXA...
         </div>
       `;
-
-
-      /* -------------------------------------
-         1. AMBIL POSTINGAN
-      -------------------------------------- */
 
       const {
         data: posts,
         error: postsError
-      } =
-        await supabaseClient
-          .from("posts")
-          .select(`
-            id,
-            user_id,
-            content,
-            image_url,
-            created_at,
-            updated_at
-          `)
-          .order(
-            "created_at",
-            {
-              ascending:false
-            }
-          );
+      } = await supabaseClient
+        .from("posts")
+        .select(`
+          id,
+          user_id,
+          content,
+          image_url,
+          created_at,
+          updated_at
+        `)
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
 
-
-      if(postsError){
+      if (postsError) {
 
         console.error(
-          "Posts error:",
+          "Gagal mengambil posts:",
           postsError
         );
 
         feed.innerHTML = `
-          <div class="empty-state">
-
-            <div class="empty-icon">
-              ⚠️
-            </div>
-
-            <strong>
-              Postingan belum bisa dimuat
-            </strong>
-
-            <span>
-              Coba refresh halaman.
-            </span>
-
-            <span class="error-details">
-              ${escapeHtml(postsError.message)}
-            </span>
-
+          <div class="mx-feed-empty">
+            Postingan belum bisa dimuat.
           </div>
         `;
 
         return;
       }
 
+      currentPosts = posts || [];
 
-      /* -------------------------------------
-         2. JIKA BELUM ADA POST
-      -------------------------------------- */
-
-      if(!posts || posts.length === 0){
+      if (!currentPosts.length) {
 
         feed.innerHTML = `
-          <div class="empty-state">
-
-            <div class="empty-icon">
-              ✨
-            </div>
-
-            <strong>
-              Belum ada postingan
-            </strong>
-
-            <span>
-              Jadilah orang pertama yang berbagi di MEXA.
+          <div class="mx-feed-empty">
+            <strong>Belum ada postingan.</strong>
+            <br>
+            <span style="display:block;margin-top:7px;">
+              Jadilah yang pertama membagikan sesuatu di MEXA.
             </span>
-
           </div>
         `;
 
@@ -2068,217 +1958,267 @@
       }
 
 
-      /* -------------------------------------
-         3. AMBIL ID USER PEMBUAT POST
-      -------------------------------------- */
+      /* ========================================
+         AMBIL PROFIL PEMILIK POST
+      ======================================== */
 
-      const userIds = [
-        ...new Set(
-          posts
-            .map(post => post.user_id)
-            .filter(Boolean)
-        )
-      ];
+      const userIds =
+        [
+          ...new Set(
+            currentPosts
+              .map(post => post.user_id)
+              .filter(Boolean)
+          )
+        ];
 
 
       let profiles = [];
 
-
-      /* -------------------------------------
-         4. AMBIL PROFILES TERPISAH
-      -------------------------------------- */
-
-      if(userIds.length > 0){
+      if (userIds.length) {
 
         const {
           data,
           error: profileError
-        } =
-          await supabaseClient
-            .from("profiles")
-            .select(`
-              id,
-              username,
-              display_name,
-              avatar_url
-            `)
-            .in(
-              "id",
-              userIds
-            );
+        } = await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            username,
+            display_name,
+            avatar_url
+          `)
+          .in(
+            "id",
+            userIds
+          );
 
-        if(profileError){
+        if (profileError) {
 
           console.error(
-            "Profile feed error:",
+            "Gagal mengambil profil:",
             profileError
           );
 
-        }else{
+        } else {
 
-          profiles =
-            data || [];
+          profiles = data || [];
 
         }
+
       }
 
 
-      /* -------------------------------------
-         5. BUAT PROFILE MAP
-      -------------------------------------- */
+      const profileMap =
+        new Map(
+          profiles.map(
+            profile => [
+              profile.id,
+              profile
+            ]
+          )
+        );
 
-      const profileMap = {};
-
-      profiles.forEach(profile => {
-
-        profileMap[
-          profile.id
-        ] = profile;
-
-      });
-
-
-      /* -------------------------------------
-         6. GABUNG POST + PROFILE
-      -------------------------------------- */
-
-      const postsWithProfiles =
-        posts.map(post => ({
-
-          ...post,
-
-          profiles:
-            profileMap[
-              post.user_id
-            ] || null
-
-        }));
-
-
-      /* -------------------------------------
-         7. TAMPILKAN KE FEED
-      -------------------------------------- */
 
       feed.innerHTML =
-        postsWithProfiles
-          .map(renderPost)
+        currentPosts
+          .map(post => {
+
+            const profile =
+              profileMap.get(
+                post.user_id
+              ) || {
+                id: post.user_id,
+                username: "mexa",
+                display_name: "MEXA User",
+                avatar_url: ""
+              };
+
+            return renderPost(
+              post,
+              profile
+            );
+
+          })
           .join("");
+
     }
 
 
-    /* =====================================
+    /* ==========================================
        RENDER POST
-    ====================================== */
+    ========================================== */
 
-    function renderPost(post){
-
-      const profile =
-        post.profiles || {};
-
+    function renderPost(
+      post,
+      profile
+    ) {
 
       const displayName =
         profile.display_name ||
-        profile.username ||
         "MEXA User";
-
 
       const username =
         profile.username ||
-        "mexauser";
-
+        "mexa";
 
       const initial =
-        getInitial(
-          displayName
-        );
+        displayName
+          .trim()
+          .charAt(0)
+          .toUpperCase() || "M";
 
-
-      const avatarHtml =
+      const avatar =
         profile.avatar_url
-
           ? `
             <img
-              src="${escapeHtml(profile.avatar_url)}"
-              alt="Avatar"
+              src="${escapeAttribute(profile.avatar_url)}"
+              alt=""
             >
           `
-
           : initial;
 
-
-      const content =
-        escapeHtml(
-          post.content || ""
+      const time =
+        formatTime(
+          post.created_at
         );
 
 
-      const image =
-        post.image_url
+      let content =
+        post.content || "";
 
-          ? `
-            <img
-              class="post-image"
-              src="${escapeHtml(post.image_url)}"
-              alt="Postingan MEXA"
-            >
-          `
 
-          : "";
+      let feelingHtml = "";
+
+
+      /*
+        Kalau postingan memakai format:
+        [PERASAAN] ...
+      */
+
+      const feelingMatch =
+        content.match(
+          /^__MEXA_FEELING__(.*?)__END_FEELING__\n?/
+        );
+
+      if (feelingMatch) {
+
+        const feeling =
+          feelingMatch[1];
+
+        feelingHtml = `
+          <div class="mx-feeling-label">
+            ${escapeHtml(feeling)}
+          </div>
+        `;
+
+        content =
+          content
+            .replace(
+              feelingMatch[0],
+              ""
+            );
+
+      }
+
+
+      let mediaHtml = "";
+
+      if (post.image_url) {
+
+        if (
+          isVideoUrl(
+            post.image_url
+          )
+        ) {
+
+          mediaHtml = `
+            <div class="mx-post-media">
+              <video
+                controls
+                playsinline
+                preload="metadata"
+              >
+                <source
+                  src="${escapeAttribute(post.image_url)}"
+                >
+              </video>
+            </div>
+          `;
+
+        } else {
+
+          mediaHtml = `
+            <div class="mx-post-media">
+              <img
+                src="${escapeAttribute(post.image_url)}"
+                alt="Media postingan"
+                loading="lazy"
+              >
+            </div>
+          `;
+
+        }
+
+      }
 
 
       return `
         <article
-          class="post"
-          data-post-id="${escapeHtml(post.id)}"
+          class="mx-post"
+          id="post-${escapeAttribute(post.id)}"
         >
 
-          <div class="post-head">
+          <div class="mx-post-head">
 
-            <div class="post-avatar">
-              ${avatarHtml}
+            <div class="mx-avatar mx-avatar-sm">
+              ${avatar}
             </div>
 
-            <div class="post-author">
+            <div class="mx-post-user">
 
-              <strong>
+              <div class="mx-post-name">
                 ${escapeHtml(displayName)}
-              </strong>
+                <span class="mx-verified">●</span>
+              </div>
 
-              <div class="post-meta">
+              <div class="mx-post-username">
                 @${escapeHtml(username)}
-                ·
-                ${formatMexaTime(post.created_at)}
+              </div>
+
+              <div class="mx-post-time">
+                ${time}
               </div>
 
             </div>
 
             <button
-              class="post-menu"
-              type="button"
-              title="Menu postingan"
-              onclick="openPostMenu('${escapeHtml(post.id)}')"
+              class="mx-post-menu"
+              onclick="openPostMenu('${escapeAttribute(post.id)}')"
             >
               ⋯
             </button>
 
           </div>
 
+          <div class="mx-post-body">
 
-          ${
-            content
-              ? `
-                <div class="post-content">
-                  ${content}
-                </div>
-              `
-              : ""
-          }
+            ${feelingHtml}
 
+            ${
+              content
+                ? `
+                  <div class="mx-post-content">
+                    ${escapeHtml(content)}
+                  </div>
+                `
+                : ""
+            }
 
-          ${image}
+            ${mediaHtml}
 
+          </div>
 
-          <div class="post-stats">
+          <div class="mx-post-stats">
 
             <span>
               0 suka
@@ -2290,29 +2230,25 @@
 
           </div>
 
-
-          <div class="post-actions">
+          <div class="mx-post-actions">
 
             <button
-              class="post-action"
-              type="button"
-              onclick="showToast('Fitur suka kita sambungkan berikutnya.')"
+              class="mx-post-action"
+              onclick="likePost('${escapeAttribute(post.id)}')"
             >
               ♡ Suka
             </button>
 
             <button
-              class="post-action"
-              type="button"
-              onclick="showToast('Fitur komentar kita sambungkan berikutnya.')"
+              class="mx-post-action"
+              onclick="commentPost('${escapeAttribute(post.id)}')"
             >
-              ◯ Komentar
+              ◌ Komentar
             </button>
 
             <button
-              class="post-action"
-              type="button"
-              onclick="showToast('Fitur bagikan kita sambungkan berikutnya.')"
+              class="mx-post-action"
+              onclick="sharePost('${escapeAttribute(post.id)}')"
             >
               ↗ Bagikan
             </button>
@@ -2321,191 +2257,1063 @@
 
         </article>
       `;
+
     }
 
 
-    /* =====================================
-       POST MENU
-    ====================================== */
+    /* ==========================================
+       STORIES — OTOMATIS DARI POSTS
+    ========================================== */
 
-    window.openPostMenu =
-      function(postId){
+    async function loadStories() {
 
-        const post =
-          document.querySelector(
-            `[data-post-id="${CSS.escape(postId)}"]`
-          );
-
-        if(!post){
-          return;
-        }
-
-        showToast(
-          "Menu postingan akan kita lanjutkan setelah feed beres."
+      const container =
+        document.getElementById(
+          "storiesContainer"
         );
-      };
+
+      container.innerHTML = `
+        <div class="mx-story-empty">
+          Memuat cerita...
+        </div>
+      `;
 
 
-    /* =====================================
-       OPEN MODAL
-    ====================================== */
+      /*
+        Ambil postingan terbaru langsung
+        dari Supabase.
 
-    function openModal(){
+        Jadi tidak menggunakan cerita
+        statis lagi.
+      */
 
-      postModal.classList.add(
-        "show"
-      );
-
-      setTimeout(
-        () => {
-          postText.focus();
-        },
-        100
-      );
-    }
-
-
-    function closePostModal(){
-
-      postModal.classList.remove(
-        "show"
-      );
-
-      postText.value = "";
-
-      publishPost.disabled =
-        true;
-
-      publishPost.textContent =
-        "Posting";
-    }
+      const {
+        data: posts,
+        error
+      } = await supabaseClient
+        .from("posts")
+        .select(`
+          id,
+          user_id,
+          content,
+          image_url,
+          created_at
+        `)
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        )
+        .limit(20);
 
 
-    openCreatePost.addEventListener(
-      "click",
-      openModal
-    );
+      if (error) {
 
+        console.error(
+          "Gagal mengambil cerita:",
+          error
+        );
 
-    mobileCreate.addEventListener(
-      "click",
-      openModal
-    );
+        container.innerHTML = `
+          <div class="mx-story-empty">
+            Cerita belum bisa dimuat.
+          </div>
+        `;
 
-
-    closeModal.addEventListener(
-      "click",
-      closePostModal
-    );
-
-
-    postModal.addEventListener(
-      "click",
-      event => {
-
-        if(
-          event.target ===
-          postModal
-        ){
-
-          closePostModal();
-
-        }
-
+        return;
       }
-    );
 
 
-    /* =====================================
-       TEXT INPUT
-    ====================================== */
+      /*
+        Selalu tampilkan tombol
+        Buat Cerita.
+      */
 
-    postText.addEventListener(
-      "input",
-      () => {
+      let html = `
+        <div
+          class="mx-story mx-story-add"
+          onclick="openCreateModal()"
+        >
+          <div class="mx-story-add-top">
+            <div class="mx-add-circle">
+              +
+            </div>
+          </div>
 
-        publishPost.disabled =
-          postText.value
-            .trim()
-            .length === 0;
+          <div class="mx-story-add-bottom">
+            Buat cerita
+          </div>
+        </div>
+      `;
 
+
+      if (!posts || !posts.length) {
+
+        html += `
+          <div class="mx-story-empty">
+            Belum ada postingan yang bisa ditampilkan sebagai cerita.
+          </div>
+        `;
+
+        container.innerHTML = html;
+
+        return;
       }
-    );
 
 
-    /* =====================================
-       CREATE TEXT POST
-    ====================================== */
+      /*
+        Ambil semua user pemilik postingan.
+      */
 
-    publishPost.addEventListener(
-      "click",
-      async () => {
-
-        const content =
-          postText.value.trim();
-
-
-        if(!content){
-          return;
-        }
+      const userIds =
+        [
+          ...new Set(
+            posts
+              .map(post => post.user_id)
+              .filter(Boolean)
+          )
+        ];
 
 
-        if(!currentUser){
-
-          showToast(
-            "Sesi login tidak ditemukan."
-          );
-
-          return;
-        }
+      let profiles = [];
 
 
-        publishPost.disabled =
-          true;
-
-        publishPost.textContent =
-          "Memposting...";
-
+      if (userIds.length) {
 
         const {
-          error
-        } =
-          await supabaseClient
-            .from("posts")
-            .insert({
+          data,
+          error: profileError
+        } = await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            username,
+            display_name,
+            avatar_url
+          `)
+          .in(
+            "id",
+            userIds
+          );
 
-              user_id:
-                currentUser.id,
+        if (!profileError) {
 
-              content:
-                content
+          profiles = data || [];
 
-            });
-
-
-        if(error){
+        } else {
 
           console.error(
-            "Create post error:",
-            error
+            "Profil cerita gagal:",
+            profileError
           );
 
-          showToast(
-            "Posting gagal: " +
-            error.message
+        }
+
+      }
+
+
+      const profileMap =
+        new Map(
+          profiles.map(
+            profile => [
+              profile.id,
+              profile
+            ]
+          )
+        );
+
+
+      /*
+        Setiap postingan menjadi
+        satu kartu Cerita.
+      */
+
+      posts.forEach(post => {
+
+        const profile =
+          profileMap.get(
+            post.user_id
+          ) || {
+            id: post.user_id,
+            username: "mexa",
+            display_name: "MEXA User",
+            avatar_url: ""
+          };
+
+
+        html +=
+          renderStoryCard(
+            post,
+            profile
           );
 
-          publishPost.disabled =
-            false;
+      });
 
-          publishPost.textContent =
-            "Posting";
 
-          return;
+      container.innerHTML = html;
+
+    }
+
+
+    /* ==========================================
+       STORY CARD
+    ========================================== */
+
+    function renderStoryCard(
+      post,
+      profile
+    ) {
+
+      const displayName =
+        profile.display_name ||
+        "MEXA User";
+
+      const initial =
+        displayName
+          .trim()
+          .charAt(0)
+          .toUpperCase() || "M";
+
+
+      const avatar =
+        profile.avatar_url
+          ? `
+            <img
+              src="${escapeAttribute(profile.avatar_url)}"
+              alt=""
+            >
+          `
+          : initial;
+
+
+      let content =
+        post.content || "";
+
+
+      const feelingMatch =
+        content.match(
+          /^__MEXA_FEELING__(.*?)__END_FEELING__\n?/
+        );
+
+
+      if (feelingMatch) {
+
+        content =
+          content.replace(
+            feelingMatch[0],
+            ""
+          );
+
+      }
+
+
+      /*
+        FOTO / VIDEO
+      */
+
+      if (post.image_url) {
+
+        if (
+          isVideoUrl(
+            post.image_url
+          )
+        ) {
+
+          /*
+            Untuk video,
+            gunakan background hitam.
+          */
+
+          return `
+            <div
+              class="mx-story"
+              onclick="openStoryViewer('${escapeAttribute(post.id)}')"
+            >
+
+              <video
+                class="mx-story-bg"
+                muted
+                playsinline
+                preload="metadata"
+              >
+                <source
+                  src="${escapeAttribute(post.image_url)}"
+                >
+              </video>
+
+              <div class="mx-story-overlay"></div>
+
+              <div class="mx-story-avatar">
+                ${avatar}
+              </div>
+
+              <div class="mx-story-name">
+                ${escapeHtml(displayName)}
+              </div>
+
+            </div>
+          `;
+
         }
 
 
-        closePostModal();
+        return `
+          <div
+            class="mx-story"
+            onclick="openStoryViewer('${escapeAttribute(post.id)}')"
+          >
+
+            <img
+              class="mx-story-bg"
+              src="${escapeAttribute(post.image_url)}"
+              alt=""
+              loading="lazy"
+            >
+
+            <div class="mx-story-overlay"></div>
+
+            <div class="mx-story-avatar">
+              ${avatar}
+            </div>
+
+            <div class="mx-story-name">
+              ${escapeHtml(displayName)}
+            </div>
+
+          </div>
+        `;
+
+      }
+
+
+      /*
+        POSTINGAN TEKS
+        juga otomatis menjadi cerita.
+      */
+
+      let storyText =
+        content.trim();
+
+      if (!storyText) {
+        storyText = "Membagikan sesuatu di MEXA";
+      }
+
+
+      /*
+        Potong tampilan cerita supaya
+        tidak terlalu panjang.
+      */
+
+      if (storyText.length > 90) {
+
+        storyText =
+          storyText.substring(0, 90) +
+          "…";
+
+      }
+
+
+      return `
+        <div
+          class="mx-story"
+          onclick="openStoryViewer('${escapeAttribute(post.id)}')"
+        >
+
+          <div class="mx-story-text-bg">
+            ${escapeHtml(storyText)}
+          </div>
+
+          <div class="mx-story-overlay"></div>
+
+          <div class="mx-story-avatar">
+            ${avatar}
+          </div>
+
+          <div class="mx-story-name">
+            ${escapeHtml(displayName)}
+          </div>
+
+        </div>
+      `;
+
+    }
+
+
+    /* ==========================================
+       STORY VIEWER
+    ========================================== */
+
+    function openStoryViewer(postId) {
+
+      const post =
+        currentPosts.find(
+          item => item.id === postId
+        );
+
+
+      /*
+        Kalau currentPosts belum punya
+        post tersebut, ambil langsung.
+      */
+
+      if (!post) {
+
+        openStoryViewerFromSupabase(
+          postId
+        );
+
+        return;
+      }
+
+
+      showStoryData(
+        post
+      );
+
+    }
+
+
+    async function openStoryViewerFromSupabase(
+      postId
+    ) {
+
+      const {
+        data: post,
+        error
+      } = await supabaseClient
+        .from("posts")
+        .select(`
+          id,
+          user_id,
+          content,
+          image_url,
+          created_at
+        `)
+        .eq("id", postId)
+        .maybeSingle();
+
+
+      if (error || !post) {
+
+        showToast(
+          "Cerita tidak ditemukan."
+        );
+
+        return;
+      }
+
+
+      showStoryData(
+        post
+      );
+
+    }
+
+
+    async function showStoryData(post) {
+
+      const viewer =
+        document.getElementById(
+          "storyViewer"
+        );
+
+      const content =
+        document.getElementById(
+          "storyViewerContent"
+        );
+
+      const info =
+        document.getElementById(
+          "storyViewerInfo"
+        );
+
+
+      const {
+        data: profile
+      } = await supabaseClient
+        .from("profiles")
+        .select(`
+          id,
+          username,
+          display_name,
+          avatar_url
+        `)
+        .eq(
+          "id",
+          post.user_id
+        )
+        .maybeSingle();
+
+
+      const displayName =
+        profile?.display_name ||
+        "MEXA User";
+
+      const initial =
+        displayName
+          .trim()
+          .charAt(0)
+          .toUpperCase() || "M";
+
+
+      const avatar =
+        profile?.avatar_url
+          ? `
+            <img
+              src="${escapeAttribute(profile.avatar_url)}"
+              style="
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                border-radius:50%;
+              "
+              alt=""
+            >
+          `
+          : initial;
+
+
+      info.innerHTML = `
+        <div class="mx-avatar mx-avatar-sm">
+          ${avatar}
+        </div>
+
+        <div class="mx-story-viewer-name">
+          ${escapeHtml(displayName)}
+        </div>
+      `;
+
+
+      let postContent =
+        post.content || "";
+
+
+      const feelingMatch =
+        postContent.match(
+          /^__MEXA_FEELING__(.*?)__END_FEELING__\n?/
+        );
+
+
+      if (feelingMatch) {
+
+        postContent =
+          postContent.replace(
+            feelingMatch[0],
+            ""
+          );
+
+      }
+
+
+      if (post.image_url) {
+
+        if (
+          isVideoUrl(
+            post.image_url
+          )
+        ) {
+
+          content.innerHTML = `
+            <video
+              class="mx-story-viewer-media"
+              controls
+              autoplay
+              playsinline
+            >
+              <source
+                src="${escapeAttribute(post.image_url)}"
+              >
+            </video>
+          `;
+
+        } else {
+
+          content.innerHTML = `
+            <img
+              class="mx-story-viewer-media"
+              src="${escapeAttribute(post.image_url)}"
+              alt=""
+            >
+          `;
+
+        }
+
+      } else {
+
+        content.innerHTML = `
+          <div class="mx-story-viewer-text">
+            ${escapeHtml(
+              postContent ||
+              "Membagikan sesuatu di MEXA"
+            )}
+          </div>
+        `;
+
+      }
+
+
+      viewer.classList.add(
+        "show"
+      );
+
+      document.body.style.overflow =
+        "hidden";
+
+    }
+
+
+    function closeStoryViewer() {
+
+      document
+        .getElementById(
+          "storyViewer"
+        )
+        .classList.remove(
+          "show"
+        );
+
+      document.body.style.overflow =
+        "";
+
+      document.getElementById(
+        "storyViewerContent"
+      ).innerHTML = "";
+
+    }
+
+
+    /* ==========================================
+       CREATE MODAL
+    ========================================== */
+
+    function openCreateModal(
+      type = ""
+    ) {
+
+      document
+        .getElementById(
+          "createModal"
+        )
+        .classList.add(
+          "show"
+        );
+
+      document.body.style.overflow =
+        "hidden";
+
+
+      if (type === "photo") {
+
+        setTimeout(() => {
+
+          document
+            .getElementById(
+              "photoInput"
+            )
+            .click();
+
+        }, 150);
+
+      }
+
+
+      if (type === "video") {
+
+        setTimeout(() => {
+
+          document
+            .getElementById(
+              "videoInput"
+            )
+            .click();
+
+        }, 150);
+
+      }
+
+
+      if (type === "feeling") {
+
+        setTimeout(() => {
+
+          document
+            .getElementById(
+              "feelingsBox"
+            )
+            .classList.add(
+              "show"
+            );
+
+        }, 100);
+
+      }
+
+    }
+
+
+    function closeCreateModal() {
+
+      document
+        .getElementById(
+          "createModal"
+        )
+        .classList.remove(
+          "show"
+        );
+
+      document.body.style.overflow =
+        "";
+
+      resetCreateForm();
+
+    }
+
+
+    function closeModalOutside(event) {
+
+      if (
+        event.target.id ===
+        "createModal"
+      ) {
+
+        closeCreateModal();
+
+      }
+
+    }
+
+
+    function resetCreateForm() {
+
+      document.getElementById(
+        "postContent"
+      ).value = "";
+
+      document.getElementById(
+        "feelingsBox"
+      ).classList.remove(
+        "show"
+      );
+
+      document.getElementById(
+        "selectedFeeling"
+      ).classList.remove(
+        "show"
+      );
+
+      document.getElementById(
+        "selectedFeeling"
+      ).textContent = "";
+
+      document.getElementById(
+        "selectedFileName"
+      ).classList.remove(
+        "show"
+      );
+
+      document.getElementById(
+        "selectedFileName"
+      ).textContent = "";
+
+      document.getElementById(
+        "photoInput"
+      ).value = "";
+
+      document.getElementById(
+        "videoInput"
+      ).value = "";
+
+      selectedFeeling = "";
+
+      selectedFile = null;
+
+      selectedFileType = "";
+
+    }
+
+
+    /* ==========================================
+       FEELING
+    ========================================== */
+
+    function toggleFeelings() {
+
+      document
+        .getElementById(
+          "feelingsBox"
+        )
+        .classList.toggle(
+          "show"
+        );
+
+    }
+
+
+    function selectFeeling(
+      feeling
+    ) {
+
+      selectedFeeling =
+        feeling;
+
+
+      const box =
+        document.getElementById(
+          "selectedFeeling"
+        );
+
+
+      box.textContent =
+        feeling;
+
+
+      box.classList.add(
+        "show"
+      );
+
+
+      document
+        .getElementById(
+          "feelingsBox"
+        )
+        .classList.remove(
+          "show"
+        );
+
+    }
+
+
+    /* ==========================================
+       FILE SELECT
+    ========================================== */
+
+    function handleFileSelect(
+      input,
+      type
+    ) {
+
+      const file =
+        input.files?.[0];
+
+      if (!file) return;
+
+
+      selectedFile =
+        file;
+
+      selectedFileType =
+        type;
+
+
+      const fileName =
+        document.getElementById(
+          "selectedFileName"
+        );
+
+
+      fileName.textContent =
+        (
+          type === "photo"
+            ? "📷 "
+            : "🎬 "
+        ) +
+        file.name;
+
+
+      fileName.classList.add(
+        "show"
+      );
+
+
+      /*
+        Pastikan modal terbuka
+        ketika tombol Foto/Video
+        dipakai.
+      */
+
+      document
+        .getElementById(
+          "createModal"
+        )
+        .classList.add(
+          "show"
+        );
+
+    }
+
+
+    /* ==========================================
+       PUBLISH POST
+    ========================================== */
+
+    async function publishPost() {
+
+      if (!currentUser) {
+
+        showToast(
+          "Silakan login terlebih dahulu."
+        );
+
+        return;
+      }
+
+
+      const button =
+        document.getElementById(
+          "publishButton"
+        );
+
+
+      let text =
+        document.getElementById(
+          "postContent"
+        ).value.trim();
+
+
+      /*
+        Tambahkan perasaan ke content
+        tanpa membutuhkan kolom database baru.
+      */
+
+      if (selectedFeeling) {
+
+        text =
+          `__MEXA_FEELING__${selectedFeeling}__END_FEELING__\n` +
+          text;
+
+      }
+
+
+      /*
+        Tidak boleh kosong kalau
+        tidak ada foto/video.
+      */
+
+      if (
+        !text &&
+        !selectedFile
+      ) {
+
+        showToast(
+          "Tulis sesuatu atau pilih foto/video."
+        );
+
+        return;
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Memposting...";
+
+
+      try {
+
+        let mediaUrl = null;
+
+
+        /* ======================================
+           UPLOAD FOTO / VIDEO
+        ====================================== */
+
+        if (selectedFile) {
+
+          const safeName =
+            selectedFile.name
+              .replace(
+                /[^a-zA-Z0-9._-]/g,
+                "_"
+              );
+
+
+          const filePath =
+            `${currentUser.id}/${Date.now()}-${safeName}`;
+
+
+          const {
+            error: uploadError
+          } = await supabaseClient
+            .storage
+            .from("mexa-media")
+            .upload(
+              filePath,
+              selectedFile,
+              {
+                cacheControl: "3600",
+                upsert: false,
+                contentType:
+                  selectedFile.type
+              }
+            );
+
+
+          if (uploadError) {
+
+            console.error(
+              uploadError
+            );
+
+            throw new Error(
+              "Upload media gagal. Pastikan bucket mexa-media sudah dibuat."
+            );
+
+          }
+
+
+          const {
+            data: publicData
+          } =
+            supabaseClient
+              .storage
+              .from("mexa-media")
+              .getPublicUrl(
+                filePath
+              );
+
+
+          mediaUrl =
+            publicData?.publicUrl ||
+            null;
+
+        }
+
+
+        /* ======================================
+           INSERT POST
+        ====================================== */
+
+        const {
+          error: insertError
+        } = await supabaseClient
+          .from("posts")
+          .insert({
+            user_id:
+              currentUser.id,
+
+            content:
+              text || null,
+
+            image_url:
+              mediaUrl
+          });
+
+
+        if (insertError) {
+
+          console.error(
+            insertError
+          );
+
+          throw new Error(
+            insertError.message
+          );
+
+        }
+
+
+        closeCreateModal();
 
 
         showToast(
@@ -2513,192 +3321,630 @@
         );
 
 
+        /*
+          MUAT ULANG FEED DAN CERITA.
+
+          Inilah bagian utama yang membuat
+          postingan langsung masuk Cerita.
+        */
+
         await loadPosts();
 
+        await loadStories();
+
+      } catch (error) {
+
+        console.error(
+          "Publish error:",
+          error
+        );
+
+        showToast(
+          error.message ||
+          "Postingan gagal dibuat."
+        );
+
+      } finally {
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "Posting";
+
       }
-    );
+
+    }
 
 
-    /* =====================================
-       PHOTO PLACEHOLDER
-    ====================================== */
+    /* ==========================================
+       POST MENU
+    ========================================== */
 
-    document
-      .getElementById("createPhoto")
-      .addEventListener(
-        "click",
-        () => {
+    function openPostMenu(
+      postId
+    ) {
 
-          openModal();
+      const post =
+        currentPosts.find(
+          item => item.id === postId
+        );
 
-          showToast(
-            "Upload foto kita sambungkan setelah feed dasar selesai."
+
+      if (!post) return;
+
+
+      if (
+        post.user_id !==
+        currentUser?.id
+      ) {
+
+        showToast(
+          "Menu postingan orang lain belum tersedia."
+        );
+
+        return;
+
+      }
+
+
+      const choice =
+        window.prompt(
+          "Ketik:\nEDIT untuk mengedit\nHAPUS untuk menghapus",
+          ""
+        );
+
+
+      if (!choice) return;
+
+
+      if (
+        choice.toLowerCase() ===
+        "hapus"
+      ) {
+
+        deletePost(
+          postId
+        );
+
+        return;
+
+      }
+
+
+      if (
+        choice.toLowerCase() ===
+        "edit"
+      ) {
+
+        editPost(
+          post
+        );
+
+        return;
+
+      }
+
+
+      showToast(
+        "Pilihan tidak dikenali."
+      );
+
+    }
+
+
+    /* ==========================================
+       EDIT POST
+    ========================================== */
+
+    async function editPost(
+      post
+    ) {
+
+      if (
+        post.user_id !==
+        currentUser?.id
+      ) {
+
+        showToast(
+          "Kamu hanya bisa mengedit postingan milikmu sendiri."
+        );
+
+        return;
+
+      }
+
+
+      let oldContent =
+        post.content || "";
+
+
+      const feelingMatch =
+        oldContent.match(
+          /^__MEXA_FEELING__(.*?)__END_FEELING__\n?/
+        );
+
+
+      let feeling =
+        "";
+
+
+      if (feelingMatch) {
+
+        feeling =
+          feelingMatch[1];
+
+        oldContent =
+          oldContent.replace(
+            feelingMatch[0],
+            ""
           );
 
-        }
+      }
+
+
+      const newContent =
+        window.prompt(
+          "Edit postingan:",
+          oldContent
+        );
+
+
+      if (
+        newContent ===
+        null
+      ) return;
+
+
+      let finalContent =
+        newContent.trim();
+
+
+      if (feeling) {
+
+        finalContent =
+          `__MEXA_FEELING__${feeling}__END_FEELING__\n` +
+          finalContent;
+
+      }
+
+
+      const {
+        error
+      } = await supabaseClient
+        .from("posts")
+        .update({
+          content:
+            finalContent
+        })
+        .eq(
+          "id",
+          post.id
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        );
+
+
+      if (error) {
+
+        console.error(
+          error
+        );
+
+        showToast(
+          "Postingan gagal diedit."
+        );
+
+        return;
+
+      }
+
+
+      showToast(
+        "Postingan berhasil diedit."
       );
 
 
-    /* =====================================
-       VIDEO PLACEHOLDER
-    ====================================== */
+      await loadPosts();
 
-    document
-      .getElementById("createVideo")
-      .addEventListener(
-        "click",
-        () => {
+      await loadStories();
 
-          showToast(
-            "Fitur video akan kita sambungkan berikutnya."
-          );
+    }
 
-        }
+
+    /* ==========================================
+       DELETE POST
+    ========================================== */
+
+    async function deletePost(
+      postId
+    ) {
+
+      if (
+        !currentUser
+      ) return;
+
+
+      const yes =
+        window.confirm(
+          "Hapus postingan ini?"
+        );
+
+
+      if (!yes) return;
+
+
+      const {
+        error
+      } = await supabaseClient
+        .from("posts")
+        .delete()
+        .eq(
+          "id",
+          postId
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        );
+
+
+      if (error) {
+
+        console.error(
+          error
+        );
+
+        showToast(
+          "Postingan gagal dihapus."
+        );
+
+        return;
+
+      }
+
+
+      showToast(
+        "Postingan berhasil dihapus."
       );
 
 
-    /* =====================================
-       FEELING PLACEHOLDER
-    ====================================== */
+      await loadPosts();
 
-    document
-      .getElementById("createFeeling")
-      .addEventListener(
-        "click",
-        () => {
+      await loadStories();
 
-          openModal();
+    }
 
-          showToast(
-            "Pilihan perasaan akan kita buat berikutnya."
-          );
 
-        }
+    /* ==========================================
+       LIKE
+    ========================================== */
+
+    async function likePost(
+      postId
+    ) {
+
+      if (!currentUser) return;
+
+
+      showToast(
+        "Like akan kita aktifkan setelah bagian Cerita selesai."
       );
 
+    }
 
-    /* =====================================
-       STORY
-    ====================================== */
 
-    document
-      .getElementById("storyAdd")
-      .addEventListener(
-        "click",
-        () => {
+    /* ==========================================
+       COMMENT
+    ========================================== */
 
-          showToast(
-            "Fitur cerita akan kita buat berikutnya."
-          );
+    async function commentPost(
+      postId
+    ) {
 
-        }
+      showToast(
+        "Komentar akan kita sambungkan berikutnya."
       );
 
-
-    /* =====================================
-       MODAL PHOTO PLACEHOLDER
-    ====================================== */
-
-    document
-      .getElementById("modalPhoto")
-      .addEventListener(
-        "click",
-        () => {
-
-          showToast(
-            "Upload foto akan kita sambungkan berikutnya."
-          );
-
-        }
-      );
+    }
 
 
-    /* =====================================
+    /* ==========================================
+       SHARE
+    ========================================== */
+
+    async function sharePost(
+      postId
+    ) {
+
+      const url =
+        window.location.origin +
+        window.location.pathname +
+        "#post-" +
+        postId;
+
+
+      try {
+
+        await navigator.clipboard.writeText(
+          url
+        );
+
+        showToast(
+          "Link postingan berhasil disalin."
+        );
+
+      } catch {
+
+        showToast(
+          "Link postingan siap dibagikan."
+        );
+
+      }
+
+    }
+
+
+    /* ==========================================
        SEARCH
-    ====================================== */
+    ========================================== */
 
     document
-      .getElementById("searchInput")
+      .getElementById(
+        "searchInput"
+      )
       .addEventListener(
         "input",
-        event => {
+        function () {
 
           const keyword =
-            event.target.value
+            this.value
               .trim()
               .toLowerCase();
 
 
           const posts =
             document.querySelectorAll(
-              ".post"
+              ".mx-post"
             );
 
 
-          posts.forEach(post => {
+          posts.forEach(
+            post => {
 
-            const text =
-              post.textContent
-                .toLowerCase();
+              if (!keyword) {
+
+                post.style.display =
+                  "";
+
+                return;
+
+              }
 
 
-            post.style.display =
-              !keyword ||
-              text.includes(keyword)
-                ? ""
-                : "none";
+              const text =
+                post.textContent
+                  .toLowerCase();
 
-          });
+
+              post.style.display =
+                text.includes(
+                  keyword
+                )
+                  ? ""
+                  : "none";
+
+            }
+          );
 
         }
       );
 
 
-    /* =====================================
-       AUTH LISTENER
-    ====================================== */
+    /* ==========================================
+       HELPERS
+    ========================================== */
 
-    supabaseClient.auth.onAuthStateChange(
-      (event,session) => {
+    function isVideoUrl(
+      url
+    ) {
 
-        if(
-          event ===
-          "SIGNED_OUT"
-        ){
+      return /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(
+        url || ""
+      );
 
-          window.location.href =
-            "Login.html";
+    }
+
+
+    function formatTime(
+      dateString
+    ) {
+
+      if (!dateString) {
+        return "";
+      }
+
+
+      const date =
+        new Date(
+          dateString
+        );
+
+
+      const now =
+        new Date();
+
+
+      const diff =
+        Math.floor(
+          (
+            now.getTime() -
+            date.getTime()
+          ) / 1000
+        );
+
+
+      if (diff < 60) {
+        return "baru saja";
+      }
+
+
+      if (diff < 3600) {
+
+        return (
+          Math.floor(
+            diff / 60
+          ) +
+          " menit lalu"
+        );
+
+      }
+
+
+      if (diff < 86400) {
+
+        return (
+          Math.floor(
+            diff / 3600
+          ) +
+          " jam lalu"
+        );
+
+      }
+
+
+      if (diff < 604800) {
+
+        return (
+          Math.floor(
+            diff / 86400
+          ) +
+          " hari lalu"
+        );
+
+      }
+
+
+      return date.toLocaleDateString(
+        "id-ID",
+        {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        }
+      );
+
+    }
+
+
+    function escapeHtml(
+      value
+    ) {
+
+      return String(
+        value ?? ""
+      )
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    function escapeAttribute(
+      value
+    ) {
+
+      return escapeHtml(
+        value
+      );
+
+    }
+
+
+    /* ==========================================
+       TOAST
+    ========================================== */
+
+    function showToast(
+      message
+    ) {
+
+      const toast =
+        document.getElementById(
+          "toast"
+        );
+
+
+      toast.textContent =
+        message;
+
+
+      toast.classList.add(
+        "show"
+      );
+
+
+      clearTimeout(
+        toastTimer
+      );
+
+
+      toastTimer =
+        setTimeout(
+          () => {
+
+            toast.classList.remove(
+              "show"
+            );
+
+          },
+          2600
+        );
+
+    }
+
+
+    /* ==========================================
+       ESC KEY
+    ========================================== */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key ===
+          "Escape"
+        ) {
+
+          closeCreateModal();
+
+          closeStoryViewer();
 
         }
 
       }
     );
-
-
-    /* =====================================
-       START MEXA
-    ====================================== */
-
-    async function startMEXA(){
-
-      const user =
-        await checkSession();
-
-
-      if(!user){
-        return;
-      }
-
-
-      await loadProfile();
-
-
-      await loadPosts();
-
-    }
-
-
-    startMEXA();
 
   </script>
 
