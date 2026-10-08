@@ -825,102 +825,122 @@ function renderProfile(profile, metadata = {}) {
       }
     }
 
-    profileForm.addEventListener("submit", async event => {
-      event.preventDefault();
+   profileForm.addEventListener("submit", async event => {
+event.preventDefault();
 
-      if (!currentUser) {
-        setEditorStatus("Sesi login tidak ditemukan. Silakan login ulang.", true);
-        return;
-      }
+if (!currentUser || !currentProfile) {
+setEditorStatus(
+"Sesi login atau profil tidak ditemukan. Muat ulang halaman dan coba lagi.",
+true
+);
+return;
+}
 
-      const displayName =
-        document.getElementById("editDisplayName").value.trim();
+const displayName =
+document.getElementById("editDisplayName").value.trim();
 
-      const username =
-        document.getElementById("editUsername").value.trim().toLowerCase();
+const username =
+document.getElementById("editUsername").value.trim().toLowerCase();
 
-      const bio =
-        document.getElementById("editBio").value.trim();
+const bio =
+document.getElementById("editBio").value.trim();
 
-      let avatarUrl = currentProfile?.avatar_url || null;
-      let coverUrl = currentProfile?.cover_url || null;
-      
-      if (!displayName || !username) {
-        setEditorStatus("Nama panggilan dan username wajib diisi.", true);
-        return;
-      }
+if (!displayName || !username) {
+setEditorStatus("Nama panggilan dan username wajib diisi.", true);
+return;
+}
 
-      if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
-  setEditorStatus(
-    "Username belum sesuai format. Gunakan 3–30 karakter berupa huruf, angka, titik (.) atau garis bawah (_). Spasi tidak diperbolehkan. Contoh: mexa_platfrom atau mexaplatfrom.",
-    true
-  );
-  return;
-    }
-      saveButton.disabled = true;
-      saveButton.textContent = "Menyimpan...";
-      setEditorStatus("Sedang menyimpan profil...");
+if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
+setEditorStatus(
+"Username harus 3–30 karakter, berupa huruf kecil, angka, titik, atau garis bawah.",
+true
+);
+return;
+}
 
-      const payload = {
-        id: currentUser.id,
-        username,
-        display_name: displayName,
-        bio: bio || null,
-        avatar_url: avatarUrl || null,
-        cover_url: coverUrl || null,
-        updated_at: new Date().toISOString()
-      };
-      if (avatarFileInput.files[0]) {
+saveButton.disabled = true;
+saveButton.textContent = "Menyimpan...";
+
+try {
+setEditorStatus("Sedang menyiapkan perubahan profil...");
+
+```
+// Pertahankan foto lama jika tidak memilih foto baru.
+let avatarUrl = currentProfile.avatar_url || null;
+let coverUrl = currentProfile.cover_url || null;
+
+// Upload foto profil baru jika dipilih.
+if (avatarFileInput.files && avatarFileInput.files[0]) {
+  setEditorStatus("Sedang mengunggah foto profil...");
   avatarUrl = await uploadProfileImage(
     avatarFileInput.files[0],
     "avatar"
   );
 }
 
-if (coverFileInput.files[0]) {
+// Upload banner baru jika dipilih.
+if (coverFileInput.files && coverFileInput.files[0]) {
+  setEditorStatus("Sedang mengunggah banner...");
   coverUrl = await uploadProfileImage(
     coverFileInput.files[0],
     "cover"
   );
-        }
-      
-      try {
-        const { data, error } = await mexaSupabase
-          .from("profiles")
-          .upsert(payload, { onConflict: "id" })
-          .select("id, username, display_name, avatar_url, cover_url, bio")
-          .single();
+}
+
+// Buat payload setelah upload agar URL foto terbaru ikut tersimpan.
+const payload = {
+  id: currentUser.id,
+  username: username,
+  display_name: displayName,
+  bio: bio || null,
+  avatar_url: avatarUrl,
+  cover_url: coverUrl,
+  updated_at: new Date().toISOString()
+};
+
+setEditorStatus("Menyimpan profil ke database...");
+
+const { data, error } = await mexaSupabase
+  .from("profiles")
+  .upsert(payload, { onConflict: "id" })
+  .select("id, username, display_name, avatar_url, cover_url, bio")
+  .single();
 
 if (error) throw error;
 
-// Perbarui tampilan memakai data terbaru dari Supabase
 currentProfile = data;
 renderProfile(data, currentUser.user_metadata || {});
 
-// Tutup editor setelah penyimpanan berhasil
 closeEditor();
+inform("Profil MEXA berhasil disimpan!");
+```
 
-// Beri tahu bahwa nama dan username berhasil disimpan
-inform("Nama panggilan dan username berhasil disimpan!");
-      } 
-        catch (error) {
-        const errorMessage =
-          error?.message || "Kesalahan tidak diketahui.";
+} catch (error) {
+console.error("MEXA save profile error:", error);
 
-        if (/duplicate key|unique constraint/i.test(errorMessage)) {
-          setEditorStatus(
-            "Username itu sudah digunakan. Coba username lain.",
-            true
-          );
-        } else {
-          setEditorStatus("Gagal menyimpan: " + errorMessage, true);
-        }
-      } finally {
-        saveButton.disabled = false;
-        saveButton.textContent = "Simpan Perubahan";
-      }
-    });
+```
+const errorMessage =
+  error?.message || "Kesalahan tidak diketahui.";
 
+if (/duplicate key|unique constraint/i.test(errorMessage)) {
+  setEditorStatus(
+    "Username sudah digunakan. Coba username lain.",
+    true
+  );
+} else {
+  setEditorStatus(
+    "Gagal menyimpan: " + errorMessage,
+    true
+  );
+}
+```
+
+} finally {
+saveButton.disabled = false;
+saveButton.textContent = "Simpan Perubahan";
+}
+});
+    
     loadProfile().catch(error => {
       console.error("MEXA profile error:", error);
       inform(
