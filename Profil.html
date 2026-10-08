@@ -842,12 +842,9 @@ function renderProfile(profile, metadata = {}) {
       const bio =
         document.getElementById("editBio").value.trim();
 
-      const avatarUrl =
-        document.getElementById("editAvatarUrl").value.trim();
-
-      const coverUrl =
-        document.getElementById("editCoverUrl").value.trim();
-
+      let avatarUrl = currentProfile?.avatar_url || null;
+      let coverUrl = currentProfile?.cover_url || null;
+      
       if (!displayName || !username) {
         setEditorStatus("Nama panggilan dan username wajib diisi.", true);
         return;
@@ -873,7 +870,20 @@ function renderProfile(profile, metadata = {}) {
         cover_url: coverUrl || null,
         updated_at: new Date().toISOString()
       };
+      if (avatarFileInput.files[0]) {
+  avatarUrl = await uploadProfileImage(
+    avatarFileInput.files[0],
+    "avatar"
+  );
+}
 
+if (coverFileInput.files[0]) {
+  coverUrl = await uploadProfileImage(
+    coverFileInput.files[0],
+    "cover"
+  );
+        }
+      
       try {
         const { data, error } = await mexaSupabase
           .from("profiles")
