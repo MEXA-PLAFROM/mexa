@@ -583,9 +583,17 @@ function previewImage(input, preview) {
 
 previewImage(avatarFileInput, avatarPreview);
 previewImage(coverFileInput, coverPreview);
-
+    
 async function uploadProfileImage(file, type) {
   if (!file) return null;
+
+  if (!currentUser) {
+    throw new Error("Sesi login tidak ditemukan. Silakan login ulang.");
+  }
+
+  if (!["avatar", "cover"].includes(type)) {
+    throw new Error("Jenis gambar tidak valid.");
+  }
 
   if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
     throw new Error("Format foto harus JPG, PNG, atau WebP.");
@@ -601,23 +609,62 @@ async function uploadProfileImage(file, type) {
     "image/webp": "webp"
   }[file.type];
 
-  const path = `${currentUser.id}/${type}-${Date.now()}.${extension}`;
+  const path =
+    `${currentUser.id}/${type}-${Date.now()}.${extension}`;
 
-  const { error } = await mexaSupabase.storage
-    .from("profile-media")
-    .upload(path, file, {
-      contentType: file.type,
-      upsert: false
+  try {
+    const uploadPromise = mexaSupabase.storage
+      .from("profile-media")
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    // Hindari proses upload menunggu tanpa batas.
+    let timeoutId;
+
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => {
+        reject(new Error(
+          "Upload foto terlalu lama. Periksa koneksi internet lalu coba lagi."
+        ));
+      }, 30000);
     });
 
-  if (error) throw error;
+    let result;
 
-  const { data } = mexaSupabase.storage
-    .from("profile-media")
-    .getPublicUrl(path);
+    try {
+      result = await Promise.race([
+        uploadPromise,
+        timeoutPromise
+      ]);
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
-  return data.publicUrl;
+    if (result.error) {
+      console.error("MEXA upload error:", result.error);
+      throw new Error(
+        result.error.message || "Gagal mengunggah foto ke Supabase."
+      );
+    }
+
+    const { data } = mexaSupabase.storage
+      .from("profile-media")
+      .getPublicUrl(path);
+
+    if (!data || !data.publicUrl) {
+      throw new Error("URL foto tidak berhasil dibuat.");
+    }
+
+    return data.publicUrl;
+
+  } catch (error) {
+    console.error("MEXA profile image error:", error);
+    throw error;
+  }
 }
+
     function inform(text) {
       message.textContent = text;
       message.classList.add("show");
