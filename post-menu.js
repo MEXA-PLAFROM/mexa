@@ -126,28 +126,50 @@
  } 
    
   function getCurrentUserId() {
-    const user = getCurrentUser();
+  try {
+    const raw = localStorage.getItem("mexa_session");
 
-    if (!user) return null;
+    if (raw) {
+      const session = JSON.parse(raw);
 
-    return (
-      user.id ||
-      user.user_id ||
-      user.userId ||
-      user.uid ||
-      null
-    );
+      const id =
+        session?.user?.id ||
+        session?.user?.user_id ||
+        session?.user?.userId ||
+        null;
+
+      if (id) {
+        console.log("MEXA CURRENT USER ID:", id);
+        return String(id);
+      }
+    }
+  } catch (error) {
+    console.warn("MEXA session error:", error);
   }
+
+  return null;
+}
 
   function isOwner(post) {
-    const ownerId = getPostOwnerId(post);
-    const currentId = getCurrentUserId();
+  const postOwnerId = getPostOwnerId(post);
+  const currentUserId = getCurrentUserId();
 
-    if (!ownerId || !currentId) return false;
+  console.log("MEXA OWNER CHECK:", {
+    postOwnerId: postOwnerId,
+    currentUserId: currentUserId,
+    same:
+      postOwnerId &&
+      currentUserId &&
+      String(postOwnerId) === String(currentUserId)
+  });
 
-    return String(ownerId) === String(currentId);
+  if (!postOwnerId || !currentUserId) {
+    return false;
   }
 
+  return String(postOwnerId) === String(currentUserId);
+}
+   
   function escapeHTML(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
