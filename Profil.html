@@ -554,55 +554,56 @@
       return cleaned ? cleaned.charAt(0).toUpperCase() : "M";
     }
 
-    function renderProfile(profile, metadata = {}) {
-      const name =
-        profile?.display_name ||
-        metadata.display_name ||
-        metadata.full_name ||
-        "Pengguna MEXA";
+   
+function renderProfile(profile, metadata = {}) {
+  const name = (
+    profile?.display_name ||
+    metadata.display_name ||
+    metadata.full_name ||
+    ""
+  ).trim() || "Pengguna MEXA";
 
-      const username =
-        profile?.username ||
-        metadata.username ||
-        "mexauser";
+  const username = (
+    profile?.username ||
+    metadata.username ||
+    (currentUser?.email || "").split("@")[0] ||
+    ""
+  ).trim().replace(/^@/, "") || ("mexa" + (currentUser?.id || "").slice(0, 6));
 
-      const bio =
-        profile?.bio ||
-        "Selamat datang di ruang MEXA-ku. Terus terhubung, berbagi, dan berkarya.";
+  const bio = profile?.bio || "";
 
-      const avatarUrl = profile?.avatar_url || metadata.avatar_url || "";
-      const coverUrl = profile?.cover_url || "";
+  const avatarUrl = profile?.avatar_url || metadata.avatar_url || "";
+  const coverUrl = profile?.cover_url || "";
 
-      document.getElementById("displayName").textContent = name;
-      document.getElementById("username").textContent = "@" + username;
-      document.getElementById("bio").textContent = bio;
+  document.getElementById("displayName").textContent = name;
+  document.getElementById("username").textContent = "@" + username;
+  document.getElementById("bio").textContent =
+    bio || "Selamat datang di ruang MEXA-ku. Terus terhubung, berbagi, dan berkarya.";
 
-      const avatar = document.getElementById("avatar");
-      avatar.textContent = initials(name);
-      avatar.style.backgroundImage =
-        "linear-gradient(135deg, var(--purple), var(--blue))";
+  const avatar = document.getElementById("avatar");
+  avatar.textContent = initials(name);
+  avatar.style.backgroundImage =
+    "linear-gradient(135deg, var(--purple), var(--blue))";
 
-      if (avatarUrl) {
-        avatar.style.backgroundImage =
-          "url(" + JSON.stringify(avatarUrl).slice(1, -1) + ")";
-      }
+  if (avatarUrl) {
+    avatar.style.backgroundImage =
+      `url("${avatarUrl.replace(/["\\]/g, "")}")`;
+  }
 
-      const cover = document.getElementById("cover");
-      cover.style.backgroundImage = coverUrl
-        ? "linear-gradient(90deg, #08061244, #08061222), url(" +
-          JSON.stringify(coverUrl).slice(1, -1) + ")"
-        : "";
+  const cover = document.getElementById("cover");
+  cover.style.backgroundImage = coverUrl
+    ? `linear-gradient(90deg, #08061244, #08061222), url("${coverUrl.replace(/["\\]/g, "")}")`
+    : "";
 
-      currentProfile = {
-        id: currentUser?.id,
-        username,
-        display_name: name,
-        avatar_url: avatarUrl,
-        cover_url: coverUrl,
-        bio: profile?.bio || ""
-      };
-    }
-
+  currentProfile = {
+    id: currentUser?.id,
+    username,
+    display_name: name,
+    avatar_url: avatarUrl,
+    cover_url: coverUrl,
+    bio: profile?.bio || ""
+  };
+}
     function openEditor() {
       if (!currentUser || !currentProfile) {
         inform("Profil belum siap. Muat ulang halaman dan pastikan kamu sudah login.");
