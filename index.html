@@ -1362,78 +1362,85 @@
        PAGE
   ========================== -->
 
-  <main class="mx-page">
+<aside class="mx-sidebar">
 
-    <!-- LEFT -->
+  <div class="mx-profile-card">
+    <div class="mx-profile-head">
+      <div class="mx-avatar mx-avatar-lg" id="sideAvatar">M</div>
 
-    <aside class="mx-sidebar">
-
-      <div class="mx-profile-card">
-        <div class="mx-profile-head">
-          <div class="mx-avatar mx-avatar-lg" id="sideAvatar">M</div>
-
-          <div>
-            <div class="mx-profile-name" id="sideDisplayName">
-              MEXA User
-            </div>
-
-            <div class="mx-profile-username" id="sideUsername">
-              @mexa
-            </div>
-          </div>
+      <div>
+        <div class="mx-profile-name" id="sideDisplayName">
+          MEXA User
         </div>
 
-        <button class="mx-profile-link" onclick="showToast('Profil MEXA segera hadir')">
-          Lihat profil
-        </button>
+        <div class="mx-profile-username" id="sideUsername">
+          @mexa
+        </div>
       </div>
+    </div>
 
-      <div class="mx-menu-card">
+    <a class="mx-profile-link"
+       href="./Profil.html"
+       style="display:block;text-align:center;text-decoration:none;">
+      Lihat profil
+    </a>
+  </div>
 
-        <button class="mx-menu-item active">
-          <span class="mx-menu-icon">⌂</span>
-          <span>Beranda</span>
-        </button>
+  <div class="mx-menu-card">
 
-        <button class="mx-menu-item" onclick="showToast('Profil segera hadir')">
-          <span class="mx-menu-icon">◯</span>
-          <span>Profil</span>
-        </button>
+    <button class="mx-menu-item active" type="button"
+      onclick="window.location.href='./index.html'">
+      <span class="mx-menu-icon">⌂</span>
+      <span>Beranda</span>
+    </button>
 
-        <button class="mx-menu-item" onclick="showToast('Reels segera hadir')">
-          <span class="mx-menu-icon">▶</span>
-          <span>Reels</span>
-        </button>
+    <button class="mx-menu-item" type="button"
+      onclick="window.location.href='./Profil.html'">
+      <span class="mx-menu-icon">◯</span>
+      <span>Profil</span>
+    </button>
 
-        <button class="mx-menu-item" onclick="showToast('Grup segera hadir')">
-          <span class="mx-menu-icon">♧</span>
-          <span>Grup</span>
-        </button>
+    <button class="mx-menu-item" type="button"
+      onclick="showToast('Reels segera hadir')">
+      <span class="mx-menu-icon">▶</span>
+      <span>Reels</span>
+    </button>
 
-        <button class="mx-menu-item" onclick="showToast('Komunitas segera hadir')">
-          <span class="mx-menu-icon">◎</span>
-          <span>Komunitas</span>
-        </button>
+    <button class="mx-menu-item" type="button"
+      onclick="showToast('Grup segera hadir')">
+      <span class="mx-menu-icon">♧</span>
+      <span>Grup</span>
+    </button>
 
-        <button class="mx-menu-item" onclick="showToast('Halaman segera hadir')">
-          <span class="mx-menu-icon">▣</span>
-          <span>Halaman</span>
-        </button>
+    <button class="mx-menu-item" type="button"
+      onclick="showToast('Komunitas segera hadir')">
+      <span class="mx-menu-icon">◎</span>
+      <span>Komunitas</span>
+    </button>
 
-        <button class="mx-menu-item" onclick="showToast('Creator Center segera hadir')">
-          <span class="mx-menu-icon">✦</span>
-          <span>Kreator</span>
-        </button>
+    <button class="mx-menu-item" type="button"
+      onclick="showToast('Halaman segera hadir')">
+      <span class="mx-menu-icon">▣</span>
+      <span>Halaman</span>
+    </button>
 
-        <button class="mx-menu-item" onclick="showToast('Pengaturan segera hadir')">
-          <span class="mx-menu-icon">⚙</span>
-          <span>Pengaturan</span>
-        </button>
+    <button class="mx-menu-item" type="button"
+      onclick="showToast('Creator Center segera hadir')">
+      <span class="mx-menu-icon">✦</span>
+      <span>Kreator</span>
+    </button>
 
-      </div>
+    <button class="mx-menu-item" type="button"
+      onclick="showToast('Pengaturan segera hadir')">
+      <span class="mx-menu-icon">⚙</span>
+      <span>Pengaturan</span>
+    </button>
 
-    </aside>
+  </div>
 
+</aside>
+```
+  
 
     <!-- CENTER -->
 
