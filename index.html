@@ -1309,8 +1309,7 @@
   <!-- =========================
        TOPBAR
   ========================== -->
-
-  <header class="mx-topbar">
+ <header class="mx-topbar">
     <div class="mx-topbar-inner">
 
       <div class="mx-brand">
@@ -1335,18 +1334,28 @@
         >
       </div>
 
-      <div class="mx-top-actions">
-        <button class="mx-icon-btn" onclick="showToast('Notifikasi MEXA')">♢</button>
-        <button class="mx-icon-btn" onclick="showToast('Pesan MEXA')">▢</button>
+    
+<div class="mx-top-actions">
+  <button class="mx-icon-btn" onclick="showToast('Notifikasi MEXA')"
+          aria-label="Notifikasi">♢</button>
 
-        <div class="mx-user-mini">
-          <div class="mx-avatar mx-avatar-sm" id="topAvatar">M</div>
-          <strong id="topDisplayName">MEXA</strong>
-        </div>
-      </div>
+  <button class="mx-icon-btn" onclick="showToast('Pesan MEXA')"
+          aria-label="Pesan">▢</button>
 
-    </div>
-  </header>
+  <a class="mx-icon-btn"
+     href="./Profil.html"
+     title="Profil MEXA"
+     aria-label="Buka Profil"
+     style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+    ♙
+  </a>
+
+  <div class="mx-user-mini">
+    <div class="mx-avatar mx-avatar-sm" id="topAvatar">M</div>
+    <strong id="topDisplayName">MEXA</strong>
+  </div>
+</div>
+ </header>
 
 
   <!-- =========================
