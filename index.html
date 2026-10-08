@@ -2883,8 +2883,7 @@ async function loadStories() {
 
     }
 
-
-    async function showStoryData(post) {
+      async function showStoryData(post) {
 
       const viewer =
         document.getElementById(
@@ -3528,83 +3527,6 @@ async function loadStories() {
       }
 
     }
-
-
-    /* ==========================================
-       POST MENU
-    ========================================== */
-
-    function openPostMenu(
-      postId
-    ) {
-
-      const post =
-        currentPosts.find(
-          item => item.id === postId
-        );
-
-
-      if (!post) return;
-
-
-      if (
-        post.user_id !==
-        currentUser?.id
-      ) {
-
-        showToast(
-          "Menu postingan orang lain belum tersedia."
-        );
-
-        return;
-
-      }
-
-
-      const choice =
-        window.prompt(
-          "Ketik:\nEDIT untuk mengedit\nHAPUS untuk menghapus",
-          ""
-        );
-
-
-      if (!choice) return;
-
-
-      if (
-        choice.toLowerCase() ===
-        "hapus"
-      ) {
-
-        deletePost(
-          postId
-        );
-
-        return;
-
-      }
-
-
-      if (
-        choice.toLowerCase() ===
-        "edit"
-      ) {
-
-        editPost(
-          post
-        );
-
-        return;
-
-      }
-
-
-      showToast(
-        "Pilihan tidak dikenali."
-      );
-
-    }
-
 
     /* ==========================================
        EDIT POST
