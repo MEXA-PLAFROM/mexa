@@ -1594,148 +1594,835 @@
 
   </div>
 
-  <!-- =====================================
-       MEXA + SUPABASE
-  ====================================== -->
-
   <script>
+/* =====================================
+   MEXA SUPABASE
+===================================== */
 
-    /* =====================================
-       SUPABASE CONFIG
-    ====================================== */
+const MEXA_SUPABASE_URL =
+  "https://yozylignolfvkemuhfse.supabase.co";
 
-    const MEXA_SUPABASE_URL =
-      "https://yozylignolfvkemuhfse.supabase.co";
+const MEXA_SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
 
-    const MEXA_SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
+const mexaSupabase =
+  window.supabase.createClient(
+    MEXA_SUPABASE_URL,
+    MEXA_SUPABASE_PUBLISHABLE_KEY
+  );
 
-    const mexaSupabase =
-      window.supabase.createClient(
-        MEXA_SUPABASE_URL,
-        MEXA_SUPABASE_PUBLISHABLE_KEY
+
+/* =====================================
+   ELEMENT
+===================================== */
+
+const modal =
+  document.getElementById("postModal");
+
+const createInput =
+  document.querySelector(".create-input");
+
+const createButton =
+  document.querySelector(".mobile-item:nth-child(3)");
+
+const closeModal =
+  document.getElementById("closeModal");
+
+const cancelModal =
+  document.getElementById("cancelModal");
+
+const publishPost =
+  document.getElementById("publishPost");
+
+const postTextarea =
+  document.querySelector(".post-textarea");
+
+const feed =
+  document.querySelector(".feed");
+
+
+/* =====================================
+   CURRENT USER
+===================================== */
+
+let currentUser = null;
+let currentProfile = null;
+
+
+/* =====================================
+   INIT
+===================================== */
+
+async function initMexaHome() {
+
+  try {
+
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await mexaSupabase.auth.getSession();
+
+    if (sessionError) {
+      console.error(
+        "Session error:",
+        sessionError
+      );
+      return;
+    }
+
+    currentUser =
+      sessionData?.session?.user || null;
+
+    /*
+      Kalau tidak ada session,
+      kembali ke Login.
+    */
+
+    if (!currentUser) {
+
+      window.location.href =
+        "Login.html";
+
+      return;
+    }
+
+    console.log(
+      "MEXA LOGIN AKTIF:",
+      currentUser.email
+    );
+
+
+    /*
+      Ambil profil dari tabel profiles
+    */
+
+    await loadCurrentProfile();
+
+
+    /*
+      Ambil postingan asli
+    */
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(
+      "MEXA INIT ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =====================================
+   LOAD PROFILE
+===================================== */
+
+async function loadCurrentProfile() {
+
+  if (!currentUser) return;
+
+  const {
+    data,
+    error
+  } = await mexaSupabase
+    .from("profiles")
+    .select(
+      "id, username, display_name, avatar_url"
+    )
+    .eq(
+      "id",
+      currentUser.id
+    )
+    .maybeSingle();
+
+  if (error) {
+
+    console.error(
+      "Gagal mengambil profil:",
+      error
+    );
+
+    return;
+  }
+
+  currentProfile = data;
+
+  if (!currentProfile) {
+
+    console.warn(
+      "Profil belum ditemukan."
+    );
+
+    return;
+  }
+
+  updateProfileUI();
+
+}
+
+
+/* =====================================
+   UPDATE PROFILE UI
+===================================== */
+
+function updateProfileUI() {
+
+  if (!currentProfile) return;
+
+  const displayName =
+    currentProfile.display_name ||
+    "MEXA User";
+
+  const username =
+    currentProfile.username ||
+    "mexauser";
+
+  /*
+    Semua nama profil utama
+  */
+
+  const profileName =
+    document.querySelector(".profile-name");
+
+  const profileUsername =
+    document.querySelector(".profile-username");
+
+  if (profileName) {
+    profileName.textContent =
+      displayName;
+  }
+
+  if (profileUsername) {
+    profileUsername.textContent =
+      "@" + username;
+  }
+
+
+  /*
+    Avatar berdasarkan huruf pertama
+  */
+
+  const firstLetter =
+    displayName
+      .trim()
+      .charAt(0)
+      .toUpperCase() || "M";
+
+  document
+    .querySelectorAll(".avatar, .avatar-mini")
+    .forEach(function(element) {
+
+      element.textContent =
+        firstLetter;
+
+    });
+
+
+  /*
+    Create post avatar
+  */
+
+  const createAvatar =
+    document.querySelector(
+      ".create-row .avatar"
+    );
+
+  if (createAvatar) {
+    createAvatar.textContent =
+      firstLetter;
+  }
+
+}
+
+
+/* =====================================
+   LOAD POSTS
+===================================== */
+
+async function loadPosts() {
+
+  const {
+    data,
+    error
+  } = await mexaSupabase
+    .from("posts")
+    .select(`
+      id,
+      user_id,
+      content,
+      image_url,
+      created_at,
+      updated_at,
+      profiles (
+        username,
+        display_name,
+        avatar_url
+      )
+    `)
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "Gagal mengambil postingan:",
+      error
+    );
+
+    return;
+  }
+
+  renderPosts(data || []);
+
+}
+
+
+/* =====================================
+   RENDER POSTS
+===================================== */
+
+function renderPosts(posts) {
+
+  /*
+    Hapus post lama.
+    Stories + create post tetap.
+  */
+
+  document
+    .querySelectorAll(".feed .post")
+    .forEach(function(post) {
+
+      post.remove();
+
+    });
+
+
+  if (!posts.length) {
+
+    const emptyPost =
+      document.createElement("article");
+
+    emptyPost.className =
+      "post";
+
+    emptyPost.innerHTML = `
+      <div
+        style="
+          padding:35px 20px;
+          text-align:center;
+          color:#667085;
+          font-size:13px;
+        "
+      >
+        Belum ada postingan di MEXA.
+        <br>
+        Jadilah yang pertama membuat postingan.
+      </div>
+    `;
+
+    feed.appendChild(
+      emptyPost
+    );
+
+    return;
+  }
+
+
+  posts.forEach(function(post) {
+
+    const profile =
+      post.profiles || {};
+
+    const displayName =
+      profile.display_name ||
+      "MEXA User";
+
+    const username =
+      profile.username ||
+      "mexauser";
+
+    const avatarLetter =
+      displayName
+        .trim()
+        .charAt(0)
+        .toUpperCase() || "M";
+
+    const timeText =
+      formatMexаTime(
+        post.created_at
       );
 
 
-    /* =====================================
-       TES KONEKSI SUPABASE
-    ====================================== */
+    const article =
+      document.createElement("article");
 
-    async function testMexaSupabase() {
+    article.className =
+      "post";
 
-      try {
+    article.dataset.postId =
+      post.id;
 
-        const {
-          data,
-          error
-        } = await mexaSupabase.auth.getSession();
 
-        if (error) {
+    let imageHTML = "";
 
-          console.error(
-            "MEXA Supabase error:",
-            error
-          );
+    if (post.image_url) {
 
-          return false;
-        }
+      imageHTML = `
+        <img
+          src="${escapeHTML(post.image_url)}"
+          alt="Postingan MEXA"
+          style="
+            width:100%;
+            display:block;
+            max-height:600px;
+            object-fit:cover;
+          "
+        >
+      `;
 
-        console.log(
-          "MEXA SUPABASE TERHUBUNG",
-          data
-        );
+    }
 
-        return true;
 
-      } catch (error) {
+    article.innerHTML = `
 
-        console.error(
-          "MEXA Supabase gagal:",
-          error
-        );
+      <div class="post-header">
 
-        return false;
+        <div class="avatar">
+          ${escapeHTML(avatarLetter)}
+        </div>
+
+        <div class="post-author">
+
+          <div class="post-author-name">
+            ${escapeHTML(displayName)}
+          </div>
+
+          <div class="post-meta">
+            <span>
+              @${escapeHTML(username)}
+            </span>
+
+            <span>•</span>
+
+            <span>
+              ${escapeHTML(timeText)}
+            </span>
+          </div>
+
+        </div>
+
+        <button
+          class="post-menu"
+          type="button"
+          aria-label="Menu postingan"
+          data-post-id="${escapeHTML(post.id)}"
+        >
+          ⋯
+        </button>
+
+      </div>
+
+      ${
+        post.content
+          ? `
+            <div class="post-content">
+              ${escapeHTML(post.content)}
+            </div>
+          `
+          : ""
       }
+
+      ${
+        imageHTML
+          ? `
+            <div class="post-image">
+              ${imageHTML}
+            </div>
+          `
+          : ""
+      }
+
+      <div class="post-stats">
+
+        <span>
+          ♡ 0 suka
+        </span>
+
+        <span>
+          0 komentar · 0 bagikan
+        </span>
+
+      </div>
+
+      <div class="post-actions">
+
+        <button
+          class="post-action"
+          type="button"
+        >
+          ♡ Suka
+        </button>
+
+        <button
+          class="post-action"
+          type="button"
+        >
+          ○ Komentar
+        </button>
+
+        <button
+          class="post-action"
+          type="button"
+        >
+          ↗ Bagikan
+        </button>
+
+      </div>
+
+    `;
+
+
+    feed.appendChild(
+      article
+    );
+
+  });
+
+}
+
+
+/* =====================================
+   FORMAT TIME
+===================================== */
+
+function formatMexаTime(dateString) {
+
+  const date =
+    new Date(dateString);
+
+  const now =
+    new Date();
+
+  const seconds =
+    Math.floor(
+      (now - date) / 1000
+    );
+
+  if (seconds < 60) {
+    return "Baru saja";
+  }
+
+  const minutes =
+    Math.floor(
+      seconds / 60
+    );
+
+  if (minutes < 60) {
+    return minutes + " menit lalu";
+  }
+
+  const hours =
+    Math.floor(
+      minutes / 60
+    );
+
+  if (hours < 24) {
+    return hours + " jam lalu";
+  }
+
+  const days =
+    Math.floor(
+      hours / 24
+    );
+
+  if (days < 7) {
+    return days + " hari lalu";
+  }
+
+  return date.toLocaleDateString(
+    "id-ID",
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    }
+  );
+
+}
+
+
+/* =====================================
+   ESCAPE HTML
+===================================== */
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =====================================
+   OPEN MODAL
+===================================== */
+
+function openModal() {
+
+  modal.classList.add(
+    "show"
+  );
+
+  setTimeout(function() {
+
+    postTextarea.focus();
+
+  }, 100);
+
+}
+
+
+/* =====================================
+   CLOSE MODAL
+===================================== */
+
+function closePostModal() {
+
+  modal.classList.remove(
+    "show"
+  );
+
+  postTextarea.value = "";
+
+}
+
+
+/* =====================================
+   CREATE POST
+===================================== */
+
+async function createMexaPost() {
+
+  if (!currentUser) {
+
+    alert(
+      "Sesi login tidak ditemukan."
+    );
+
+    return;
+  }
+
+
+  const content =
+    postTextarea.value.trim();
+
+
+  if (!content) {
+
+    alert(
+      "Tulis sesuatu sebelum posting."
+    );
+
+    return;
+  }
+
+
+  publishPost.disabled =
+    true;
+
+  publishPost.textContent =
+    "Memposting...";
+
+
+  try {
+
+    const {
+      data,
+      error
+    } = await mexaSupabase
+      .from("posts")
+      .insert({
+
+        user_id:
+          currentUser.id,
+
+        content:
+          content
+
+      })
+      .select()
+      .single();
+
+
+    if (error) {
+
+      console.error(
+        "Post error:",
+        error
+      );
+
+      alert(
+        "Gagal membuat postingan: " +
+        error.message
+      );
+
+      return;
     }
 
 
-    /* Jalankan tes */
-
-    testMexaSupabase();
-
-
-    /* =====================================
-       MODAL POST
-    ====================================== */
-
-    const modal =
-      document.getElementById("postModal");
-
-    const createInput =
-      document.querySelector(".create-input");
-
-    const createButton =
-      document.querySelector(".mobile-item:nth-child(3)");
-
-    const closeModal =
-      document.getElementById("closeModal");
-
-    const cancelModal =
-      document.getElementById("cancelModal");
-
-
-    function openModal() {
-
-      modal.classList.add("show");
-
-    }
-
-
-    function closePostModal() {
-
-      modal.classList.remove("show");
-
-    }
-
-
-    createInput.addEventListener(
-      "click",
-      openModal
+    console.log(
+      "Postingan berhasil:",
+      data
     );
 
 
-    createButton.addEventListener(
-      "click",
-      openModal
+    closePostModal();
+
+    await loadPosts();
+
+
+  } catch (error) {
+
+    console.error(
+      "Create post error:",
+      error
     );
 
-
-    closeModal.addEventListener(
-      "click",
-      closePostModal
+    alert(
+      "Terjadi kesalahan saat membuat postingan."
     );
 
+  } finally {
 
-    cancelModal.addEventListener(
-      "click",
-      closePostModal
-    );
+    publishPost.disabled =
+      false;
+
+    publishPost.textContent =
+      "Posting";
+
+  }
+
+}
 
 
-    modal.addEventListener(
-      "click",
-      function(event) {
+/* =====================================
+   EVENTS
+===================================== */
 
-        if (event.target === modal) {
+if (createInput) {
 
-          closePostModal();
+  createInput.addEventListener(
+    "click",
+    openModal
+  );
 
-        }
+}
+
+
+if (createButton) {
+
+  createButton.addEventListener(
+    "click",
+    openModal
+  );
+
+}
+
+
+if (closeModal) {
+
+  closeModal.addEventListener(
+    "click",
+    closePostModal
+  );
+
+}
+
+
+if (cancelModal) {
+
+  cancelModal.addEventListener(
+    "click",
+    closePostModal
+  );
+
+}
+
+
+if (publishPost) {
+
+  publishPost.addEventListener(
+    "click",
+    createMexaPost
+  );
+
+}
+
+
+if (modal) {
+
+  modal.addEventListener(
+    "click",
+    function(event) {
+
+      if (
+        event.target === modal
+      ) {
+
+        closePostModal();
 
       }
+
+    }
+  );
+
+}
+
+
+/* =====================================
+   SUPABASE AUTH STATE
+===================================== */
+
+mexaSupabase.auth.onAuthStateChange(
+  function(event, session) {
+
+    console.log(
+      "MEXA AUTH:",
+      event
     );
 
-  </script>
+    if (
+      event === "SIGNED_OUT"
+    ) {
 
+      window.location.href =
+        "Login.html";
+
+    }
+
+  }
+);
+
+
+/* =====================================
+   START MEXA HOME
+===================================== */
+
+initMexaHome();
+
+</script>
+  
 </body>
 </html>
