@@ -55,51 +55,76 @@
     );
   }
 
-  function getCurrentUser() {
-    /*
-      Kalau index.html punya resolver sendiri,
-      MEXA akan memakai resolver tersebut.
-    */
-    if (typeof window.MEXA_GET_CURRENT_USER === "function") {
-      try {
-        return window.MEXA_GET_CURRENT_USER();
-      } catch (e) {
-        console.warn("MEXA_GET_CURRENT_USER error:", e);
+ function getCurrentUser() {
+  /*
+   * MEXA memakai session yang disimpan
+   * oleh sistem login di index.html.
+   */
+  try {
+    const sessionRaw =
+      localStorage.getItem("mexa_session");
+
+    if (sessionRaw) {
+      const session = JSON.parse(sessionRaw);
+
+      if (session && session.user) {
+        return session.user;
       }
     }
-
-    /*
-      Coba beberapa nama localStorage yang umum.
-      Tidak mengubah sistem login yang sudah ada.
-    */
-    const keys = [
-      "mexa_user",
-      "mexaUser",
-      "currentUser",
-      "current_user",
-      "user"
-    ];
-
-    for (const key of keys) {
-      try {
-        const value = localStorage.getItem(key);
-
-        if (!value) continue;
-
-        try {
-          return JSON.parse(value);
-        } catch (_) {
-          return {
-            id: value,
-            user_id: value
-          };
-        }
-      } catch (_) {}
-    }
-
-    return null;
+  } catch (e) {
+    console.warn("MEXA session tidak dapat dibaca:", e);
   }
 
+  /*
+   * Fallback jika suatu saat Home
+   * menyediakan resolver user sendiri.
+   */
+  if (typeof window.MEXA_GET_CURRENT_USER === "function") {
+    try {
+      const user =
+        window.MEXA_GET_CURRENT_USER();
+
+      if (user) return user;
+    } catch (e) {
+      console.warn(
+        "MEXA_GET_CURRENT_USER error:",
+        e
+      );
+    }
+  }
+
+  /*
+   * Fallback tambahan.
+   */
+  const keys = [
+    "mexa_user",
+    "mexaUser",
+    "currentUser",
+    "current_user",
+    "user"
+  ];
+
+  for (const key of keys) {
+    try {
+      const value =
+        localStorage.getItem(key);
+
+      if (!value) continue;
+
+      try {
+        return JSON.parse(value);
+      } catch (_) {
+        return {
+          id: value,
+          user_id: value
+        };
+      }
+    } catch (_) {}
+  }
+
+  return null;   
+ } 
+   
   function getCurrentUserId() {
     const user = getCurrentUser();
 
