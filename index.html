@@ -707,14 +707,34 @@
     }
 
     .mx-feed-loading {
-      background: #fff;
-      border: 1px solid var(--mx-border);
-      border-radius: var(--mx-radius);
-      padding: 35px;
-      text-align: center;
-      color: var(--mx-muted);
-    }
+  background: #15112D;
+  border: 1px solid #29204A;
+  border-radius: var(--mx-radius);
+  padding: 35px;
+  text-align: center;
+  color: #F5F3FF;
+  font-weight: 700;
+  box-shadow: 0 8px 30px rgba(0,0,0,.18);
+}
 
+.mx-feed-loading::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 12px;
+  border: 3px solid #29204A;
+  border-top-color: #7C5CFF;
+  border-right-color: #00E5FF;
+  border-radius: 50%;
+  animation: mexaLoading 0.8s linear infinite;
+}
+
+@keyframes mexaLoading {
+  to {
+    transform: rotate(360deg);
+  }
+}
     /* =========================
        RIGHT
     ========================= */
