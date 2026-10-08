@@ -163,28 +163,37 @@
       gap: 8px;
     }
 
-   .mx-icon-btn {
+ 
+    .mx-icon-btn {
   width: 42px;
   height: 42px;
-  border: 1px solid #29204A;
-  border-radius: 14px;
-  background: #211B43;
-  color: #F5F3FF;
+  padding: 0;
+  border: 1px solid rgba(124, 92, 255, .35);
+  border-radius: 13px;
+  background: #15112D;
   display: grid;
   place-items: center;
-  font-size: 18px;
-  transition: .2s ease;
-  box-shadow: 0 0 0 rgba(124,92,255,0);
+  overflow: hidden;
+  transition: .25s ease;
+  box-shadow: 0 0 14px rgba(124, 92, 255, .12);
+}
+
+.mx-icon-btn img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 7px rgba(124, 92, 255, .35));
 }
 
 .mx-icon-btn:hover {
-  background: #2A2152;
+  transform: translateY(-1px) scale(1.04);
   border-color: #7C5CFF;
-  color: #FFFFFF;
-  transform: translateY(-1px);
-  box-shadow: 0 0 15px rgba(124,92,255,.22);
+  background: #211B43;
+  box-shadow:
+    0 0 18px rgba(124, 92, 255, .30),
+    0 0 10px rgba(0, 229, 255, .12);
 }
-    
     .mx-user-mini {
       display: flex;
       align-items: center;
