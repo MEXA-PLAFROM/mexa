@@ -6,6 +6,9 @@
 
   <title>MEXA — Connect. Share. Grow.</title>
 
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --bg: #f4f7fb;
@@ -83,11 +86,9 @@
       display: inline-flex;
       align-items: center;
       gap: 3px;
-
       font-weight: 950;
       font-size: 29px;
       line-height: 1;
-
       letter-spacing: -2.5px;
       user-select: none;
     }
@@ -101,28 +102,19 @@
       color: var(--accent);
     }
 
-    /*
-      E MEXA:
-      tepat 3 strip horizontal.
-    */
-
     .logo-e {
       width: 19px;
       height: 23px;
-
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-
       margin: 0 1px;
     }
 
     .logo-e span {
       display: block;
-
       width: 19px;
       height: 4px;
-
       background: var(--primary);
       border-radius: 999px;
     }
@@ -143,22 +135,17 @@
       position: sticky;
       top: 0;
       z-index: 100;
-
       height: 72px;
-
       background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-
       border-bottom: 1px solid rgba(230, 234, 240, 0.9);
     }
 
     .topbar-inner {
       width: min(1440px, calc(100% - 40px));
       height: 100%;
-
       margin: 0 auto;
-
       display: grid;
       grid-template-columns: 250px minmax(300px, 650px) 250px;
       align-items: center;
@@ -183,18 +170,12 @@
     .search-box input {
       width: 100%;
       height: 43px;
-
-      padding:
-        0 18px 0 45px;
-
+      padding: 0 18px 0 45px;
       border: 1px solid var(--border);
       border-radius: 999px;
-
       outline: none;
-
       background: var(--surface-2);
       color: var(--text);
-
       transition:
         border-color 0.2s,
         box-shadow 0.2s,
@@ -204,7 +185,6 @@
     .search-box input:focus {
       background: #fff;
       border-color: rgba(37, 99, 235, 0.4);
-
       box-shadow:
         0 0 0 4px rgba(37, 99, 235, 0.08);
     }
@@ -213,9 +193,7 @@
       position: absolute;
       left: 17px;
       top: 50%;
-
       transform: translateY(-50%);
-
       color: var(--muted);
       font-size: 17px;
     }
@@ -234,17 +212,12 @@
     .icon-btn {
       width: 42px;
       height: 42px;
-
       display: grid;
       place-items: center;
-
       border-radius: 50%;
-
       background: transparent;
       color: #475467;
-
       font-size: 18px;
-
       transition:
         background 0.2s,
         transform 0.2s;
@@ -258,26 +231,19 @@
     .avatar-mini {
       width: 38px;
       height: 38px;
-
       display: grid;
       place-items: center;
-
       border-radius: 50%;
-
       background:
         linear-gradient(
           135deg,
           #2563eb,
           #7c3aed
         );
-
       color: #fff;
-
       font-size: 14px;
       font-weight: 800;
-
       border: 2px solid #fff;
-
       box-shadow:
         0 3px 10px rgba(37, 99, 235, 0.2);
     }
@@ -288,18 +254,13 @@
 
     .main-layout {
       width: min(1440px, calc(100% - 40px));
-
       margin: 0 auto;
-
       display: grid;
-
       grid-template-columns:
         230px
         minmax(400px, 650px)
         250px;
-
       gap: 26px;
-
       padding:
         28px 0 90px;
     }
@@ -311,20 +272,15 @@
     .sidebar {
       position: sticky;
       top: 98px;
-
       align-self: start;
     }
 
     .profile-card {
       padding: 18px;
-
       background: var(--surface);
       border: 1px solid var(--border);
-
       border-radius: var(--radius-lg);
-
       box-shadow: var(--shadow);
-
       margin-bottom: 16px;
     }
 
@@ -337,23 +293,17 @@
     .avatar {
       width: 46px;
       height: 46px;
-
       flex: 0 0 46px;
-
       display: grid;
       place-items: center;
-
       border-radius: 50%;
-
       background:
         linear-gradient(
           135deg,
           #2563eb,
           #7c3aed
         );
-
       color: #fff;
-
       font-size: 15px;
       font-weight: 800;
     }
@@ -365,54 +315,39 @@
 
     .profile-username {
       margin-top: 3px;
-
       font-size: 12px;
       color: var(--muted);
     }
 
     .profile-link {
       display: block;
-
       margin-top: 15px;
-
       text-align: center;
-
       color: var(--primary);
-
       font-size: 13px;
       font-weight: 750;
     }
 
     .side-menu {
       padding: 10px;
-
       background: var(--surface);
       border: 1px solid var(--border);
-
       border-radius: var(--radius-lg);
-
       box-shadow: var(--shadow);
     }
 
     .side-item {
       width: 100%;
-
       display: flex;
       align-items: center;
       gap: 13px;
-
       padding: 12px 13px;
-
       border-radius: 12px;
-
       background: transparent;
       color: #475467;
-
       text-align: left;
-
       font-size: 13px;
       font-weight: 700;
-
       transition:
         background 0.2s,
         color 0.2s;
@@ -426,9 +361,7 @@
 
     .side-icon {
       width: 22px;
-
       text-align: center;
-
       font-size: 17px;
     }
 
@@ -446,35 +379,26 @@
 
     .stories {
       display: grid;
-
       grid-template-columns:
         repeat(5, 1fr);
-
       gap: 9px;
-
       margin-bottom: 18px;
     }
 
     .story {
       position: relative;
-
       min-height: 112px;
-
       overflow: hidden;
-
       border-radius: 17px;
-
       background:
         linear-gradient(
           145deg,
           #dbeafe,
           #eef2ff
         );
-
       border: 1px solid var(--border);
-
-      box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05);
-
+      box-shadow:
+        0 5px 18px rgba(15, 23, 42, 0.05);
       cursor: pointer;
     }
 
@@ -516,10 +440,8 @@
 
     .story::after {
       content: "";
-
       position: absolute;
       inset: 0;
-
       background:
         linear-gradient(
           transparent 35%,
@@ -529,39 +451,27 @@
 
     .story-avatar {
       position: absolute;
-
       top: 9px;
       left: 9px;
-
       z-index: 2;
-
       width: 32px;
       height: 32px;
-
       display: grid;
       place-items: center;
-
       border-radius: 50%;
-
       background: #fff;
       color: var(--primary);
-
       font-size: 11px;
       font-weight: 850;
-
       border: 2px solid #fff;
     }
 
     .story-name {
       position: absolute;
-
       z-index: 3;
-
       left: 10px;
       bottom: 10px;
-
       color: #fff;
-
       font-size: 11px;
       font-weight: 800;
     }
@@ -572,14 +482,10 @@
 
     .create-post {
       padding: 16px;
-
       background: var(--surface);
-
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-
       box-shadow: var(--shadow);
-
       margin-bottom: 18px;
     }
 
@@ -591,25 +497,16 @@
 
     .create-input {
       flex: 1;
-
       min-width: 0;
-
       height: 45px;
-
       padding: 0 17px;
-
       display: flex;
       align-items: center;
-
       background: var(--surface-2);
-
       border: 1px solid var(--border);
       border-radius: 999px;
-
       color: #98a2b3;
-
       font-size: 13px;
-
       cursor: pointer;
     }
 
@@ -620,23 +517,17 @@
     .create-actions {
       display: flex;
       gap: 5px;
-
       margin-top: 13px;
       padding-top: 13px;
-
       border-top: 1px solid #f0f2f5;
     }
 
     .create-action {
       flex: 1;
-
       padding: 8px 5px;
-
       border-radius: 10px;
-
       background: transparent;
       color: #667085;
-
       font-size: 12px;
       font-weight: 750;
     }
@@ -652,23 +543,17 @@
 
     .post {
       background: var(--surface);
-
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-
       box-shadow: var(--shadow);
-
       margin-bottom: 18px;
-
       overflow: hidden;
     }
 
     .post-header {
       display: flex;
       align-items: center;
-
       padding: 17px 17px 10px;
-
       gap: 11px;
     }
 
@@ -685,23 +570,17 @@
     .post-meta {
       display: flex;
       gap: 5px;
-
       margin-top: 3px;
-
       color: var(--muted);
-
       font-size: 11px;
     }
 
     .post-menu {
       width: 34px;
       height: 34px;
-
       border-radius: 50%;
-
       background: transparent;
       color: #667085;
-
       font-size: 18px;
     }
 
@@ -711,20 +590,15 @@
 
     .post-content {
       padding: 6px 17px 15px;
-
       font-size: 14px;
       line-height: 1.65;
-
       color: #344054;
-
       white-space: pre-wrap;
     }
 
     .post-image {
       width: 100%;
-
       aspect-ratio: 16 / 9;
-
       background:
         linear-gradient(
           135deg,
@@ -732,12 +606,9 @@
           #e0e7ff,
           #fce7f3
         );
-
       display: grid;
       place-items: center;
-
       color: rgba(37, 99, 235, 0.45);
-
       font-size: 40px;
     }
 
@@ -745,34 +616,24 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       padding: 11px 17px;
-
       border-bottom: 1px solid #f0f2f5;
-
       color: var(--muted);
-
       font-size: 11px;
     }
 
     .post-actions {
       display: grid;
-
       grid-template-columns:
         repeat(3, 1fr);
-
       padding: 5px 8px;
     }
 
     .post-action {
       padding: 10px;
-
       background: transparent;
-
       border-radius: 10px;
-
       color: #667085;
-
       font-size: 12px;
       font-weight: 750;
     }
@@ -788,29 +649,22 @@
 
     .right-card {
       background: var(--surface);
-
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-
       box-shadow: var(--shadow);
-
       padding: 18px;
-
       margin-bottom: 16px;
     }
 
     .right-title {
       font-size: 14px;
       font-weight: 850;
-
       margin-bottom: 15px;
     }
 
     .trend {
       display: block;
-
       padding: 9px 0;
-
       border-bottom: 1px solid #f2f4f7;
     }
 
@@ -820,16 +674,13 @@
 
     .trend-tag {
       color: var(--primary);
-
       font-size: 12px;
       font-weight: 800;
     }
 
     .trend-count {
       margin-top: 3px;
-
       color: var(--muted);
-
       font-size: 11px;
     }
 
@@ -840,32 +691,24 @@
           #eff6ff,
           #eef2ff
         );
-
       border: 1px solid #dbeafe;
     }
 
     .creator-card p {
       color: #667085;
-
       font-size: 12px;
       line-height: 1.6;
-
       margin-bottom: 14px;
     }
 
     .creator-button {
       width: 100%;
-
       height: 38px;
-
       background: var(--primary);
       color: #fff;
-
       border-radius: 10px;
-
       font-size: 12px;
       font-weight: 800;
-
       box-shadow:
         0 6px 15px rgba(37, 99, 235, 0.2);
     }
@@ -880,51 +723,33 @@
 
     .mobile-nav {
       display: none;
-
       position: fixed;
-
       left: 12px;
       right: 12px;
       bottom: 12px;
-
       z-index: 200;
-
       height: 62px;
-
       padding: 5px;
-
       background: rgba(255, 255, 255, 0.92);
-
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-
       border: 1px solid rgba(230, 234, 240, 0.95);
-
       border-radius: 19px;
-
       box-shadow:
         0 15px 35px rgba(15, 23, 42, 0.13);
-
       grid-template-columns:
         repeat(5, 1fr);
     }
 
     .mobile-item {
       display: flex;
-
       flex-direction: column;
-
       align-items: center;
       justify-content: center;
-
       gap: 3px;
-
       background: transparent;
-
       border-radius: 13px;
-
       color: #667085;
-
       font-size: 10px;
       font-weight: 750;
     }
@@ -945,17 +770,12 @@
     .modal {
       position: fixed;
       inset: 0;
-
       z-index: 500;
-
       display: none;
       align-items: center;
       justify-content: center;
-
       padding: 20px;
-
       background: rgba(15, 23, 42, 0.48);
-
       backdrop-filter: blur(5px);
     }
 
@@ -965,26 +785,19 @@
 
     .modal-card {
       width: min(520px, 100%);
-
       background: #fff;
-
       border-radius: 22px;
-
       box-shadow:
         0 30px 80px rgba(15, 23, 42, 0.25);
-
       overflow: hidden;
     }
 
     .modal-header {
       height: 58px;
-
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       padding: 0 18px;
-
       border-bottom: 1px solid var(--border);
     }
 
@@ -996,12 +809,9 @@
     .modal-close {
       width: 34px;
       height: 34px;
-
       border-radius: 50%;
-
       background: #f2f4f7;
       color: #475467;
-
       font-size: 17px;
     }
 
@@ -1011,27 +821,19 @@
 
     .post-textarea {
       width: 100%;
-
       min-height: 150px;
-
       resize: vertical;
-
       padding: 14px;
-
       border: 1px solid var(--border);
       border-radius: 14px;
-
       outline: none;
-
       color: var(--text);
-
       font-size: 14px;
       line-height: 1.6;
     }
 
     .post-textarea:focus {
       border-color: rgba(37, 99, 235, 0.4);
-
       box-shadow:
         0 0 0 4px rgba(37, 99, 235, 0.08);
     }
@@ -1039,19 +841,14 @@
     .modal-footer {
       display: flex;
       justify-content: flex-end;
-
       gap: 8px;
-
       margin-top: 14px;
     }
 
     .modal-button {
       height: 40px;
-
       padding: 0 18px;
-
       border-radius: 10px;
-
       font-size: 12px;
       font-weight: 800;
     }
@@ -1083,7 +880,6 @@
         grid-template-columns:
           200px
           minmax(380px, 1fr);
-
         max-width: 950px;
       }
 
@@ -1108,14 +904,11 @@
 
       .topbar-inner {
         width: calc(100% - 24px);
-
         display: grid;
-
         grid-template-columns:
           auto
           1fr
           auto;
-
         gap: 10px;
       }
 
@@ -1135,9 +928,7 @@
 
       .search-box input {
         height: 38px;
-
         padding-left: 39px;
-
         font-size: 12px;
       }
 
@@ -1161,9 +952,7 @@
 
       .main-layout {
         width: 100%;
-
         display: block;
-
         padding:
           14px 12px 100px;
       }
@@ -1176,9 +965,7 @@
       .stories {
         grid-template-columns:
           repeat(5, 1fr);
-
         gap: 6px;
-
         margin-bottom: 12px;
       }
 
@@ -1190,17 +977,14 @@
       .story-avatar {
         width: 27px;
         height: 27px;
-
         top: 7px;
         left: 7px;
-
         font-size: 9px;
       }
 
       .story-name {
         left: 7px;
         bottom: 7px;
-
         font-size: 9px;
       }
 
@@ -1230,7 +1014,6 @@
       .post-content {
         padding:
           5px 14px 13px;
-
         font-size: 13px;
       }
 
@@ -1258,7 +1041,6 @@
 
       .modal-card {
         width: 100%;
-
         border-radius:
           22px 22px 0 0;
       }
@@ -1293,10 +1075,6 @@
 
   <div class="mexa-app">
 
-    <!-- =====================================
-         TOPBAR
-    ====================================== -->
-
     <header class="topbar">
 
       <div class="topbar-inner">
@@ -1321,7 +1099,6 @@
 
         </div>
 
-
         <div class="search-box">
 
           <span class="search-icon">⌕</span>
@@ -1333,7 +1110,6 @@
           >
 
         </div>
-
 
         <div class="top-actions">
 
@@ -1367,17 +1143,7 @@
 
     </header>
 
-
-    <!-- =====================================
-         MAIN
-    ====================================== -->
-
     <main class="main-layout">
-
-
-      <!-- ===================================
-           LEFT SIDEBAR
-      ==================================== -->
 
       <aside class="sidebar left-sidebar">
 
@@ -1411,7 +1177,6 @@
           </a>
 
         </div>
-
 
         <nav class="side-menu">
 
@@ -1454,86 +1219,36 @@
 
       </aside>
 
-
-      <!-- ===================================
-           CENTER FEED
-      ==================================== -->
-
       <section class="feed">
-
-
-        <!-- STORIES -->
 
         <div class="stories">
 
           <div class="story">
-
-            <div class="story-avatar">
-              +
-            </div>
-
-            <div class="story-name">
-              Buat cerita
-            </div>
-
+            <div class="story-avatar">+</div>
+            <div class="story-name">Buat cerita</div>
           </div>
 
-
           <div class="story">
-
-            <div class="story-avatar">
-              A
-            </div>
-
-            <div class="story-name">
-              Andi
-            </div>
-
+            <div class="story-avatar">A</div>
+            <div class="story-name">Andi</div>
           </div>
 
-
           <div class="story">
-
-            <div class="story-avatar">
-              R
-            </div>
-
-            <div class="story-name">
-              Rina
-            </div>
-
+            <div class="story-avatar">R</div>
+            <div class="story-name">Rina</div>
           </div>
 
-
           <div class="story">
-
-            <div class="story-avatar">
-              D
-            </div>
-
-            <div class="story-name">
-              Dika
-            </div>
-
+            <div class="story-avatar">D</div>
+            <div class="story-name">Dika</div>
           </div>
 
-
           <div class="story">
-
-            <div class="story-avatar">
-              S
-            </div>
-
-            <div class="story-name">
-              Sinta
-            </div>
-
+            <div class="story-avatar">S</div>
+            <div class="story-name">Sinta</div>
           </div>
 
         </div>
-
-
-        <!-- CREATE POST -->
 
         <div class="create-post">
 
@@ -1548,7 +1263,6 @@
             </div>
 
           </div>
-
 
           <div class="create-actions">
 
@@ -1567,9 +1281,6 @@
           </div>
 
         </div>
-
-
-        <!-- POST 1 -->
 
         <article class="post">
 
@@ -1603,16 +1314,13 @@
 
           </div>
 
-
           <div class="post-content">
             Selamat datang di MEXA. Tempat baru untuk terhubung, berbagi, dan berkembang bersama.
           </div>
 
-
           <div class="post-image">
             M
           </div>
-
 
           <div class="post-stats">
 
@@ -1625,7 +1333,6 @@
             </span>
 
           </div>
-
 
           <div class="post-actions">
 
@@ -1644,9 +1351,6 @@
           </div>
 
         </article>
-
-
-        <!-- POST 2 -->
 
         <article class="post">
 
@@ -1680,11 +1384,9 @@
 
           </div>
 
-
           <div class="post-content">
             Ini adalah contoh tampilan feed MEXA. Nantinya postingan asli akan otomatis muncul dari Supabase.
           </div>
-
 
           <div class="post-stats">
 
@@ -1697,7 +1399,6 @@
             </span>
 
           </div>
-
 
           <div class="post-actions">
 
@@ -1719,20 +1420,13 @@
 
       </section>
 
-
-      <!-- ===================================
-           RIGHT SIDEBAR
-      ==================================== -->
-
       <aside class="sidebar right-sidebar">
-
 
         <div class="right-card">
 
           <div class="right-title">
             Tren MEXA
           </div>
-
 
           <a href="#" class="trend">
 
@@ -1746,7 +1440,6 @@
 
           </a>
 
-
           <a href="#" class="trend">
 
             <div class="trend-tag">
@@ -1758,7 +1451,6 @@
             </div>
 
           </a>
-
 
           <a href="#" class="trend">
 
@@ -1773,7 +1465,6 @@
           </a>
 
         </div>
-
 
         <div class="right-card creator-card">
 
@@ -1791,7 +1482,6 @@
           </button>
 
         </div>
-
 
         <div class="right-card">
 
@@ -1816,11 +1506,6 @@
       </aside>
 
     </main>
-
-
-    <!-- =====================================
-         MOBILE NAV
-    ====================================== -->
 
     <nav class="mobile-nav">
 
@@ -1851,11 +1536,6 @@
 
     </nav>
 
-
-    <!-- =====================================
-         CREATE POST MODAL
-    ====================================== -->
-
     <div
       class="modal"
       id="postModal"
@@ -1879,14 +1559,12 @@
 
         </div>
 
-
         <div class="modal-body">
 
           <textarea
             class="post-textarea"
             placeholder="Apa yang ingin kamu bagikan?"
           ></textarea>
-
 
           <div class="modal-footer">
 
@@ -1900,6 +1578,7 @@
 
             <button
               class="modal-button modal-publish"
+              id="publishPost"
               type="button"
             >
               Posting
@@ -1915,13 +1594,82 @@
 
   </div>
 
-
   <!-- =====================================
-       BASIC UI SCRIPT
+       MEXA + SUPABASE
   ====================================== -->
 
   <script>
-    const modal = document.getElementById("postModal");
+
+    /* =====================================
+       SUPABASE CONFIG
+    ====================================== */
+
+    const MEXA_SUPABASE_URL =
+      "https://yozylignolfvkemuhfse.supabase.co";
+
+    const MEXA_SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
+
+    const mexaSupabase =
+      window.supabase.createClient(
+        MEXA_SUPABASE_URL,
+        MEXA_SUPABASE_PUBLISHABLE_KEY
+      );
+
+
+    /* =====================================
+       TES KONEKSI SUPABASE
+    ====================================== */
+
+    async function testMexaSupabase() {
+
+      try {
+
+        const {
+          data,
+          error
+        } = await mexaSupabase.auth.getSession();
+
+        if (error) {
+
+          console.error(
+            "MEXA Supabase error:",
+            error
+          );
+
+          return false;
+        }
+
+        console.log(
+          "MEXA SUPABASE TERHUBUNG",
+          data
+        );
+
+        return true;
+
+      } catch (error) {
+
+        console.error(
+          "MEXA Supabase gagal:",
+          error
+        );
+
+        return false;
+      }
+    }
+
+
+    /* Jalankan tes */
+
+    testMexaSupabase();
+
+
+    /* =====================================
+       MODAL POST
+    ====================================== */
+
+    const modal =
+      document.getElementById("postModal");
 
     const createInput =
       document.querySelector(".create-input");
@@ -1937,12 +1685,16 @@
 
 
     function openModal() {
+
       modal.classList.add("show");
+
     }
 
 
     function closePostModal() {
+
       modal.classList.remove("show");
+
     }
 
 
@@ -1975,11 +1727,14 @@
       function(event) {
 
         if (event.target === modal) {
+
           closePostModal();
+
         }
 
       }
     );
+
   </script>
 
 </body>
