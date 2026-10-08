@@ -907,43 +907,60 @@ return;
 
 saveButton.disabled = true;
 saveButton.textContent = "Menyimpan...";
-
+     
 try {
-setEditorStatus("Sedang menyiapkan perubahan profil...");
+  setEditorStatus("Memeriksa data profil...");
 
+  console.log("MEXA: mulai menyiapkan profil");
+
+  let avatarUrl = currentProfile.avatar_url || null;
+  let coverUrl = currentProfile.cover_url || null;
+
+  // Upload foto profil jika dipilih.
+  const avatarFile =
+    avatarFileInput?.files?.[0] || null;
+
+  if (avatarFile) {
+    setEditorStatus("Sedang mengunggah foto profil...");
+    console.log("MEXA: mulai upload avatar");
+
+    avatarUrl = await uploadProfileImage(
+      avatarFile,
+      "avatar"
+    );
+
+    console.log("MEXA: upload avatar selesai");
+  }
+
+  // Upload banner jika dipilih.
+  const coverFile =
+    coverFileInput?.files?.[0] || null;
+
+  if (coverFile) {
+    setEditorStatus("Sedang mengunggah banner...");
+    console.log("MEXA: mulai upload banner");
+
+    coverUrl = await uploadProfileImage(
+      coverFile,
+      "cover"
+    );
+
+    console.log("MEXA: upload banner selesai");
+  }
+
+  // Siapkan data untuk database.
+  const payload = {
+    id: currentUser.id,
+    username: username,
+    display_name: displayName,
+    bio: bio || null,
+    avatar_url: avatarUrl,
+    cover_url: coverUrl
+  };
+
+  console.log("MEXA: payload profil siap");
 ```
-// Pertahankan foto lama jika tidak memilih foto baru.
-let avatarUrl = currentProfile.avatar_url || null;
-let coverUrl = currentProfile.cover_url || null;
 
-// Upload foto profil baru jika dipilih.
-if (avatarFileInput.files && avatarFileInput.files[0]) {
-  setEditorStatus("Sedang mengunggah foto profil...");
-  avatarUrl = await uploadProfileImage(
-    avatarFileInput.files[0],
-    "avatar"
-  );
-}
-
-// Upload banner baru jika dipilih.
-if (coverFileInput.files && coverFileInput.files[0]) {
-  setEditorStatus("Sedang mengunggah banner...");
-  coverUrl = await uploadProfileImage(
-    coverFileInput.files[0],
-    "cover"
-  );
-}
-
-// Buat payload setelah upload agar URL foto terbaru ikut tersimpan.
-const payload = {
-  id: currentUser.id,
-  username: username,
-  display_name: displayName,
-  bio: bio || null,
-  avatar_url: avatarUrl,
-  cover_url: coverUrl,
-  updated_at: new Date().toISOString()
-};
 
 setEditorStatus("Menyimpan profil ke database...");
 
