@@ -553,7 +553,71 @@
 
     let currentUser = null;
     let currentProfile = null;
+    
+const avatarFileInput = document.getElementById("editAvatarFile");
+const coverFileInput = document.getElementById("editCoverFile");
+const avatarPreview = document.getElementById("avatarPreview");
+const coverPreview = document.getElementById("coverPreview");
 
+function previewImage(input, preview) {
+  input.addEventListener("change", () => {
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      alert("Pilih foto JPG, PNG, atau WebP.");
+      input.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Ukuran foto maksimal 5 MB.");
+      input.value = "";
+      return;
+    }
+
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  });
+}
+
+previewImage(avatarFileInput, avatarPreview);
+previewImage(coverFileInput, coverPreview);
+
+async function uploadProfileImage(file, type) {
+  if (!file) return null;
+
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    throw new Error("Format foto harus JPG, PNG, atau WebP.");
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Ukuran foto maksimal 5 MB.");
+  }
+
+  const extension = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp"
+  }[file.type];
+
+  const path = `${currentUser.id}/${type}-${Date.now()}.${extension}`;
+
+  const { error } = await mexaSupabase.storage
+    .from("profile-media")
+    .upload(path, file, {
+      contentType: file.type,
+      upsert: false
+    });
+
+  if (error) throw error;
+
+  const { data } = mexaSupabase.storage
+    .from("profile-media")
+    .getPublicUrl(path);
+
+  return data.publicUrl;
+}
     function inform(text) {
       message.textContent = text;
       message.classList.add("show");
