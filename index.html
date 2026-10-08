@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MEXA — Connect. Share. Grow.</title>
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --border: #e6eaf0;
+      --text: #101828;
+      --muted: #667085;
+
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+
+      --accent: #ef4444;
+
+      --shadow:
+        0 12px 35px rgba(15, 23, 42, 0.07);
+
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 50% -20%,
+          rgba(37, 99, 235, 0.08),
+          transparent 35%
+        ),
+        var(--bg);
+
+      color: var(--text);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* =========================================
+       MEXA LOGO
+    ========================================= */
+
+    .mexa-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+
+      font-weight: 950;
+      font-size: 29px;
+      line-height: 1;
+
+      letter-spacing: -2.5px;
+      user-select: none;
+    }
+
+    .logo-m,
+    .logo-a {
+      color: var(--primary);
+    }
+
+    .logo-x {
+      color: var(--accent);
+    }
+
+    /*
+      E MEXA:
+      tepat 3 strip horizontal.
+    */
+
+    .logo-e {
+      width: 19px;
+      height: 23px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      margin: 0 1px;
+    }
+
+    .logo-e span {
+      display: block;
+
+      width: 19px;
+      height: 4px;
+
+      background: var(--primary);
+      border-radius: 999px;
+    }
+
+    /* =========================================
+       APP
+    ========================================= */
+
+    .mexa-app {
+      min-height: 100vh;
+    }
+
+    /* =========================================
+       TOP HEADER
+    ========================================= */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      height: 72px;
+
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      border-bottom: 1px solid rgba(230, 234, 240, 0.9);
+    }
+
+    .topbar-inner {
+      width: min(1440px, calc(100% - 40px));
+      height: 100%;
+
+      margin: 0 auto;
+
+      display: grid;
+      grid-template-columns: 250px minmax(300px, 650px) 250px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+    }
+
+    /* =========================================
+       SEARCH
+    ========================================= */
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 43px;
+
+      padding:
+        0 18px 0 45px;
+
+      border: 1px solid var(--border);
+      border-radius: 999px;
+
+      outline: none;
+
+      background: var(--surface-2);
+      color: var(--text);
+
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+    }
+
+    .search-box input:focus {
+      background: #fff;
+      border-color: rgba(37, 99, 235, 0.4);
+
+      box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 17px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    /* =========================================
+       HEADER ACTIONS
+    ========================================= */
+
+    .top-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      background: transparent;
+      color: #475467;
+
+      font-size: 18px;
+
+      transition:
+        background 0.2s,
+        transform 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: #f2f4f7;
+      transform: translateY(-1px);
+    }
+
+    .avatar-mini {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #7c3aed
+        );
+
+      color: #fff;
+
+      font-size: 14px;
+      font-weight: 800;
+
+      border: 2px solid #fff;
+
+      box-shadow:
+        0 3px 10px rgba(37, 99, 235, 0.2);
+    }
+
+    /* =========================================
+       MAIN LAYOUT
+    ========================================= */
+
+    .main-layout {
+      width: min(1440px, calc(100% - 40px));
+
+      margin: 0 auto;
+
+      display: grid;
+
+      grid-template-columns:
+        230px
+        minmax(400px, 650px)
+        250px;
+
+      gap: 26px;
+
+      padding:
+        28px 0 90px;
+    }
+
+    /* =========================================
+       LEFT SIDEBAR
+    ========================================= */
+
+    .sidebar {
+      position: sticky;
+      top: 98px;
+
+      align-self: start;
+    }
+
+    .profile-card {
+      padding: 18px;
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+
+      border-radius: var(--radius-lg);
+
+      box-shadow: var(--shadow);
+
+      margin-bottom: 16px;
+    }
+
+    .profile-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+
+      flex: 0 0 46px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #7c3aed
+        );
+
+      color: #fff;
+
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .profile-name {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .profile-username {
+      margin-top: 3px;
+
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .profile-link {
+      display: block;
+
+      margin-top: 15px;
+
+      text-align: center;
+
+      color: var(--primary);
+
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .side-menu {
+      padding: 10px;
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+
+      border-radius: var(--radius-lg);
+
+      box-shadow: var(--shadow);
+    }
+
+    .side-item {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+      gap: 13px;
+
+      padding: 12px 13px;
+
+      border-radius: 12px;
+
+      background: transparent;
+      color: #475467;
+
+      text-align: left;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      transition:
+        background 0.2s,
+        color 0.2s;
+    }
+
+    .side-item:hover,
+    .side-item.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .side-icon {
+      width: 22px;
+
+      text-align: center;
+
+      font-size: 17px;
+    }
+
+    /* =========================================
+       CENTER
+    ========================================= */
+
+    .feed {
+      min-width: 0;
+    }
+
+    /* =========================================
+       STORIES
+    ========================================= */
+
+    .stories {
+      display: grid;
+
+      grid-template-columns:
+        repeat(5, 1fr);
+
+      gap: 9px;
+
+      margin-bottom: 18px;
+    }
+
+    .story {
+      position: relative;
+
+      min-height: 112px;
+
+      overflow: hidden;
+
+      border-radius: 17px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #dbeafe,
+          #eef2ff
+        );
+
+      border: 1px solid var(--border);
+
+      box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05);
+
+      cursor: pointer;
+    }
+
+    .story:nth-child(2) {
+      background:
+        linear-gradient(
+          145deg,
+          #fce7f3,
+          #f5d0fe
+        );
+    }
+
+    .story:nth-child(3) {
+      background:
+        linear-gradient(
+          145deg,
+          #dcfce7,
+          #d1fae5
+        );
+    }
+
+    .story:nth-child(4) {
+      background:
+        linear-gradient(
+          145deg,
+          #fef3c7,
+          #ffedd5
+        );
+    }
+
+    .story:nth-child(5) {
+      background:
+        linear-gradient(
+          145deg,
+          #e0e7ff,
+          #ede9fe
+        );
+    }
+
+    .story::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          transparent 35%,
+          rgba(15, 23, 42, 0.55)
+        );
+    }
+
+    .story-avatar {
+      position: absolute;
+
+      top: 9px;
+      left: 9px;
+
+      z-index: 2;
+
+      width: 32px;
+      height: 32px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      background: #fff;
+      color: var(--primary);
+
+      font-size: 11px;
+      font-weight: 850;
+
+      border: 2px solid #fff;
+    }
+
+    .story-name {
+      position: absolute;
+
+      z-index: 3;
+
+      left: 10px;
+      bottom: 10px;
+
+      color: #fff;
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* =========================================
+       CREATE POST
+    ========================================= */
+
+    .create-post {
+      padding: 16px;
+
+      background: var(--surface);
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+
+      box-shadow: var(--shadow);
+
+      margin-bottom: 18px;
+    }
+
+    .create-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .create-input {
+      flex: 1;
+
+      min-width: 0;
+
+      height: 45px;
+
+      padding: 0 17px;
+
+      display: flex;
+      align-items: center;
+
+      background: var(--surface-2);
+
+      border: 1px solid var(--border);
+      border-radius: 999px;
+
+      color: #98a2b3;
+
+      font-size: 13px;
+
+      cursor: pointer;
+    }
+
+    .create-input:hover {
+      background: #f2f4f7;
+    }
+
+    .create-actions {
+      display: flex;
+      gap: 5px;
+
+      margin-top: 13px;
+      padding-top: 13px;
+
+      border-top: 1px solid #f0f2f5;
+    }
+
+    .create-action {
+      flex: 1;
+
+      padding: 8px 5px;
+
+      border-radius: 10px;
+
+      background: transparent;
+      color: #667085;
+
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .create-action:hover {
+      background: #f8fafc;
+      color: var(--primary);
+    }
+
+    /* =========================================
+       POST
+    ========================================= */
+
+    .post {
+      background: var(--surface);
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+
+      box-shadow: var(--shadow);
+
+      margin-bottom: 18px;
+
+      overflow: hidden;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+
+      padding: 17px 17px 10px;
+
+      gap: 11px;
+    }
+
+    .post-author {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .post-author-name {
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .post-meta {
+      display: flex;
+      gap: 5px;
+
+      margin-top: 3px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .post-menu {
+      width: 34px;
+      height: 34px;
+
+      border-radius: 50%;
+
+      background: transparent;
+      color: #667085;
+
+      font-size: 18px;
+    }
+
+    .post-menu:hover {
+      background: #f2f4f7;
+    }
+
+    .post-content {
+      padding: 6px 17px 15px;
+
+      font-size: 14px;
+      line-height: 1.65;
+
+      color: #344054;
+
+      white-space: pre-wrap;
+    }
+
+    .post-image {
+      width: 100%;
+
+      aspect-ratio: 16 / 9;
+
+      background:
+        linear-gradient(
+          135deg,
+          #dbeafe,
+          #e0e7ff,
+          #fce7f3
+        );
+
+      display: grid;
+      place-items: center;
+
+      color: rgba(37, 99, 235, 0.45);
+
+      font-size: 40px;
+    }
+
+    .post-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 11px 17px;
+
+      border-bottom: 1px solid #f0f2f5;
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .post-actions {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      padding: 5px 8px;
+    }
+
+    .post-action {
+      padding: 10px;
+
+      background: transparent;
+
+      border-radius: 10px;
+
+      color: #667085;
+
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .post-action:hover {
+      background: #f8fafc;
+      color: var(--primary);
+    }
+
+    /* =========================================
+       RIGHT SIDEBAR
+    ========================================= */
+
+    .right-card {
+      background: var(--surface);
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+
+      box-shadow: var(--shadow);
+
+      padding: 18px;
+
+      margin-bottom: 16px;
+    }
+
+    .right-title {
+      font-size: 14px;
+      font-weight: 850;
+
+      margin-bottom: 15px;
+    }
+
+    .trend {
+      display: block;
+
+      padding: 9px 0;
+
+      border-bottom: 1px solid #f2f4f7;
+    }
+
+    .trend:last-child {
+      border-bottom: 0;
+    }
+
+    .trend-tag {
+      color: var(--primary);
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .trend-count {
+      margin-top: 3px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .creator-card {
+      background:
+        linear-gradient(
+          145deg,
+          #eff6ff,
+          #eef2ff
+        );
+
+      border: 1px solid #dbeafe;
+    }
+
+    .creator-card p {
+      color: #667085;
+
+      font-size: 12px;
+      line-height: 1.6;
+
+      margin-bottom: 14px;
+    }
+
+    .creator-button {
+      width: 100%;
+
+      height: 38px;
+
+      background: var(--primary);
+      color: #fff;
+
+      border-radius: 10px;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      box-shadow:
+        0 6px 15px rgba(37, 99, 235, 0.2);
+    }
+
+    .creator-button:hover {
+      filter: brightness(0.96);
+    }
+
+    /* =========================================
+       MOBILE NAV
+    ========================================= */
+
+    .mobile-nav {
+      display: none;
+
+      position: fixed;
+
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+
+      z-index: 200;
+
+      height: 62px;
+
+      padding: 5px;
+
+      background: rgba(255, 255, 255, 0.92);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      border: 1px solid rgba(230, 234, 240, 0.95);
+
+      border-radius: 19px;
+
+      box-shadow:
+        0 15px 35px rgba(15, 23, 42, 0.13);
+
+      grid-template-columns:
+        repeat(5, 1fr);
+    }
+
+    .mobile-item {
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 3px;
+
+      background: transparent;
+
+      border-radius: 13px;
+
+      color: #667085;
+
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .mobile-item span:first-child {
+      font-size: 18px;
+    }
+
+    .mobile-item.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    /* =========================================
+       MODAL
+    ========================================= */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+
+      z-index: 500;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background: rgba(15, 23, 42, 0.48);
+
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(520px, 100%);
+
+      background: #fff;
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 30px 80px rgba(15, 23, 42, 0.25);
+
+      overflow: hidden;
+    }
+
+    .modal-header {
+      height: 58px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 18px;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .modal-close {
+      width: 34px;
+      height: 34px;
+
+      border-radius: 50%;
+
+      background: #f2f4f7;
+      color: #475467;
+
+      font-size: 17px;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .post-textarea {
+      width: 100%;
+
+      min-height: 150px;
+
+      resize: vertical;
+
+      padding: 14px;
+
+      border: 1px solid var(--border);
+      border-radius: 14px;
+
+      outline: none;
+
+      color: var(--text);
+
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .post-textarea:focus {
+      border-color: rgba(37, 99, 235, 0.4);
+
+      box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+
+      gap: 8px;
+
+      margin-top: 14px;
+    }
+
+    .modal-button {
+      height: 40px;
+
+      padding: 0 18px;
+
+      border-radius: 10px;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .modal-cancel {
+      background: #f2f4f7;
+      color: #475467;
+    }
+
+    .modal-publish {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* =========================================
+       RESPONSIVE TABLET
+    ========================================= */
+
+    @media (max-width: 1100px) {
+
+      .topbar-inner {
+        grid-template-columns:
+          190px
+          minmax(260px, 1fr)
+          190px;
+      }
+
+      .main-layout {
+        grid-template-columns:
+          200px
+          minmax(380px, 1fr);
+
+        max-width: 950px;
+      }
+
+      .right-sidebar {
+        display: none;
+      }
+    }
+
+    /* =========================================
+       RESPONSIVE MOBILE
+    ========================================= */
+
+    @media (max-width: 760px) {
+
+      body {
+        background: #f5f7fb;
+      }
+
+      .topbar {
+        height: 62px;
+      }
+
+      .topbar-inner {
+        width: calc(100% - 24px);
+
+        display: grid;
+
+        grid-template-columns:
+          auto
+          1fr
+          auto;
+
+        gap: 10px;
+      }
+
+      .brand .mexa-logo {
+        font-size: 24px;
+      }
+
+      .brand .logo-e {
+        width: 16px;
+        height: 19px;
+      }
+
+      .brand .logo-e span {
+        width: 16px;
+        height: 3px;
+      }
+
+      .search-box input {
+        height: 38px;
+
+        padding-left: 39px;
+
+        font-size: 12px;
+      }
+
+      .search-icon {
+        left: 14px;
+        font-size: 14px;
+      }
+
+      .top-actions {
+        gap: 1px;
+      }
+
+      .top-actions .icon-btn {
+        display: none;
+      }
+
+      .top-actions .avatar-mini {
+        width: 36px;
+        height: 36px;
+      }
+
+      .main-layout {
+        width: 100%;
+
+        display: block;
+
+        padding:
+          14px 12px 100px;
+      }
+
+      .left-sidebar,
+      .right-sidebar {
+        display: none;
+      }
+
+      .stories {
+        grid-template-columns:
+          repeat(5, 1fr);
+
+        gap: 6px;
+
+        margin-bottom: 12px;
+      }
+
+      .story {
+        min-height: 94px;
+        border-radius: 13px;
+      }
+
+      .story-avatar {
+        width: 27px;
+        height: 27px;
+
+        top: 7px;
+        left: 7px;
+
+        font-size: 9px;
+      }
+
+      .story-name {
+        left: 7px;
+        bottom: 7px;
+
+        font-size: 9px;
+      }
+
+      .create-post {
+        padding: 13px;
+        border-radius: 17px;
+      }
+
+      .create-actions {
+        margin-top: 10px;
+        padding-top: 10px;
+      }
+
+      .create-action {
+        font-size: 11px;
+      }
+
+      .post {
+        border-radius: 17px;
+        margin-bottom: 12px;
+      }
+
+      .post-header {
+        padding: 14px 14px 8px;
+      }
+
+      .post-content {
+        padding:
+          5px 14px 13px;
+
+        font-size: 13px;
+      }
+
+      .post-stats {
+        padding: 9px 14px;
+      }
+
+      .post-actions {
+        padding: 4px 6px;
+      }
+
+      .post-action {
+        padding: 9px 4px;
+        font-size: 11px;
+      }
+
+      .mobile-nav {
+        display: grid;
+      }
+
+      .modal {
+        align-items: flex-end;
+        padding: 0;
+      }
+
+      .modal-card {
+        width: 100%;
+
+        border-radius:
+          22px 22px 0 0;
+      }
+    }
+
+    @media (max-width: 430px) {
+
+      .search-box {
+        min-width: 0;
+      }
+
+      .search-box input {
+        font-size: 11px;
+      }
+
+      .stories {
+        gap: 5px;
+      }
+
+      .story {
+        min-height: 88px;
+      }
+
+      .story-name {
+        font-size: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="mexa-app">
+
+    <!-- =====================================
+         TOPBAR
+    ====================================== -->
+
+    <header class="topbar">
+
+      <div class="topbar-inner">
+
+        <div class="brand">
+
+          <div class="mexa-logo">
+
+            <span class="logo-m">M</span>
+
+            <span class="logo-e">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+
+            <span class="logo-x">X</span>
+
+            <span class="logo-a">A</span>
+
+          </div>
+
+        </div>
+
+
+        <div class="search-box">
+
+          <span class="search-icon">⌕</span>
+
+          <input
+            type="search"
+            placeholder="Cari di MEXA..."
+            aria-label="Cari di MEXA"
+          >
+
+        </div>
+
+
+        <div class="top-actions">
+
+          <button
+            class="icon-btn"
+            type="button"
+            aria-label="Notifikasi"
+          >
+            ♡
+          </button>
+
+          <button
+            class="icon-btn"
+            type="button"
+            aria-label="Pesan"
+          >
+            ◇
+          </button>
+
+          <button
+            class="avatar-mini"
+            type="button"
+            aria-label="Profil"
+          >
+            M
+          </button>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================
+         MAIN
+    ====================================== -->
+
+    <main class="main-layout">
+
+
+      <!-- ===================================
+           LEFT SIDEBAR
+      ==================================== -->
+
+      <aside class="sidebar left-sidebar">
+
+        <div class="profile-card">
+
+          <div class="profile-top">
+
+            <div class="avatar">
+              M
+            </div>
+
+            <div>
+
+              <div class="profile-name">
+                MEXA User
+              </div>
+
+              <div class="profile-username">
+                @mexauser
+              </div>
+
+            </div>
+
+          </div>
+
+          <a
+            href="#"
+            class="profile-link"
+          >
+            Lihat profil
+          </a>
+
+        </div>
+
+
+        <nav class="side-menu">
+
+          <button class="side-item active">
+            <span class="side-icon">⌂</span>
+            <span>Beranda</span>
+          </button>
+
+          <button class="side-item">
+            <span class="side-icon">◎</span>
+            <span>Profil</span>
+          </button>
+
+          <button class="side-item">
+            <span class="side-icon">▶</span>
+            <span>Reels</span>
+          </button>
+
+          <button class="side-item">
+            <span class="side-icon">♧</span>
+            <span>Grup</span>
+          </button>
+
+          <button class="side-item">
+            <span class="side-icon">✦</span>
+            <span>Komunitas</span>
+          </button>
+
+          <button class="side-item">
+            <span class="side-icon">◈</span>
+            <span>Kreator</span>
+          </button>
+
+          <button class="side-item">
+            <span class="side-icon">⚙</span>
+            <span>Pengaturan</span>
+          </button>
+
+        </nav>
+
+      </aside>
+
+
+      <!-- ===================================
+           CENTER FEED
+      ==================================== -->
+
+      <section class="feed">
+
+
+        <!-- STORIES -->
+
+        <div class="stories">
+
+          <div class="story">
+
+            <div class="story-avatar">
+              +
+            </div>
+
+            <div class="story-name">
+              Buat cerita
+            </div>
+
+          </div>
+
+
+          <div class="story">
+
+            <div class="story-avatar">
+              A
+            </div>
+
+            <div class="story-name">
+              Andi
+            </div>
+
+          </div>
+
+
+          <div class="story">
+
+            <div class="story-avatar">
+              R
+            </div>
+
+            <div class="story-name">
+              Rina
+            </div>
+
+          </div>
+
+
+          <div class="story">
+
+            <div class="story-avatar">
+              D
+            </div>
+
+            <div class="story-name">
+              Dika
+            </div>
+
+          </div>
+
+
+          <div class="story">
+
+            <div class="story-avatar">
+              S
+            </div>
+
+            <div class="story-name">
+              Sinta
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- CREATE POST -->
+
+        <div class="create-post">
+
+          <div class="create-row">
+
+            <div class="avatar">
+              M
+            </div>
+
+            <div class="create-input">
+              Apa yang ingin kamu bagikan?
+            </div>
+
+          </div>
+
+
+          <div class="create-actions">
+
+            <button class="create-action">
+              ▣ Foto
+            </button>
+
+            <button class="create-action">
+              ▶ Video
+            </button>
+
+            <button class="create-action">
+              ✦ Perasaan
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- POST 1 -->
+
+        <article class="post">
+
+          <div class="post-header">
+
+            <div class="avatar">
+              M
+            </div>
+
+            <div class="post-author">
+
+              <div class="post-author-name">
+                MEXA User
+              </div>
+
+              <div class="post-meta">
+                <span>@mexauser</span>
+                <span>•</span>
+                <span>Baru saja</span>
+              </div>
+
+            </div>
+
+            <button
+              class="post-menu"
+              type="button"
+              aria-label="Menu postingan"
+            >
+              ⋯
+            </button>
+
+          </div>
+
+
+          <div class="post-content">
+            Selamat datang di MEXA. Tempat baru untuk terhubung, berbagi, dan berkembang bersama.
+          </div>
+
+
+          <div class="post-image">
+            M
+          </div>
+
+
+          <div class="post-stats">
+
+            <span>
+              ♡ 24 suka
+            </span>
+
+            <span>
+              8 komentar · 3 bagikan
+            </span>
+
+          </div>
+
+
+          <div class="post-actions">
+
+            <button class="post-action">
+              ♡ Suka
+            </button>
+
+            <button class="post-action">
+              ○ Komentar
+            </button>
+
+            <button class="post-action">
+              ↗ Bagikan
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- POST 2 -->
+
+        <article class="post">
+
+          <div class="post-header">
+
+            <div class="avatar">
+              A
+            </div>
+
+            <div class="post-author">
+
+              <div class="post-author-name">
+                Andi MEXA
+              </div>
+
+              <div class="post-meta">
+                <span>@andimexa</span>
+                <span>•</span>
+                <span>1 jam</span>
+              </div>
+
+            </div>
+
+            <button
+              class="post-menu"
+              type="button"
+              aria-label="Menu postingan"
+            >
+              ⋯
+            </button>
+
+          </div>
+
+
+          <div class="post-content">
+            Ini adalah contoh tampilan feed MEXA. Nantinya postingan asli akan otomatis muncul dari Supabase.
+          </div>
+
+
+          <div class="post-stats">
+
+            <span>
+              ♡ 17 suka
+            </span>
+
+            <span>
+              5 komentar · 2 bagikan
+            </span>
+
+          </div>
+
+
+          <div class="post-actions">
+
+            <button class="post-action">
+              ♡ Suka
+            </button>
+
+            <button class="post-action">
+              ○ Komentar
+            </button>
+
+            <button class="post-action">
+              ↗ Bagikan
+            </button>
+
+          </div>
+
+        </article>
+
+      </section>
+
+
+      <!-- ===================================
+           RIGHT SIDEBAR
+      ==================================== -->
+
+      <aside class="sidebar right-sidebar">
+
+
+        <div class="right-card">
+
+          <div class="right-title">
+            Tren MEXA
+          </div>
+
+
+          <a href="#" class="trend">
+
+            <div class="trend-tag">
+              #MEXA
+            </div>
+
+            <div class="trend-count">
+              12K postingan
+            </div>
+
+          </a>
+
+
+          <a href="#" class="trend">
+
+            <div class="trend-tag">
+              #Gaming
+            </div>
+
+            <div class="trend-count">
+              8K postingan
+            </div>
+
+          </a>
+
+
+          <a href="#" class="trend">
+
+            <div class="trend-tag">
+              #Kreator
+            </div>
+
+            <div class="trend-count">
+              5K postingan
+            </div>
+
+          </a>
+
+        </div>
+
+
+        <div class="right-card creator-card">
+
+          <div class="right-title">
+            Creator Center
+          </div>
+
+          <p>
+            Bangun komunitasmu, bagikan karya,
+            dan kembangkan akun MEXA kamu.
+          </p>
+
+          <button class="creator-button">
+            Buka Creator Center
+          </button>
+
+        </div>
+
+
+        <div class="right-card">
+
+          <div class="right-title">
+            MEXA
+          </div>
+
+          <p
+            style="
+              color:#98a2b3;
+              font-size:11px;
+              line-height:1.6;
+            "
+          >
+            Connect. Share. Grow.
+            <br>
+            © 2026 MEXA
+          </p>
+
+        </div>
+
+      </aside>
+
+    </main>
+
+
+    <!-- =====================================
+         MOBILE NAV
+    ====================================== -->
+
+    <nav class="mobile-nav">
+
+      <button class="mobile-item active">
+        <span>⌂</span>
+        <span>Home</span>
+      </button>
+
+      <button class="mobile-item">
+        <span>▶</span>
+        <span>Reels</span>
+      </button>
+
+      <button class="mobile-item">
+        <span>＋</span>
+        <span>Buat</span>
+      </button>
+
+      <button class="mobile-item">
+        <span>♧</span>
+        <span>Grup</span>
+      </button>
+
+      <button class="mobile-item">
+        <span>◎</span>
+        <span>Profil</span>
+      </button>
+
+    </nav>
+
+
+    <!-- =====================================
+         CREATE POST MODAL
+    ====================================== -->
+
+    <div
+      class="modal"
+      id="postModal"
+    >
+
+      <div class="modal-card">
+
+        <div class="modal-header">
+
+          <div class="modal-title">
+            Buat postingan
+          </div>
+
+          <button
+            class="modal-close"
+            id="closeModal"
+            type="button"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+          <textarea
+            class="post-textarea"
+            placeholder="Apa yang ingin kamu bagikan?"
+          ></textarea>
+
+
+          <div class="modal-footer">
+
+            <button
+              class="modal-button modal-cancel"
+              id="cancelModal"
+              type="button"
+            >
+              Batal
+            </button>
+
+            <button
+              class="modal-button modal-publish"
+              type="button"
+            >
+              Posting
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================
+       BASIC UI SCRIPT
+  ====================================== -->
+
+  <script>
+    const modal = document.getElementById("postModal");
+
+    const createInput =
+      document.querySelector(".create-input");
+
+    const createButton =
+      document.querySelector(".mobile-item:nth-child(3)");
+
+    const closeModal =
+      document.getElementById("closeModal");
+
+    const cancelModal =
+      document.getElementById("cancelModal");
+
+
+    function openModal() {
+      modal.classList.add("show");
+    }
+
+
+    function closePostModal() {
+      modal.classList.remove("show");
+    }
+
+
+    createInput.addEventListener(
+      "click",
+      openModal
+    );
+
+
+    createButton.addEventListener(
+      "click",
+      openModal
+    );
+
+
+    closeModal.addEventListener(
+      "click",
+      closePostModal
+    );
+
+
+    cancelModal.addEventListener(
+      "click",
+      closePostModal
+    );
+
+
+    modal.addEventListener(
+      "click",
+      function(event) {
+
+        if (event.target === modal) {
+          closePostModal();
+        }
+
+      }
+    );
+  </script>
+
+</body>
+</html>
