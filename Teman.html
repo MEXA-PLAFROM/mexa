@@ -1631,42 +1631,184 @@ async function sendPostToFriends(){
   }
 
 
-  if(!selectedFriends.length){
+  if(!currentUserId){
 
     showToast(
-      "Pilih teman terlebih dahulu."
+      "Sesi MEXA belum terbaca."
     );
 
     return;
   }
 
 
-  /*
-   * Untuk tahap pertama,
-   * pilihan teman sudah berhasil
-   * dan post ID sudah otomatis.
-   *
-   * Endpoint pengiriman teman akan
-   * kita aktifkan setelah tabel
-   * penerima share disiapkan.
-   */
+  if(!selectedFriends.length){
 
-  console.log(
-    "MEXA SEND POST",
-    {
-      post_id:postId,
-      sender_id:currentUserId,
-      friend_ids:selectedFriends
+    showToast(
+      "Pilih minimal satu teman."
+    );
+
+    return;
+  }
+
+
+  const button =
+    document.getElementById(
+      "sendButton"
+    );
+
+
+  const oldText =
+    button.textContent;
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "Mengirim...";
+
+
+  try{
+
+    const result =
+      await mexaAPI(
+        "send_post_to_friends",
+        {
+          post_id:
+            postId,
+
+          user_id:
+            currentUserId,
+
+          friend_ids:
+            selectedFriends
+        }
+      );
+
+
+    if(
+      !result ||
+      !result.success
+    ){
+
+      showToast(
+        result?.error ||
+        "Postingan gagal dikirim."
+      );
+
+      return;
     }
-  );
 
 
-  showToast(
-    selectedFriends.length +
-    " teman dipilih. Sistem pengiriman MEXA siap."
-  );
+    const sentCount =
+      Number(
+        result.sent_count || 0
+      );
+
+
+    if(sentCount > 0){
+
+      showToast(
+        sentCount === 1
+          ? "Postingan berhasil dikirim ke 1 teman."
+          : `Postingan berhasil dikirim ke ${sentCount} teman.`
+      );
+
+    }else{
+
+      showToast(
+        "Postingan sudah pernah dikirim ke teman yang dipilih."
+      );
+    }
+
+
+    /*
+     * Bersihkan pilihan
+     */
+
+    selectedFriends = [];
+
+
+    /*
+     * Render ulang
+     */
+
+    const keyword =
+      document
+        .getElementById(
+          "friendSearch"
+        )
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    if(keyword){
+
+      const filtered =
+        mexaFriends.filter(
+          friend => {
+
+            const name =
+              (
+                friend.display_name ||
+                friend.name ||
+                ""
+              ).toLowerCase();
+
+
+            const username =
+              (
+                friend.username ||
+                ""
+              ).toLowerCase();
+
+
+            return (
+              name.includes(
+                keyword
+              ) ||
+              username.includes(
+                keyword
+              )
+            );
+          }
+        );
+
+
+      renderFriends(
+        filtered
+      );
+
+    }else{
+
+      renderFriends(
+        mexaFriends
+      );
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "SEND POST ERROR:",
+      error
+    );
+
+
+    showToast(
+      "Terjadi kesalahan saat mengirim."
+    );
+
+
+  }finally{
+
+    button.disabled =
+      selectedFriends.length === 0;
+
+    button.textContent =
+      oldText;
+  }
 }
-
 
 /* =========================================================
    BACK HOME
