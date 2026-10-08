@@ -1,26 +1,12 @@
 /* =========================================================
    MEXA — POST MENU
-   Menu titik tiga postingan
    File: post-menu.js
 
-   TUGAS FILE INI:
-   - Membuka menu titik tiga
-   - Cek pemilik postingan
-   - Edit / Hapus untuk pemilik
-   - Share
-   - Share ke teman
-   - Share ke grup
-   - Share ke media lain
-   - Salin link
-   - Laporkan postingan
+   MENU TITIK TIGA POSTINGAN
    ========================================================= */
 
 (function () {
   "use strict";
-
-  /* =========================================================
-     STATE
-     ========================================================= */
 
   let activePost = null;
   let menuRoot = null;
@@ -31,6 +17,10 @@
 
   function getPostId(post) {
     if (!post) return null;
+
+    if (typeof post === "string") {
+      return post;
+    }
 
     return (
       post.id ||
@@ -55,121 +45,156 @@
     );
   }
 
- function getCurrentUser() {
   /*
-   * MEXA memakai session yang disimpan
-   * oleh sistem login di index.html.
+   * Resolver otomatis.
+   *
+   * Kalau Home mengirim object post:
+   * langsung digunakan.
+   *
+   * Kalau Home mengirim post.id:
+   * coba cari dari registry MEXA.
    */
-  try {
-    const sessionRaw =
-      localStorage.getItem("mexa_session");
+  function resolvePost(input) {
+    if (!input) return null;
 
-    if (sessionRaw) {
-      const session = JSON.parse(sessionRaw);
-
-      if (session && session.user) {
-        return session.user;
-      }
+    if (typeof input === "object") {
+      return input;
     }
-  } catch (e) {
-    console.warn("MEXA session tidak dapat dibaca:", e);
+
+    const postId = String(input);
+
+    if (
+      Array.isArray(window.MEXA_POSTS)
+    ) {
+      const found =
+        window.MEXA_POSTS.find(
+          post =>
+            String(getPostId(post)) === postId
+        );
+
+      if (found) return found;
+    }
+
+    return null;
   }
 
-  /*
-   * Fallback jika suatu saat Home
-   * menyediakan resolver user sendiri.
-   */
-  if (typeof window.MEXA_GET_CURRENT_USER === "function") {
-    try {
-      const user =
-        window.MEXA_GET_CURRENT_USER();
+  function getCurrentUser() {
+    /*
+     * Prioritas:
+     * resolver dari Home
+     */
+    if (
+      typeof window.MEXA_GET_CURRENT_USER ===
+      "function"
+    ) {
+      try {
+        const user =
+          window.MEXA_GET_CURRENT_USER();
 
-      if (user) return user;
+        if (user) return user;
+      } catch (e) {
+        console.warn(
+          "MEXA_GET_CURRENT_USER error:",
+          e
+        );
+      }
+    }
+
+    /*
+     * Session login MEXA
+     */
+    try {
+      const raw =
+        localStorage.getItem(
+          "mexa_session"
+        );
+
+      if (raw) {
+        const session =
+          JSON.parse(raw);
+
+        if (session?.user) {
+          return session.user;
+        }
+      }
     } catch (e) {
       console.warn(
-        "MEXA_GET_CURRENT_USER error:",
+        "MEXA session tidak dapat dibaca:",
         e
       );
     }
-  }
 
-  /*
-   * Fallback tambahan.
-   */
-  const keys = [
-    "mexa_user",
-    "mexaUser",
-    "currentUser",
-    "current_user",
-    "user"
-  ];
+    /*
+     * Fallback
+     */
+    const keys = [
+      "mexa_user",
+      "mexaUser",
+      "currentUser",
+      "current_user",
+      "user"
+    ];
 
-  for (const key of keys) {
-    try {
-      const value =
-        localStorage.getItem(key);
-
-      if (!value) continue;
-
+    for (const key of keys) {
       try {
-        return JSON.parse(value);
-      } catch (_) {
-        return {
-          id: value,
-          user_id: value
-        };
-      }
-    } catch (_) {}
-  }
+        const value =
+          localStorage.getItem(key);
 
-  return null;   
- } 
-   
-  function getCurrentUserId() {
-  try {
-    const raw = localStorage.getItem("mexa_session");
+        if (!value) continue;
 
-    if (raw) {
-      const session = JSON.parse(raw);
-
-      const id =
-        session?.user?.id ||
-        session?.user?.user_id ||
-        session?.user?.userId ||
-        null;
-
-      if (id) {
-        console.log("MEXA CURRENT USER ID:", id);
-        return String(id);
-      }
+        try {
+          return JSON.parse(value);
+        } catch (_) {
+          return {
+            id: value,
+            user_id: value
+          };
+        }
+      } catch (_) {}
     }
-  } catch (error) {
-    console.warn("MEXA session error:", error);
+
+    return null;
   }
 
-  return null;
-}
+  function getCurrentUserId() {
+    const user =
+      getCurrentUser();
+
+    if (!user) return null;
+
+    return String(
+      user.id ||
+      user.user_id ||
+      user.userId ||
+      ""
+    ) || null;
+  }
 
   function isOwner(post) {
-  const postOwnerId = getPostOwnerId(post);
-  const currentUserId = getCurrentUserId();
+    const postOwnerId =
+      getPostOwnerId(post);
 
-  console.log("MEXA OWNER CHECK:", {
-    postOwnerId: postOwnerId,
-    currentUserId: currentUserId,
-    same:
+    const currentUserId =
+      getCurrentUserId();
+
+    const same =
       postOwnerId &&
       currentUserId &&
-      String(postOwnerId) === String(currentUserId)
-  });
+      String(postOwnerId) ===
+        String(currentUserId);
 
-  if (!postOwnerId || !currentUserId) {
-    return false;
+    console.log(
+      "MEXA OWNER CHECK:",
+      {
+        postOwnerId,
+        currentUserId,
+        same
+      }
+    );
+
+    return !!same;
   }
 
-  return String(postOwnerId) === String(currentUserId);
-}
-   
   function escapeHTML(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -205,16 +230,21 @@
      ========================================================= */
 
   function injectStyle() {
-    if (document.getElementById("mexa-post-menu-style")) return;
+    if (
+      document.getElementById(
+        "mexa-post-menu-style"
+      )
+    ) {
+      return;
+    }
 
-    const style = document.createElement("style");
-    style.id = "mexa-post-menu-style";
+    const style =
+      document.createElement("style");
+
+    style.id =
+      "mexa-post-menu-style";
 
     style.textContent = `
-      /* =====================================================
-         MEXA POST MENU
-         ===================================================== */
-
       .mx-post-menu-layer {
         position: fixed;
         inset: 0;
@@ -236,26 +266,28 @@
         background:
           radial-gradient(
             circle at 50% 100%,
-            rgba(80, 90, 255, .10),
+            rgba(80,90,255,.10),
             transparent 45%
           ),
-          rgba(0, 0, 0, .52);
+          rgba(0,0,0,.52);
 
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
 
         opacity: 0;
-        transition: opacity .22s ease;
+        transition:
+          opacity .22s ease;
       }
 
-      .mx-post-menu-layer.is-open .mx-post-menu-backdrop {
+      .mx-post-menu-layer.is-open
+      .mx-post-menu-backdrop {
         opacity: 1;
       }
 
       .mx-post-menu-sheet {
         position: relative;
-        width: min(100%, 520px);
-        max-height: min(86vh, 720px);
+        width: min(100%,520px);
+        max-height: min(86vh,720px);
 
         overflow: hidden auto;
 
@@ -268,36 +300,51 @@
 
         color: #171820;
 
-        border: 1px solid rgba(255,255,255,.85);
+        border: 1px solid
+          rgba(255,255,255,.85);
+
         border-bottom: none;
 
-        border-radius: 28px 28px 0 0;
+        border-radius:
+          28px 28px 0 0;
 
         box-shadow:
-          0 -12px 50px rgba(0,0,0,.18),
-          0 -2px 12px rgba(0,0,0,.08);
+          0 -12px 50px
+          rgba(0,0,0,.18),
+          0 -2px 12px
+          rgba(0,0,0,.08);
 
-        transform: translateY(105%);
+        transform:
+          translateY(105%);
+
         opacity: .7;
 
         transition:
-          transform .32s cubic-bezier(.22,1,.36,1),
+          transform .32s
+          cubic-bezier(.22,1,.36,1),
           opacity .22s ease;
 
         padding:
           10px
           12px
-          calc(12px + env(safe-area-inset-bottom));
+          calc(
+            12px +
+            env(
+              safe-area-inset-bottom
+            )
+          );
       }
 
-      .mx-post-menu-layer.is-open .mx-post-menu-sheet {
-        transform: translateY(0);
+      .mx-post-menu-layer.is-open
+      .mx-post-menu-sheet {
+        transform:
+          translateY(0);
+
         opacity: 1;
       }
 
-      /* DARK MODE */
-
       @media (prefers-color-scheme: dark) {
+
         .mx-post-menu-sheet {
           background:
             linear-gradient(
@@ -308,25 +355,30 @@
 
           color: #f7f8fb;
 
-          border-color: rgba(255,255,255,.08);
+          border-color:
+            rgba(255,255,255,.08);
 
           box-shadow:
-            0 -16px 60px rgba(0,0,0,.55),
-            0 -2px 20px rgba(0,0,0,.30);
+            0 -16px 60px
+            rgba(0,0,0,.55),
+            0 -2px 20px
+            rgba(0,0,0,.30);
         }
       }
 
-      /* DESKTOP */
+      @media (min-width:700px) {
 
-      @media (min-width: 700px) {
         .mx-post-menu-layer {
           align-items: center;
         }
 
         .mx-post-menu-sheet {
-          width: min(92vw, 520px);
+          width: min(92vw,520px);
+
           border-radius: 28px;
-          border: 1px solid rgba(255,255,255,.12);
+
+          border: 1px solid
+            rgba(255,255,255,.12);
 
           transform:
             translateY(20px)
@@ -335,7 +387,8 @@
           opacity: 0;
         }
 
-        .mx-post-menu-layer.is-open .mx-post-menu-sheet {
+        .mx-post-menu-layer.is-open
+        .mx-post-menu-sheet {
           transform:
             translateY(0)
             scale(1);
@@ -344,25 +397,27 @@
         }
       }
 
-      /* HANDLE */
-
       .mx-post-menu-handle {
         width: 42px;
         height: 5px;
+
         border-radius: 999px;
-        margin: 2px auto 14px;
 
-        background: rgba(120,125,140,.35);
+        margin:
+          2px auto 14px;
+
+        background:
+          rgba(120,125,140,.35);
       }
-
-      /* HEADER */
 
       .mx-post-menu-header {
         display: flex;
         align-items: center;
+
         gap: 11px;
 
-        padding: 5px 8px 14px;
+        padding:
+          5px 8px 14px;
       }
 
       .mx-post-menu-avatar {
@@ -391,7 +446,8 @@
         font-weight: 800;
 
         box-shadow:
-          0 5px 18px rgba(50,60,130,.22);
+          0 5px 18px
+          rgba(50,60,130,.22);
       }
 
       .mx-post-menu-avatar img {
@@ -408,6 +464,7 @@
       .mx-post-menu-user-name {
         font-size: 14px;
         font-weight: 800;
+
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -415,7 +472,9 @@
 
       .mx-post-menu-user-sub {
         margin-top: 3px;
+
         font-size: 11px;
+
         opacity: .55;
       }
 
@@ -432,39 +491,30 @@
         cursor: pointer;
 
         color: inherit;
-        background: rgba(120,125,140,.10);
+
+        background:
+          rgba(120,125,140,.10);
 
         font-size: 21px;
-
-        transition:
-          transform .18s ease,
-          background .18s ease;
       }
-
-      .mx-post-menu-close:hover {
-        transform: scale(1.05);
-        background: rgba(120,125,140,.18);
-      }
-
-      /* SECTION */
 
       .mx-post-menu-section {
         margin-top: 6px;
       }
 
       .mx-post-menu-section-title {
-        padding: 8px 9px 7px;
+        padding:
+          8px 9px 7px;
 
         font-size: 10px;
         font-weight: 800;
 
         letter-spacing: .08em;
+
         text-transform: uppercase;
 
         opacity: .42;
       }
-
-      /* ITEM */
 
       .mx-post-menu-item {
         width: 100%;
@@ -474,7 +524,8 @@
 
         gap: 12px;
 
-        padding: 12px 10px;
+        padding:
+          12px 10px;
 
         margin: 2px 0;
 
@@ -496,7 +547,8 @@
       }
 
       .mx-post-menu-item:hover {
-        background: rgba(100,110,140,.09);
+        background:
+          rgba(100,110,140,.09);
       }
 
       .mx-post-menu-item:active {
@@ -527,6 +579,7 @@
       }
 
       @media (prefers-color-scheme: dark) {
+
         .mx-post-menu-icon {
           background:
             linear-gradient(
@@ -564,18 +617,17 @@
         font-size: 17px;
       }
 
-      /* DANGER */
-
       .mx-post-menu-item.is-danger {
         color: #e5484d;
       }
 
-      .mx-post-menu-item.is-danger .mx-post-menu-icon {
-        background: rgba(229,72,77,.10);
+      .mx-post-menu-item.is-danger
+      .mx-post-menu-icon {
+        background:
+          rgba(229,72,77,.10);
+
         color: #e5484d;
       }
-
-      /* CANCEL */
 
       .mx-post-menu-cancel {
         width: 100%;
@@ -587,53 +639,51 @@
         border: 0;
         border-radius: 17px;
 
-        background: rgba(120,125,140,.10);
+        background:
+          rgba(120,125,140,.10);
+
         color: inherit;
 
         cursor: pointer;
 
         font: inherit;
+
         font-size: 13px;
         font-weight: 800;
-
-        transition:
-          background .18s ease,
-          transform .16s ease;
       }
-
-      .mx-post-menu-cancel:hover {
-        background: rgba(120,125,140,.16);
-      }
-
-      .mx-post-menu-cancel:active {
-        transform: scale(.985);
-      }
-
-      /* TOAST */
 
       .mx-post-menu-toast {
         position: fixed;
 
         left: 50%;
-        bottom: calc(
-          22px + env(safe-area-inset-bottom)
-        );
+
+        bottom:
+          calc(
+            22px +
+            env(
+              safe-area-inset-bottom
+            )
+          );
 
         transform:
-          translate(-50%, 18px)
+          translate(-50%,18px)
           scale(.96);
 
         z-index: 1000000;
 
-        padding: 11px 16px;
+        padding:
+          11px 16px;
 
         border-radius: 999px;
 
-        background: rgba(20,22,28,.94);
+        background:
+          rgba(20,22,28,.94);
+
         color: white;
 
         box-shadow:
-          0 12px 35px rgba(0,0,0,.28);
+          0 12px 35px
+          rgba(0,0,0,.28);
 
         font-size: 12px;
         font-weight: 700;
@@ -651,19 +701,8 @@
         opacity: 1;
 
         transform:
-          translate(-50%, 0)
+          translate(-50%,0)
           scale(1);
-      }
-
-      /* REDUCED MOTION */
-
-      @media (prefers-reduced-motion: reduce) {
-        .mx-post-menu-sheet,
-        .mx-post-menu-backdrop,
-        .mx-post-menu-item,
-        .mx-post-menu-toast {
-          transition: none !important;
-        }
       }
     `;
 
@@ -675,24 +714,39 @@
      ========================================================= */
 
   function showToast(message) {
-    let toast = document.getElementById("mexa-post-menu-toast");
+    let toast =
+      document.getElementById(
+        "mexa-post-menu-toast"
+      );
 
     if (!toast) {
-      toast = document.createElement("div");
-      toast.id = "mexa-post-menu-toast";
-      toast.className = "mx-post-menu-toast";
+      toast =
+        document.createElement("div");
+
+      toast.id =
+        "mexa-post-menu-toast";
+
+      toast.className =
+        "mx-post-menu-toast";
 
       document.body.appendChild(toast);
     }
 
-    toast.textContent = message;
+    toast.textContent =
+      message;
+
     toast.classList.add("show");
 
-    clearTimeout(toast._timer);
+    clearTimeout(
+      toast._timer
+    );
 
-    toast._timer = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2200);
+    toast._timer =
+      setTimeout(() => {
+        toast.classList.remove(
+          "show"
+        );
+      }, 2200);
   }
 
   /* =========================================================
@@ -711,7 +765,7 @@
   };
 
   /* =========================================================
-     MENU ITEM
+     ITEM
      ========================================================= */
 
   function createItem({
@@ -721,14 +775,22 @@
     description,
     danger = false
   }) {
-    const button = document.createElement("button");
+    const button =
+      document.createElement(
+        "button"
+      );
 
-    button.type = "button";
+    button.type =
+      "button";
+
     button.className =
       "mx-post-menu-item" +
-      (danger ? " is-danger" : "");
+      (danger
+        ? " is-danger"
+        : "");
 
-    button.dataset.action = action;
+    button.dataset.action =
+      action;
 
     button.innerHTML = `
       <span class="mx-post-menu-icon">
@@ -744,7 +806,9 @@
           description
             ? `
               <span class="mx-post-menu-desc">
-                ${escapeHTML(description)}
+                ${escapeHTML(
+                  description
+                )}
               </span>
             `
             : ""
@@ -760,36 +824,69 @@
   }
 
   /* =========================================================
-     OPEN MENU
+     OPEN
      ========================================================= */
 
-  function openPostMenu(post) {
+  function openPostMenu(input) {
+
+    const post =
+      resolvePost(input);
+
     if (!post) {
-      console.warn("MEXA: post tidak ditemukan.");
+      console.warn(
+        "MEXA: postingan tidak ditemukan.",
+        input
+      );
+
+      showToast(
+        "Postingan tidak ditemukan."
+      );
+
       return;
     }
 
     injectStyle();
 
-    activePost = post;
+    activePost =
+      post;
 
     closePostMenu(true);
 
-    const owner = isOwner(post);
+    const owner =
+      isOwner(post);
 
-    const layer = document.createElement("div");
+    const layer =
+      document.createElement(
+        "div"
+      );
 
-    layer.className = "mx-post-menu-layer";
-    layer.id = "mexa-post-menu";
+    layer.className =
+      "mx-post-menu-layer";
 
-    const avatar = getPostAvatar(post);
-    const name = getPostName(post);
+    layer.id =
+      "mexa-post-menu";
 
-    const avatarHTML = avatar
-      ? `<img src="${escapeHTML(avatar)}" alt="">`
-      : escapeHTML(
-          String(name).trim().charAt(0).toUpperCase() || "M"
-        );
+    const avatar =
+      getPostAvatar(post);
+
+    const name =
+      getPostName(post);
+
+    const avatarHTML =
+      avatar
+        ? `
+          <img
+            src="${escapeHTML(avatar)}"
+            alt=""
+          >
+        `
+        : escapeHTML(
+            String(name)
+              .trim()
+              .charAt(0)
+              .toUpperCase() ||
+              "M"
+          );
 
     layer.innerHTML = `
       <div
@@ -813,15 +910,19 @@
           </div>
 
           <div class="mx-post-menu-user">
+
             <div class="mx-post-menu-user-name">
               ${escapeHTML(name)}
             </div>
 
             <div class="mx-post-menu-user-sub">
-              ${owner
-                ? "Postingan Anda"
-                : "Menu postingan MEXA"}
+              ${
+                owner
+                  ? "Postingan Anda"
+                  : "Menu postingan MEXA"
+              }
             </div>
+
           </div>
 
           <button
@@ -847,39 +948,44 @@
               action: "share",
               icon: ICONS.share,
               title: "Bagikan",
-              description: "Bagikan postingan ke MEXA",
+              description:
+                "Bagikan postingan ke MEXA"
             }).outerHTML}
 
             ${createItem({
               action: "friend",
               icon: ICONS.friend,
               title: "Bagikan ke teman",
-              description: "Kirim postingan ke teman MEXA",
+              description:
+                "Kirim postingan ke teman MEXA"
             }).outerHTML}
 
             ${createItem({
               action: "group",
               icon: ICONS.group,
               title: "Bagikan ke grup",
-              description: "Bagikan ke komunitas atau grup",
+              description:
+                "Bagikan ke komunitas atau grup"
             }).outerHTML}
 
             ${createItem({
               action: "media",
               icon: ICONS.media,
-              title: "Bagikan ke media lain",
-              description: "Gunakan aplikasi lain di perangkat",
+              title:
+                "Bagikan ke media lain",
+              description:
+                "Gunakan aplikasi lain di perangkat"
             }).outerHTML}
 
             ${createItem({
               action: "copy",
               icon: ICONS.copy,
               title: "Salin link",
-              description: "Salin tautan postingan",
+              description:
+                "Salin tautan postingan"
             }).outerHTML}
 
           </div>
-
         </div>
 
         ${
@@ -894,15 +1000,19 @@
                 ${createItem({
                   action: "edit",
                   icon: ICONS.edit,
-                  title: "Edit postingan",
-                  description: "Ubah isi postingan Anda",
+                  title:
+                    "Edit postingan",
+                  description:
+                    "Ubah isi postingan Anda"
                 }).outerHTML}
 
                 ${createItem({
                   action: "delete",
                   icon: ICONS.delete,
-                  title: "Hapus postingan",
-                  description: "Hapus postingan ini dari MEXA",
+                  title:
+                    "Hapus postingan",
+                  description:
+                    "Hapus postingan ini dari MEXA",
                   danger: true
                 }).outerHTML}
 
@@ -918,8 +1028,10 @@
                 ${createItem({
                   action: "report",
                   icon: ICONS.report,
-                  title: "Laporkan postingan",
-                  description: "Beri tahu MEXA jika ada masalah",
+                  title:
+                    "Laporkan postingan",
+                  description:
+                    "Beri tahu MEXA jika ada masalah",
                   danger: true
                 }).outerHTML}
 
@@ -938,17 +1050,27 @@
       </div>
     `;
 
-    document.body.appendChild(layer);
+    document.body.appendChild(
+      layer
+    );
 
-    menuRoot = layer;
+    menuRoot =
+      layer;
 
-    requestAnimationFrame(() => {
-      layer.classList.add("is-open");
-    });
+    requestAnimationFrame(
+      () => {
+        layer.classList.add(
+          "is-open"
+        );
+      }
+    );
 
-    bindMenuEvents(layer);
+    bindMenuEvents(
+      layer
+    );
 
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow =
+      "hidden";
   }
 
   /* =========================================================
@@ -956,190 +1078,225 @@
      ========================================================= */
 
   function bindMenuEvents(layer) {
-    layer.addEventListener("click", function (event) {
 
-      const closeTarget =
-        event.target.closest("[data-menu-close]");
+    layer.addEventListener(
+      "click",
+      function (event) {
 
-      if (closeTarget) {
-        closePostMenu();
-        return;
+        const closeTarget =
+          event.target.closest(
+            "[data-menu-close]"
+          );
+
+        if (closeTarget) {
+          closePostMenu();
+          return;
+        }
+
+        const item =
+          event.target.closest(
+            ".mx-post-menu-item"
+          );
+
+        if (!item) return;
+
+        handleAction(
+          item.dataset.action
+        );
       }
-
-      const item =
-        event.target.closest(".mx-post-menu-item");
-
-      if (!item) return;
-
-      const action = item.dataset.action;
-
-      handleAction(action);
-    });
+    );
   }
 
   /* =========================================================
-     ACTION ROUTER
+     ACTION
      ========================================================= */
 
   function handleAction(action) {
-    const post = activePost;
+
+    const post =
+      activePost;
 
     if (!post) return;
 
-    /*
-      MENU DITUTUP DULU
-      sebelum membuka modul berikutnya.
-    */
     closePostMenu();
 
-    /* =========================
-       EDIT
-       ========================= */
+    /* EDIT */
 
     if (action === "edit") {
 
       if (!isOwner(post)) {
-        showToast("Anda tidak memiliki akses edit.");
+        showToast(
+          "Anda tidak memiliki akses edit."
+        );
         return;
       }
 
       if (
-        typeof window.openPostEditor === "function"
+        typeof window.openPostEditor ===
+        "function"
       ) {
-        window.openPostEditor(post);
+        window.openPostEditor(
+          post
+        );
         return;
       }
 
       window.dispatchEvent(
-        new CustomEvent("mexa:edit-post", {
-          detail: { post }
-        })
+        new CustomEvent(
+          "mexa:edit-post",
+          {
+            detail: { post }
+          }
+        )
       );
 
       return;
     }
 
-    /* =========================
-       DELETE
-       ========================= */
+    /* DELETE */
 
     if (action === "delete") {
 
       if (!isOwner(post)) {
-        showToast("Anda tidak memiliki akses hapus.");
+        showToast(
+          "Anda tidak memiliki akses hapus."
+        );
         return;
       }
 
       window.dispatchEvent(
-        new CustomEvent("mexa:delete-post", {
-          detail: { post }
-        })
+        new CustomEvent(
+          "mexa:delete-post",
+          {
+            detail: { post }
+          }
+        )
       );
 
       return;
     }
 
-    /* =========================
-       SHARE
-       ========================= */
+    /* SHARE */
 
     if (action === "share") {
 
       if (
-        typeof window.mexaSharePost === "function"
+        typeof window.mexaSharePost ===
+        "function"
       ) {
-        window.mexaSharePost(post);
+        window.mexaSharePost(
+          post
+        );
       } else {
         window.dispatchEvent(
-          new CustomEvent("mexa:share-post", {
-            detail: { post }
-          })
+          new CustomEvent(
+            "mexa:share-post",
+            {
+              detail: { post }
+            }
+          )
         );
       }
 
       return;
     }
 
-    /* =========================
-       FRIEND
-       ========================= */
+    /* FRIEND */
 
     if (action === "friend") {
 
       if (
-        typeof window.openShareToFriend === "function"
+        typeof window.openShareToFriend ===
+        "function"
       ) {
-        window.openShareToFriend(post);
+        window.openShareToFriend(
+          post
+        );
       } else {
         window.dispatchEvent(
-          new CustomEvent("mexa:share-to-friend", {
-            detail: { post }
-          })
+          new CustomEvent(
+            "mexa:share-to-friend",
+            {
+              detail: { post }
+            }
+          )
         );
       }
 
       return;
     }
 
-    /* =========================
-       GROUP
-       ========================= */
+    /* GROUP */
 
     if (action === "group") {
 
       if (
-        typeof window.openShareToGroup === "function"
+        typeof window.openShareToGroup ===
+        "function"
       ) {
-        window.openShareToGroup(post);
+        window.openShareToGroup(
+          post
+        );
       } else {
         window.dispatchEvent(
-          new CustomEvent("mexa:share-to-group", {
-            detail: { post }
-          })
+          new CustomEvent(
+            "mexa:share-to-group",
+            {
+              detail: { post }
+            }
+          )
         );
       }
 
       return;
     }
 
-    /* =========================
-       MEDIA LAIN
-       ========================= */
+    /* MEDIA */
 
     if (action === "media") {
 
       if (
-        typeof window.mexaShareToOtherMedia === "function"
+        typeof window.mexaShareToOtherMedia ===
+        "function"
       ) {
-        window.mexaShareToOtherMedia(post);
+        window.mexaShareToOtherMedia(
+          post
+        );
       } else {
         window.dispatchEvent(
-          new CustomEvent("mexa:share-to-media", {
-            detail: { post }
-          })
+          new CustomEvent(
+            "mexa:share-to-media",
+            {
+              detail: { post }
+            }
+          )
         );
       }
 
       return;
     }
 
-    /* =========================
-       COPY LINK
-       ========================= */
+    /* COPY */
 
     if (action === "copy") {
 
       if (
-        typeof window.mexaCopyPostLink === "function"
+        typeof window.mexaCopyPostLink ===
+        "function"
       ) {
-        window.mexaCopyPostLink(post);
+        window.mexaCopyPostLink(
+          post
+        );
         return;
       }
 
-      const postId = getPostId(post);
+      const postId =
+        getPostId(post);
 
       if (!postId) {
-        showToast("Link postingan belum tersedia.");
+        showToast(
+          "Link postingan belum tersedia."
+        );
         return;
       }
 
@@ -1147,36 +1304,46 @@
         window.location.origin +
         window.location.pathname +
         "?post=" +
-        encodeURIComponent(postId);
+        encodeURIComponent(
+          postId
+        );
 
       if (
         navigator.clipboard &&
         navigator.clipboard.writeText
       ) {
-        navigator.clipboard.writeText(url)
+        navigator.clipboard
+          .writeText(url)
           .then(() => {
-            showToast("Link postingan berhasil disalin.");
+            showToast(
+              "Link postingan berhasil disalin."
+            );
           })
           .catch(() => {
-            showToast("Tidak dapat menyalin link.");
+            showToast(
+              "Tidak dapat menyalin link."
+            );
           });
       } else {
-        showToast("Fitur salin tidak tersedia.");
+        showToast(
+          "Fitur salin tidak tersedia."
+        );
       }
 
       return;
     }
 
-    /* =========================
-       REPORT
-       ========================= */
+    /* REPORT */
 
     if (action === "report") {
 
       window.dispatchEvent(
-        new CustomEvent("mexa:report-post", {
-          detail: { post }
-        })
+        new CustomEvent(
+          "mexa:report-post",
+          {
+            detail: { post }
+          }
+        )
       );
 
       return;
@@ -1184,13 +1351,18 @@
   }
 
   /* =========================================================
-     CLOSE MENU
+     CLOSE
      ========================================================= */
 
-  function closePostMenu(immediate = false) {
+  function closePostMenu(
+    immediate = false
+  ) {
+
     const layer =
       menuRoot ||
-      document.getElementById("mexa-post-menu");
+      document.getElementById(
+        "mexa-post-menu"
+      );
 
     if (!layer) return;
 
@@ -1198,18 +1370,27 @@
 
     if (immediate) {
       layer.remove();
-      document.body.style.overflow = "";
+      document.body.style.overflow =
+        "";
       return;
     }
 
-    layer.classList.remove("is-open");
+    layer.classList.remove(
+      "is-open"
+    );
 
     setTimeout(() => {
-      if (layer && layer.parentNode) {
+
+      if (
+        layer &&
+        layer.parentNode
+      ) {
         layer.remove();
       }
 
-      document.body.style.overflow = "";
+      document.body.style.overflow =
+        "";
+
     }, 300);
   }
 
@@ -1217,28 +1398,36 @@
      ESC
      ========================================================= */
 
-  document.addEventListener("keydown", function (event) {
+  document.addEventListener(
+    "keydown",
+    function (event) {
 
-    if (event.key !== "Escape") return;
+      if (
+        event.key === "Escape" &&
+        menuRoot
+      ) {
+        closePostMenu();
+      }
 
-    if (menuRoot) {
-      closePostMenu();
     }
-
-  });
+  );
 
   /* =========================================================
      PUBLIC API
      ========================================================= */
 
-  window.openPostMenu = openPostMenu;
-  window.closePostMenu = closePostMenu;
+  window.openPostMenu =
+    openPostMenu;
+
+  window.closePostMenu =
+    closePostMenu;
 
   window.MEXAPostMenu = {
     open: openPostMenu,
     close: closePostMenu,
-    isOwner: isOwner,
-    getPostId: getPostId
+    isOwner,
+    getPostId,
+    resolvePost
   };
 
 })();
