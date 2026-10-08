@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MEXA — Profil</title>
+
+<style>
+:root{
+  --bg:#050611;
+  --bg2:#090b20;
+  --card:rgba(13,16,38,.88);
+  --card2:rgba(20,23,50,.72);
+  --text:#fff;
+  --muted:#aeb2c9;
+  --line:rgba(125,113,255,.18);
+  --purple:#7358ff;
+  --blue:#387cff;
+  --green:#43e39a;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 20%,rgba(62,63,255,.18),transparent 28%),
+    radial-gradient(circle at 85% 70%,rgba(125,45,255,.16),transparent 30%),
+    linear-gradient(135deg,var(--bg),var(--bg2));
+  min-height:100vh;
+}
+
+/* BACKGROUND */
+.bg-glow{
+  position:fixed;
+  width:280px;
+  height:280px;
+  border-radius:50%;
+  filter:blur(90px);
+  pointer-events:none;
+  opacity:.3;
+}
+
+.g1{background:#4d42ff;top:-100px;left:-100px}
+.g2{background:#176bff;right:-100px;bottom:-100px}
+
+/* HEADER */
+.mx-header{
+  height:66px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+  background:rgba(5,6,17,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* LOGO MEXA */
+.logo{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  cursor:pointer;
+  user-select:none;
+}
+
+.logo-m,.logo-x,.logo-a{
+  font-size:25px;
+  font-weight:950;
+  line-height:1;
+}
+
+.logo-m,.logo-a{color:#fff}
+
+.logo-x{
+  color:#765cff;
+  text-shadow:0 0 15px #765cff;
+}
+
+/* E 3 GARIS KECIL */
+.logo-e{
+  width:14px;
+  height:17px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.logo-e i{
+  display:block;
+  width:13px;
+  height:2px;
+  border-radius:2px;
+  background:#fff;
+  box-shadow:0 0 7px rgba(255,255,255,.45);
+}
+
+.divider{
+  height:27px;
+  width:1px;
+  background:var(--line);
+  margin:0 4px;
+}
+
+/* HEADER ACTION */
+.head-btn{
+  border:0;
+  background:transparent;
+  color:#fff;
+  padding:8px 9px;
+  border-radius:9px;
+  font-weight:750;
+  cursor:pointer;
+}
+
+.head-btn:hover{
+  background:rgba(255,255,255,.07);
+}
+
+.live-head{
+  color:#ff5f70;
+}
+
+.home-btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:#fff;
+  padding:9px 13px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:750;
+}
+
+/* PAGE */
+.page{
+  width:min(1120px,calc(100% - 28px));
+  margin:22px auto 60px;
+}
+
+/* COVER */
+.cover{
+  height:270px;
+  border-radius:22px 22px 0 0;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 70% 25%,rgba(91,75,255,.5),transparent 28%),
+    linear-gradient(135deg,#101329,#15183b 50%,#31206b);
+  border:1px solid var(--line);
+}
+
+.cover:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(120deg,transparent 30%,rgba(115,88,255,.14),transparent 70%);
+}
+
+/* PROFILE */
+.profile{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-top:0;
+  border-radius:0 0 20px 20px;
+  padding:0 26px 20px;
+  box-shadow:0 15px 50px rgba(0,0,0,.22);
+}
+
+.profile-top{
+  display:flex;
+  align-items:flex-end;
+  gap:17px;
+  position:relative;
+  margin-top:-55px;
+  z-index:2;
+}
+
+.avatar{
+  width:112px;
+  height:112px;
+  border-radius:50%;
+  border:4px solid #101329;
+  background:linear-gradient(135deg,#25294c,#765cff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:38px;
+  font-weight:900;
+  box-shadow:0 0 28px rgba(100,80,255,.28);
+}
+
+.identity{
+  flex:1;
+  padding-bottom:7px;
+}
+
+.name{
+  font-size:27px;
+  font-weight:850;
+}
+
+.username{
+  color:var(--muted);
+  margin-top:3px;
+  font-size:14px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  padding-bottom:7px;
+}
+
+.btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.055);
+  color:#fff;
+  padding:10px 15px;
+  border-radius:10px;
+  font-weight:750;
+  cursor:pointer;
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,#624eff,#367cff);
+  border:0;
+  box-shadow:0 0 18px rgba(91,76,255,.25);
+}
+
+.btn.following{
+  background:rgba(67,227,154,.12);
+  border-color:rgba(67,227,154,.35);
+  color:#61efa8;
+}
+
+/* INFO */
+.info{
+  margin-top:20px;
+}
+
+.label{
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px;
+  color:#fff;
+}
+
+.ruang{
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.details{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  margin-top:13px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:14px;
+}
+
+.tag{
+  padding:6px 10px;
+  border:1px solid var(--line);
+  background:rgba(115,88,255,.09);
+  color:#c5c0ff;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:750;
+}
+
+.links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:14px;
+}
+
+.links a{
+  color:#8e82ff;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:700;
+}
+
+/* STATS */
+.stats{
+  display:flex;
+  gap:32px;
+  padding-top:18px;
+  margin-top:18px;
+  border-top:1px solid var(--line);
+}
+
+.stat strong{
+  display:block;
+  font-size:19px;
+}
+
+.stat span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* TABS */
+.tabs{
+  display:flex;
+  gap:4px;
+  margin-top:18px;
+  border-bottom:1px solid var(--line);
+}
+
+.tab{
+  border:0;
+  background:none;
+  color:var(--muted);
+  padding:12px 16px;
+  font-weight:750;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+}
+
+.tab.active{
+  color:#fff;
+  border-bottom-color:#7358ff;
+}
+
+/* FEATURE ACTIONS */
+.creator-tools{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+}
+
+.tool{
+  flex:1;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:#fff;
+  border-radius:14px;
+  padding:15px;
+  text-align:left;
+  cursor:pointer;
+}
+
+.tool:hover{
+  background:rgba(115,88,255,.09);
+}
+
+.tool-icon{
+  font-size:20px;
+  margin-bottom:7px;
+}
+
+.tool-title{
+  font-weight:800;
+}
+
+.tool-desc{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+
+/* CONTENT */
+.content{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:16px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:19px;
+}
+
+.card h3{
+  margin:0 0 13px;
+  font-size:16px;
+}
+
+.empty{
+  color:var(--muted);
+  background:rgba(255,255,255,.035);
+  border-radius:12px;
+  padding:22px;
+  text-align:center;
+  font-size:12px;
+}
+
+/* LIVE LOCK */
+.live-locked{
+  border-color:rgba(255,95,112,.16);
+}
+
+.live-status{
+  color:#ff7a88;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+  .mx-header{
+    padding:0 11px;
+  }
+
+  .head-btn{
+    padding:7px 5px;
+    font-size:12px;
+  }
+
+  .home-btn{
+    padding:8px 9px;
+    font-size:12px;
+  }
+
+  .page{
+    width:calc(100% - 16px);
+    margin-top:10px;
+  }
+
+  .cover{
+    height:190px;
+    border-radius:16px 16px 0 0;
+  }
+
+  .profile{
+    padding:0 15px 18px;
+  }
+
+  .profile-top{
+    flex-direction:column;
+    align-items:flex-start;
+    margin-top:-48px;
+  }
+
+  .avatar{
+    width:96px;
+    height:96px;
+  }
+
+  .identity{
+    width:100%;
+  }
+
+  .name{
+    font-size:23px;
+  }
+
+  .actions{
+    width:100%;
+  }
+
+  .actions .btn{
+    flex:1;
+  }
+
+  .creator-tools{
+    flex-direction:column;
+  }
+
+  .content{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-glow g1"></div>
+<div class="bg-glow g2"></div>
+
+
+<header class="mx-header">
+
+  <div class="header-left">
+
+    <div class="logo" onclick="goHome()">
+      <span class="logo-m">M</span>
+
+      <span class="logo-e">
+        <i></i>
+        <i></i>
+        <i></i>
+      </span>
+
+      <span class="logo-x">X</span>
+      <span class="logo-a">A</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="head-btn" onclick="openReels()">
+      🎬 Reels
+    </button>
+
+    <button class="head-btn live-head" onclick="openLive()">
+      🔴 Live
+    </button>
+
+  </div>
+
+  <button class="home-btn" onclick="goHome()">
+    ← Home
+  </button>
+
+</header>
+
+
+<main class="page">
+
+  <section class="cover"></section>
+
+  <section class="profile">
+
+    <div class="profile-top">
+
+      <div class="avatar">M</div>
+
+      <div class="identity">
+        <div class="name" id="profileName">Santri MEXA</div>
+        <div class="username" id="profileUsername">@santrimexa</div>
+      </div>
+
+      <div class="actions" id="profileActions"></div>
+
+    </div>
+
+
+    <div class="info">
+
+      <div class="label">Ruang</div>
+
+      <div class="ruang">
+        Selamat datang di ruang MEXA saya.
+        Di sini saya berbagi karya, cerita, dan berbagai hal yang saya sukai.
+      </div>
+
+      <div class="details">
+        <span>📍 Sukabumi, Jawa Barat</span>
+        <span>• Bergabung di MEXA</span>
+      </div>
+
+      <div class="tags">
+        <span class="tag">Content Creator</span>
+        <span class="tag">Teknologi</span>
+        <span class="tag">AI Kreatif</span>
+      </div>
+
+      <div class="links">
+        <a href="#">YouTube</a>
+        <a href="#">Facebook</a>
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Website</a>
+      </div>
+
+      <div class="stats">
+
+        <div class="stat">
+          <strong id="followersCount">128</strong>
+          <span>Terhubung</span>
+        </div>
+
+        <div class="stat">
+          <strong>48</strong>
+          <span>Teman</span>
+        </div>
+
+        <div class="stat">
+          <strong>24</strong>
+          <span>Postingan</span>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="tabs">
+
+      <button class="tab active">Postingan</button>
+      <button class="tab">Media</button>
+      <button class="tab">Reels</button>
+
+    </div>
+
+
+    <!-- FITUR OTOMATIS -->
+    <div class="creator-tools" id="creatorTools"></div>
+
+  </section>
+
+
+  <section class="content">
+
+    <div class="card">
+      <h3>Unggulan</h3>
+      <div class="empty">
+        Konten unggulan akan muncul di sini.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Media</h3>
+      <div class="empty">
+        Foto dan video akan muncul di sini.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Teman</h3>
+      <div class="empty">
+        Teman MEXA akan muncul di sini.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Komunitas</h3>
+      <div class="empty">
+        Komunitas yang diikuti akan muncul di sini.
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+/*
+====================================================
+ MEXA PROFILE AUTO SYSTEM
+====================================================
+
+Nanti nilai ini diambil dari Supabase/Auth.
+
+isOwner:
+  true  = pemilik profil
+  false = orang lain
+
+isFollowing:
+  true  = sudah mengikuti
+  false = belum
+
+canLive:
+  true  = memenuhi syarat Live
+  false = belum memenuhi syarat
+
+====================================================
+*/
+
+/* DEMO STATE */
+
+const MEXA_PROFILE = {
+
+  userId: "profile-user-id",
+
+  isOwner: false,
+
+  isFollowing: false,
+
+  canLive: false,
+
+  followers:128
+
+};
+
+
+/* =========================
+   RENDER PROFILE
+========================= */
+
+function renderProfile(){
+
+  const actions =
+    document.getElementById("profileActions");
+
+  const tools =
+    document.getElementById("creatorTools");
+
+  actions.innerHTML = "";
+  tools.innerHTML = "";
+
+
+  /* =====================
+     PEMILIK PROFIL
+  ===================== */
+
+  if(MEXA_PROFILE.isOwner){
+
+    actions.innerHTML = `
+      <button
+        class="btn primary"
+        onclick="editProfile()">
+        Edit Profil
+      </button>
+
+      <button
+        class="btn"
+        onclick="profileMenu()">
+        •••
+      </button>
+    `;
+
+
+    /* REELS */
+
+    tools.innerHTML += `
+      <button
+        class="tool"
+        onclick="createReels()">
+
+        <div class="tool-icon">🎬</div>
+
+        <div class="tool-title">
+          + Buat Reels
+        </div>
+
+        <div class="tool-desc">
+          Bagikan video pendek ke MEXA
+        </div>
+
+      </button>
+    `;
+
+
+    /* LIVE */
+
+    if(MEXA_PROFILE.canLive){
+
+      tools.innerHTML += `
+        <button
+          class="tool"
+          onclick="startLive()">
+
+          <div class="tool-icon">🔴</div>
+
+          <div class="tool-title">
+            + Mulai Live
+          </div>
+
+          <div class="tool-desc">
+            Mulai siaran langsung di MEXA
+          </div>
+
+        </button>
+      `;
+
+    }else{
+
+      tools.innerHTML += `
+        <button
+          class="tool live-locked"
+          onclick="liveRequirements()">
+
+          <div class="tool-icon">🔒</div>
+
+          <div class="tool-title">
+            Live Belum Aktif
+          </div>
+
+          <div class="tool-desc live-status">
+            Syarat Live belum terpenuhi
+          </div>
+
+        </button>
+      `;
+    }
+
+  }
+
+
+  /* =====================
+     PENGUNJUNG
+  ===================== */
+
+  else{
+
+    actions.innerHTML = `
+
+      <button
+        id="followButton"
+        class="btn primary"
+        onclick="toggleFollow()">
+
+        ${MEXA_PROFILE.isFollowing
+          ? "✓ Mengikuti"
+          : "+ Ikuti"}
+
+      </button>
+
+      <button
+        class="btn"
+        onclick="sendMessage()">
+
+        💬 Pesan
+
+      </button>
+
+      <button
+        class="btn"
+        onclick="profileMenu()">
+
+        •••
+
+      </button>
+    `;
+
+
+    /* ORANG LAIN BISA MELIHAT REELS */
+
+    tools.innerHTML += `
+      <button
+        class="tool"
+        onclick="openProfileReels()">
+
+        <div class="tool-icon">🎬</div>
+
+        <div class="tool-title">
+          Reels
+        </div>
+
+        <div class="tool-desc">
+          Lihat Reels akun ini
+        </div>
+
+      </button>
+    `;
+
+  }
+
+}
+
+
+/* =========================
+   FOLLOW
+========================= */
+
+async function toggleFollow(){
+
+  const button =
+    document.getElementById("followButton");
+
+  if(!button) return;
+
+
+  /* DEMO */
+
+  if(MEXA_PROFILE.isFollowing){
+
+    /*
+      NANTI:
+      mexa-api
+      action = unfollow_user
+    */
+
+    MEXA_PROFILE.isFollowing = false;
+
+    MEXA_PROFILE.followers =
+      Math.max(0,MEXA_PROFILE.followers - 1);
+
+  }else{
+
+    /*
+      NANTI:
+      mexa-api
+      action = follow_user
+    */
+
+    MEXA_PROFILE.isFollowing = true;
+
+    MEXA_PROFILE.followers++;
+
+  }
+
+
+  document.getElementById("followersCount")
+    .textContent = MEXA_PROFILE.followers;
+
+  renderProfile();
+
+}
+
+
+/* =========================
+   REELS
+========================= */
+
+function createReels(){
+
+  alert(
+    "Buat Reels MEXA akan membuka halaman pembuatan Reels."
+  );
+
+}
+
+function openProfileReels(){
+
+  alert(
+    "Membuka Reels akun ini."
+  );
+
+}
+
+function openReels(){
+
+  alert(
+    "Membuka Reels MEXA."
+  );
+
+}
+
+
+/* =========================
+   LIVE
+========================= */
+
+function startLive(){
+
+  if(!MEXA_PROFILE.canLive){
+
+    liveRequirements();
+    return;
+
+  }
+
+  alert(
+    "Membuka ruang Live MEXA."
+  );
+
+}
+
+function openLive(){
+
+  if(MEXA_PROFILE.isOwner){
+
+    if(MEXA_PROFILE.canLive){
+
+      startLive();
+
+    }else{
+
+      liveRequirements();
+
+    }
+
+  }else{
+
+    alert(
+      "Halaman Live MEXA."
+    );
+
+  }
+
+}
+
+function liveRequirements(){
+
+  alert(
+    "Live belum aktif. Akun harus memenuhi persyaratan Live MEXA."
+  );
+
+}
+
+
+/* =========================
+   PROFILE
+========================= */
+
+function editProfile(){
+
+  alert("Membuka Edit Profil MEXA.");
+
+}
+
+function profileMenu(){
+
+  alert("Menu profil.");
+
+}
+
+function sendMessage(){
+
+  alert("Membuka pesan.");
+
+}
+
+
+/* =========================
+   HOME
+========================= */
+
+function goHome(){
+
+  window.location.href =
+    "https://mexa-plafrom.github.io/mexa/";
+
+}
+
+
+/* =========================
+   JALANKAN
+========================= */
+
+renderProfile();
+
+</script>
+
+</body>
+</html>
+```
