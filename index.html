@@ -2260,200 +2260,214 @@
 
     }
 
+/* ==========================================
+   STORIES MEXA — FINAL
+   URUTAN:
+   1. + Buat Cerita
+   2. Posting terbaru milik sendiri — 1 saja
+   3. Posting terbaru pengguna lain
+   4. Posting berikutnya dari pengguna lain
+========================================== */
 
-    /* ==========================================
-       STORIES — OTOMATIS DARI POSTS
-    ========================================== */
+async function loadStories() {
 
-    async function loadStories() {
+  const container =
+    document.getElementById("storiesContainer");
 
-      const container =
-        document.getElementById(
-          "storiesContainer"
-        );
+  if (!container) return;
 
-      container.innerHTML = `
-        <div class="mx-story-empty">
-          Memuat cerita...
+  container.innerHTML = `
+    <div class="mx-story-empty">
+      Memuat cerita...
+    </div>
+  `;
+
+  const {
+    data: posts,
+    error
+  } = await supabaseClient
+    .from("posts")
+    .select(`
+      id,
+      user_id,
+      content,
+      image_url,
+      created_at
+    `)
+    .order("created_at", {
+      ascending: false
+    })
+    .limit(50);
+
+  if (error) {
+
+    console.error(
+      "Gagal mengambil cerita:",
+      error
+    );
+
+    container.innerHTML = `
+      <div class="mx-story-empty">
+        Cerita belum bisa dimuat.
+      </div>
+    `;
+
+    return;
+  }
+
+  let html = `
+    <div
+      class="mx-story mx-story-add"
+      onclick="openCreateModal()"
+    >
+      <div class="mx-story-add-top">
+        <div class="mx-add-circle">
+          +
         </div>
-      `;
+      </div>
 
+      <div class="mx-story-add-bottom">
+        Buat cerita
+      </div>
+    </div>
+  `;
 
-      /*
-        Ambil postingan terbaru langsung
-        dari Supabase.
+  if (!posts || posts.length === 0) {
+    container.innerHTML = html;
+    return;
+  }
 
-        Jadi tidak menggunakan cerita
-        statis lagi.
-      */
+  /* ==========================================
+     POSTINGAN SAYA
+     Ambil HANYA yang paling baru
+  ========================================== */
 
-      const {
-        data: posts,
-        error
-      } = await supabaseClient
-        .from("posts")
-        .select(`
-          id,
-          user_id,
-          content,
-          image_url,
-          created_at
-        `)
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        )
-        .limit(20);
+  const myPosts = posts
+    .filter(post =>
+      post.user_id === currentUser?.id
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.created_at) -
+        new Date(a.created_at)
+    );
 
+  /* ==========================================
+     POSTINGAN ORANG LAIN
+     Semua diurutkan terbaru
+  ========================================== */
 
-      if (error) {
+  const otherPosts = posts
+    .filter(post =>
+      post.user_id !== currentUser?.id
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.created_at) -
+        new Date(a.created_at)
+    );
 
-        console.error(
-          "Gagal mengambil cerita:",
-          error
-        );
+  /* ==========================================
+     SUSUN STORY
 
-        container.innerHTML = `
-          <div class="mx-story-empty">
-            Cerita belum bisa dimuat.
-          </div>
-        `;
+     + Buat Cerita
+     ↓
+     Posting terbaru saya
+     ↓
+     Posting terbaru orang lain
+     ↓
+     Posting berikutnya
+  ========================================== */
 
-        return;
-      }
+  const storyPosts = [];
 
+  if (myPosts.length > 0) {
+    storyPosts.push(myPosts[0]);
+  }
 
-      /*
-        Selalu tampilkan tombol
-        Buat Cerita.
-      */
+  storyPosts.push(...otherPosts);
 
-      let html = `
-        <div
-          class="mx-story mx-story-add"
-          onclick="openCreateModal()"
-        >
-          <div class="mx-story-add-top">
-            <div class="mx-add-circle">
-              +
-            </div>
-          </div>
+  /* ==========================================
+     AMBIL PROFILE USER STORY
+  ========================================== */
 
-          <div class="mx-story-add-bottom">
-            Buat cerita
-          </div>
-        </div>
-      `;
+  const userIds = [
+    ...new Set(
+      storyPosts
+        .map(post => post.user_id)
+        .filter(Boolean)
+    )
+  ];
 
+  let profiles = [];
 
-      if (!posts || !posts.length) {
+  if (userIds.length > 0) {
 
-        html += `
-          <div class="mx-story-empty">
-            Belum ada postingan yang bisa ditampilkan sebagai cerita.
-          </div>
-        `;
+    const {
+      data,
+      error: profileError
+    } = await supabaseClient
+      .from("profiles")
+      .select(`
+        id,
+        username,
+        display_name,
+        avatar_url
+      `)
+      .in(
+        "id",
+        userIds
+      );
 
-        container.innerHTML = html;
+    if (profileError) {
 
-        return;
-      }
+      console.error(
+        "Profil cerita gagal:",
+        profileError
+      );
 
+    } else {
 
-      /*
-        Ambil semua user pemilik postingan.
-      */
-
-      const userIds =
-        [
-          ...new Set(
-            posts
-              .map(post => post.user_id)
-              .filter(Boolean)
-          )
-        ];
-
-
-      let profiles = [];
-
-
-      if (userIds.length) {
-
-        const {
-          data,
-          error: profileError
-        } = await supabaseClient
-          .from("profiles")
-          .select(`
-            id,
-            username,
-            display_name,
-            avatar_url
-          `)
-          .in(
-            "id",
-            userIds
-          );
-
-        if (!profileError) {
-
-          profiles = data || [];
-
-        } else {
-
-          console.error(
-            "Profil cerita gagal:",
-            profileError
-          );
-
-        }
-
-      }
-
-
-      const profileMap =
-        new Map(
-          profiles.map(
-            profile => [
-              profile.id,
-              profile
-            ]
-          )
-        );
-
-
-      /*
-        Setiap postingan menjadi
-        satu kartu Cerita.
-      */
-
-      posts.forEach(post => {
-
-        const profile =
-          profileMap.get(
-            post.user_id
-          ) || {
-            id: post.user_id,
-            username: "mexa",
-            display_name: "MEXA User",
-            avatar_url: ""
-          };
-
-
-        html +=
-          renderStoryCard(
-            post,
-            profile
-          );
-
-      });
-
-
-      container.innerHTML = html;
+      profiles = data || [];
 
     }
+  }
+
+  /* ==========================================
+     PROFILE MAP
+  ========================================== */
+
+  const profileMap =
+    new Map(
+      profiles.map(profile => [
+        profile.id,
+        profile
+      ])
+    );
+
+  /* ==========================================
+     RENDER STORY
+  ========================================== */
+
+  storyPosts.forEach(post => {
+
+    const profile =
+      profileMap.get(post.user_id) || {
+        id: post.user_id,
+        username: "mexa",
+        display_name: "MEXA User",
+        avatar_url: ""
+      };
+
+    html += renderStoryCard(
+      post,
+      profile
+    );
+
+  });
+
+  container.innerHTML = html;
+}
 
 
     /* ==========================================
