@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080612">
+  <title>Profil MEXA Hub</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080612;
+      --panel: #130d23;
+      --line: #382253;
+      --purple: #a855f7;
+      --blue: #36cfff;
+      --text: #f8f5ff;
+      --muted: #b4a7ca;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 12% 0%, #451675 0, transparent 38%),
+        radial-gradient(ellipse at 100% 35%, #092e50 0, transparent 35%),
+        var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 5%;
+      background: rgba(8, 6, 18, .96);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .logo-m, .logo-a { color: #fff; }
+
+    .logo-x {
+      color: var(--blue);
+      text-shadow: 0 0 14px var(--blue);
+    }
+
+    .logo-e {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 15px;
+      height: 21px;
+      margin: 0 1px;
+    }
+
+    .logo-e span {
+      height: 4px;
+      width: 15px;
+      border-radius: 3px;
+      background: var(--purple);
+      box-shadow: 0 0 8px var(--purple);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav a, .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 15px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #ffffff08;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav a:hover, .btn:hover {
+      border-color: var(--blue);
+    }
+
+    .nav .home {
+      color: var(--blue);
+      border-color: #36cfff55;
+    }
+
+    .wrap {
+      width: min(960px, calc(100% - 28px));
+      margin: 28px auto 50px;
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(145deg, #171025, #0c0916);
+      box-shadow: 0 18px 60px #0007, 0 0 30px #a855f710;
+    }
+
+    .cover {
+      height: 210px;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 25% 40%, #a855f766, transparent 45%),
+        radial-gradient(ellipse at 80% 30%, #36cfff55, transparent 40%),
+        linear-gradient(120deg, #210c3c, #0b1a35, #25103b);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cover::after {
+      content: "MEXA • YOUR SPACE";
+      position: absolute;
+      right: 18px;
+      bottom: 16px;
+      color: #eee0ff;
+      letter-spacing: 3px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .body {
+      padding: 0 26px 26px;
+    }
+
+    .identity {
+      display: flex;
+      align-items: flex-end;
+      gap: 17px;
+      margin-top: -54px;
+      position: relative;
+    }
+
+    .avatar {
+      width: 108px;
+      height: 108px;
+      flex: 0 0 108px;
+      display: grid;
+      place-items: center;
+      border: 4px solid #130d23;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      box-shadow: 0 0 25px #a855f755;
+      color: white;
+      font-size: 36px;
+      font-weight: 900;
+    }
+
+    .identity h1 {
+      margin: 0 0 7px;
+      font-size: clamp(22px, 4vw, 31px);
+      overflow-wrap: anywhere;
+    }
+
+    .username {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 23px;
+    }
+
+    .btn {
+      min-height: 42px;
+    }
+
+    .primary {
+      background: linear-gradient(110deg, #8b35e8, #5944f5);
+      border-color: transparent;
+      box-shadow: 0 5px 18px #8738e833;
+    }
+
+    .cyan {
+      color: var(--blue);
+      border-color: #36cfff55;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .stat {
+      padding: 16px;
+      background: #ffffff05;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 21px;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .section {
+      margin-top: 22px;
+      padding: 18px;
+      background: #ffffff04;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+    }
+
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+    }
+
+    .section p {
+      margin: 0;
+      color: #d7cde8;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 9px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+
+    .tab {
+      padding: 10px 14px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+    }
+
+    .tab.active {
+      color: white;
+      background: #a855f722;
+      border: 1px solid #a855f744;
+    }
+
+    .empty {
+      margin-top: 15px;
+      padding: 34px 15px;
+      text-align: center;
+      border: 1px dashed #67418a;
+      border-radius: 15px;
+      background: #ffffff03;
+    }
+
+    .empty .symbol {
+      color: var(--blue);
+      font-size: 30px;
+    }
+
+    .empty h3 {
+      margin: 12px 0 8px;
+      font-size: 16px;
+    }
+
+    .empty p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 13px;
+      border: 1px solid #36cfff55;
+      border-radius: 12px;
+      color: #c7f2ff;
+      background: #36cfff10;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .message.show { display: block; }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: #9588a9;
+      font-size: 11px;
+    }
+
+    @media (max-width: 600px) {
+      .header { padding: 12px 14px; }
+      .nav { gap: 5px; }
+      .nav a { padding: 10px; }
+      .nav .label { display: none; }
+      .wrap { width: calc(100% - 18px); margin-top: 16px; }
+      .cover { height: 160px; }
+      .body { padding: 0 15px 18px; }
+      .identity { gap: 12px; margin-top: -43px; }
+      .avatar { width: 86px; height: 86px; flex-basis: 86px; font-size: 28px; }
+      .stats { gap: 7px; }
+      .stat { padding: 12px 8px; }
+      .stat strong { font-size: 18px; }
+      .stat span { font-size: 11px; }
+      .btn { padding: 10px 12px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <a class="logo" href="./index.html" aria-label="MEXA">
+      <span class="logo-m">M</span>
+      <span class="logo-e" aria-label="E">
+        <span></span><span></span><span></span>
+      </span>
+      <span class="logo-x">X</span>
+      <span class="logo-a">A</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./reels.html">🎬 <span class="label">Reels</span></a>
+      <a href="./live.html">🔴 <span class="label">Live</span></a>
+      <a class="home" href="./index.html">⌂ <span class="label">Home</span></a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <article class="card">
+      <div class="cover"></div>
+
+      <div class="body">
+        <div class="identity">
+          <div class="avatar" id="avatar">M</div>
+          <div>
+            <h1 id="displayName">Santri MEXA</h1>
+            <div class="username" id="username">@santrimexa</div>
+          </div>
+        </div>
+
+        <div class="actions" id="actions"></div>
+        <div class="message" id="message" role="status"></div>
+
+        <div class="stats">
+          <div class="stat">
+            <strong id="followers">—</strong>
+            <span>Terhubung</span>
+          </div>
+          <div class="stat">
+            <strong id="friends">—</strong>
+            <span>Teman</span>
+          </div>
+          <div class="stat">
+            <strong id="posts">0</strong>
+            <span>Postingan</span>
+          </div>
+        </div>
+
+        <section class="section">
+          <h2>Ruang</h2>
+          <p id="bio">Selamat datang di ruang MEXA-ku. Terus terhubung, berbagi, dan berkarya.</p>
+        </section>
+
+        <section class="section">
+          <div class="tabs">
+            <a class="tab active" href="#postingan">Postingan</a>
+            <a class="tab" href="./reels.html">Reels</a>
+          </div>
+
+          <div class="empty" id="postingan">
+            <div class="symbol">✦</div>
+            <h3>Ruang kreator</h3>
+            <p>Postingan akan muncul setelah profil dihubungkan ke database MEXA.</p>
+          </div>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer>© MEXA Hub · Ruang untuk terhubung dan berkarya.</footer>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const visitorMode = params.get("mode") === "visitor";
+
+    const profile = {
+      name: "Santri MEXA",
+      username: "santrimexa",
+      avatar: "M",
+      bio: "Selamat datang di ruang MEXA-ku. Terus terhubung, berbagi, dan berkarya."
+    };
+
+    document.getElementById("displayName").textContent = profile.name;
+    document.getElementById("username").textContent = "@" + profile.username;
+    document.getElementById("avatar").textContent = profile.avatar;
+    document.getElementById("bio").textContent = profile.bio;
+
+    const actions = document.getElementById("actions");
+    const message = document.getElementById("message");
+
+    function addButton(label, className, callback) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "btn " + className;
+      button.textContent = label;
+      button.addEventListener("click", callback);
+      actions.appendChild(button);
+    }
+
+    function inform(text) {
+      message.textContent = text;
+      message.classList.add("show");
+    }
+
+    if (visitorMode) {
+      addButton("+ Ikuti", "primary", () => {
+        inform("Follow belum tersambung ke database. Akun perlu divalidasi sebelum mengikuti profil.");
+      });
+      addButton("✉ Pesan", "", () => {
+        inform("Fitur Pesan akan dihubungkan pada tahap berikutnya.");
+      });
+      addButton("••• Menu", "", () => {
+        inform("Menu profil akan tersedia setelah fungsi profil dihubungkan.");
+      });
+    } else {
+      addButton("✎ Edit Profil", "primary", () => {
+        inform("Editor profil akan dihubungkan ke akun MEXA.");
+      });
+      addButton("+ Reels", "cyan", () => {
+        location.href = "./reels.html";
+      });
+      addButton("🔒 Live", "", () => {
+        inform("Fitur Live memerlukan pemeriksaan kelayakan akun.");
+      });
+    }
+  </script>
+</body>
+</html>
