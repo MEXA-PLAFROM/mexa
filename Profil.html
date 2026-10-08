@@ -489,16 +489,40 @@
                     placeholder="Ceritakan sedikit tentang dirimu"></textarea>
         </div>
 
-        <div class="field">
-          <label for="editAvatarUrl">URL foto profil (opsional)</label>
-          <input id="editAvatarUrl" type="url" placeholder="https://...">
-        </div>
+       
+<div class="field">
+  <label for="editAvatarFile">📸 Foto Profil</label>
+  <input
+    id="editAvatarFile"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+  >
+  <small style="color:#b4a7ca;line-height:1.6">
+    Pilih foto dari galeri HP atau komputer. Format JPG, PNG, atau WebP. Maksimal 5 MB.
+  </small>
+  <img
+    id="avatarPreview"
+    alt="Pratinjau foto profil"
+    style="display:none;width:100px;height:100px;object-fit:cover;border-radius:50%;border:2px solid #a855f7"
+  >
+</div>
 
-        <div class="field">
-          <label for="editCoverUrl">URL foto sampul (opsional)</label>
-          <input id="editCoverUrl" type="url" placeholder="https://...">
-        </div>
-
+<div class="field">
+  <label for="editCoverFile">🖼️ Foto Sampul / Banner</label>
+  <input
+    id="editCoverFile"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+  >
+  <small style="color:#b4a7ca;line-height:1.6">
+    Pilih gambar banner dari galeri. Format JPG, PNG, atau WebP. Maksimal 5 MB.
+  </small>
+  <img
+    id="coverPreview"
+    alt="Pratinjau foto sampul"
+    style="display:none;width:100%;max-height:150px;object-fit:cover;border-radius:12px;border:1px solid #382253"
+  >
+</div>
         <button type="submit" class="btn primary save-profile" id="saveProfile">
           Simpan Perubahan
         </button>
