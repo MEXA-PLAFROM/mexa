@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teman — MEXA</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #111;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  /* =========================================
+     HEADER
+     ========================================= */
+
+  .mexa-friends-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 18px;
+
+    background: rgba(255,255,255,.96);
+
+    backdrop-filter: blur(18px);
+
+    border-bottom: 1px solid rgba(0,0,0,.08);
+  }
+
+  .mexa-back {
+    width: 42px;
+    height: 42px;
+
+    border: 0;
+    border-radius: 14px;
+
+    background: #f0f1f3;
+
+    font-size: 23px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mexa-back:active {
+    transform: scale(.95);
+  }
+
+  /* =========================================
+     LOGO MEXA
+     ========================================= */
+
+  .mexa-logo {
+    display: flex;
+    align-items: center;
+
+    font-size: 23px;
+    font-weight: 900;
+
+    letter-spacing: -1px;
+  }
+
+  .mexa-logo-m,
+  .mexa-logo-e,
+  .mexa-logo-a {
+    color: #111;
+  }
+
+  .mexa-logo-x {
+    color: #ff315c;
+  }
+
+  /* E terdiri dari 3 strip */
+  .mexa-logo-e {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 3px;
+
+    width: 14px;
+    height: 20px;
+
+    margin: 0 1px;
+  }
+
+  .mexa-logo-e span {
+    display: block;
+    width: 14px;
+    height: 3px;
+    border-radius: 3px;
+    background: currentColor;
+  }
+
+  .mexa-page-title {
+    font-size: 19px;
+    font-weight: 750;
+  }
+
+  /* =========================================
+     CONTENT
+     ========================================= */
+
+  .mexa-friends-container {
+    width: min(680px, 100%);
+
+    margin: 0 auto;
+
+    padding: 22px 16px 50px;
+  }
+
+  .mexa-heading {
+    margin-bottom: 17px;
+  }
+
+  .mexa-heading h1 {
+    margin: 0;
+
+    font-size: 25px;
+  }
+
+  .mexa-heading p {
+    margin: 6px 0 0;
+
+    font-size: 14px;
+
+    color: #6c7078;
+  }
+
+  /* =========================================
+     SEARCH
+     ========================================= */
+
+  .mexa-search {
+    width: 100%;
+
+    border: 0;
+    outline: none;
+
+    padding: 14px 17px;
+
+    border-radius: 17px;
+
+    background: #e9ebef;
+
+    font-size: 15px;
+
+    margin-bottom: 18px;
+  }
+
+  .mexa-search:focus {
+    background: #e3e5e9;
+  }
+
+  /* =========================================
+     FRIEND LIST
+     ========================================= */
+
+  .mexa-friends-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+  }
+
+  .mexa-friend {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px;
+
+    border-radius: 18px;
+
+    background: #fff;
+
+    border: 1px solid rgba(0,0,0,.05);
+
+    cursor: pointer;
+
+    transition: .15s ease;
+  }
+
+  .mexa-friend:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(0,0,0,.06);
+  }
+
+  .mexa-friend:active {
+    transform: scale(.985);
+  }
+
+  .mexa-avatar {
+    width: 50px;
+    height: 50px;
+
+    flex: 0 0 50px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    background: #ddd;
+  }
+
+  .mexa-friend-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .mexa-friend-name {
+    font-size: 15px;
+    font-weight: 750;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mexa-friend-username {
+    margin-top: 4px;
+
+    font-size: 13px;
+
+    color: #777;
+  }
+
+  .mexa-select {
+    width: 24px;
+    height: 24px;
+
+    border: 2px solid #c8cbd1;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mexa-friend.selected .mexa-select {
+    border-color: #111;
+    background: #111;
+    color: #fff;
+  }
+
+  .mexa-friend.selected .mexa-select::after {
+    content: "✓";
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  /* =========================================
+     EMPTY
+     ========================================= */
+
+  .mexa-empty {
+    text-align: center;
+
+    padding: 70px 20px;
+
+    color: #777;
+  }
+
+  .mexa-empty-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+  }
+
+  .mexa-empty-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+  }
+
+  .mexa-empty-text {
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  /* =========================================
+     SEND BUTTON
+     ========================================= */
+
+  .mexa-send-bar {
+    position: fixed;
+
+    left: 50%;
+    bottom: 16px;
+
+    transform: translateX(-50%);
+
+    width: min(650px, calc(100% - 30px));
+
+    padding: 10px;
+
+    background: rgba(255,255,255,.94);
+
+    backdrop-filter: blur(18px);
+
+    border-radius: 19px;
+
+    box-shadow:
+      0 10px 35px rgba(0,0,0,.15);
+
+    display: none;
+
+    z-index: 200;
+  }
+
+  .mexa-send-bar.active {
+    display: block;
+  }
+
+  .mexa-send-button {
+    width: 100%;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    padding: 14px;
+
+    background: #111;
+
+    color: #fff;
+
+    font-size: 15px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+  }
+
+  .mexa-send-button:active {
+    transform: scale(.985);
+  }
+
+  /* =========================================
+     MOBILE
+     ========================================= */
+
+  @media (max-width: 600px) {
+
+    .mexa-friends-header {
+      height: 62px;
+      padding: 0 13px;
+    }
+
+    .mexa-logo {
+      font-size: 21px;
+    }
+
+    .mexa-page-title {
+      font-size: 17px;
+    }
+
+    .mexa-friends-container {
+      padding: 18px 12px 100px;
+    }
+
+  }
+</style>
+</head>
+
+<body>
+
+<!-- =========================================
+     HEADER
+     ========================================= -->
+
+<header class="mexa-friends-header">
+
+  <button
+    class="mexa-back"
+    type="button"
+    onclick="backToHome()"
+    aria-label="Kembali ke Home"
+  >
+    ←
+  </button>
+
+  <div class="mexa-logo">
+
+    <span class="mexa-logo-m">M</span>
+
+    <span class="mexa-logo-e">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+
+    <span class="mexa-logo-x">X</span>
+
+    <span class="mexa-logo-a">A</span>
+
+  </div>
+
+  <div class="mexa-page-title">
+    Teman
+  </div>
+
+</header>
+
+
+<!-- =========================================
+     CONTENT
+     ========================================= -->
+
+<main class="mexa-friends-container">
+
+  <div class="mexa-heading">
+
+    <h1>
+      Teman
+    </h1>
+
+    <p>
+      Pilih teman untuk membagikan postingan MEXA.
+    </p>
+
+  </div>
+
+
+  <input
+    id="friendSearch"
+    class="mexa-search"
+    type="search"
+    placeholder="Cari teman..."
+    autocomplete="off"
+  >
+
+
+  <div
+    id="friendsList"
+    class="mexa-friends-list"
+  >
+
+    <div class="mexa-empty">
+
+      <div class="mexa-empty-icon">
+        👥
+      </div>
+
+      <div class="mexa-empty-title">
+        Teman MEXA
+      </div>
+
+      <div class="mexa-empty-text">
+        Daftar teman akan muncul otomatis
+        setelah sistem pertemanan MEXA aktif.
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- =========================================
+     SEND BAR
+     ========================================= -->
+
+<div
+  id="sendBar"
+  class="mexa-send-bar"
+>
+
+  <button
+    id="sendButton"
+    class="mexa-send-button"
+    type="button"
+    onclick="sendPostToFriends()"
+  >
+    Kirim postingan
+  </button>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   MEXA — DATA POSTINGAN YANG DIBAGIKAN
+   ===================================================== */
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const postId =
+  params.get("post_id") || null;
+
+
+/* =====================================================
+   MEXA — DATA TEMAN
+   NANTI AKAN DIISI OTOMATIS DARI DATABASE
+   ===================================================== */
+
+let mexaFriends = [];
+
+let selectedFriends = [];
+
+
+/* =====================================================
+   KEMBALI KE HOME
+   ===================================================== */
+
+function backToHome() {
+
+  if (
+    document.referrer &&
+    document.referrer.includes(
+      window.location.hostname
+    )
+  ) {
+
+    history.back();
+
+    return;
+  }
+
+  window.location.href =
+    "index.html";
+}
+
+
+/* =====================================================
+   TAMPILKAN TEMAN
+   ===================================================== */
+
+function renderFriends() {
+
+  const list =
+    document.getElementById(
+      "friendsList"
+    );
+
+  if (!list) return;
+
+
+  if (!mexaFriends.length) {
+
+    list.innerHTML = `
+      <div class="mexa-empty">
+
+        <div class="mexa-empty-icon">
+          👥
+        </div>
+
+        <div class="mexa-empty-title">
+          Belum ada teman
+        </div>
+
+        <div class="mexa-empty-text">
+          Teman yang sudah terhubung
+          dengan akunmu akan muncul
+          otomatis di sini.
+        </div>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  list.innerHTML =
+    mexaFriends.map(friend => {
+
+      const selected =
+        selectedFriends.includes(
+          friend.id
+        );
+
+      return `
+
+        <div
+          class="mexa-friend ${
+            selected ? "selected" : ""
+          }"
+          onclick="toggleFriend('${friend.id}')"
+        >
+
+          <img
+            class="mexa-avatar"
+            src="${
+              friend.avatar ||
+              "https://via.placeholder.com/100"
+            }"
+            alt=""
+          >
+
+          <div class="mexa-friend-info">
+
+            <div class="mexa-friend-name">
+              ${escapeHTML(
+                friend.name || "Pengguna MEXA"
+              )}
+            </div>
+
+            <div class="mexa-friend-username">
+              ${
+                friend.username
+                  ? "@" + escapeHTML(friend.username)
+                  : ""
+              }
+            </div>
+
+          </div>
+
+          <div class="mexa-select"></div>
+
+        </div>
+
+      `;
+
+    }).join("");
+}
+
+
+/* =====================================================
+   PILIH TEMAN
+   ===================================================== */
+
+function toggleFriend(friendId) {
+
+  const index =
+    selectedFriends.indexOf(
+      friendId
+    );
+
+
+  if (index >= 0) {
+
+    selectedFriends.splice(
+      index,
+      1
+    );
+
+  } else {
+
+    selectedFriends.push(
+      friendId
+    );
+
+  }
+
+
+  updateSendBar();
+
+  renderFriends();
+}
+
+
+/* =====================================================
+   TOMBOL KIRIM
+   ===================================================== */
+
+function updateSendBar() {
+
+  const bar =
+    document.getElementById(
+      "sendBar"
+    );
+
+  const button =
+    document.getElementById(
+      "sendButton"
+    );
+
+  if (!bar || !button) return;
+
+
+  if (!selectedFriends.length) {
+
+    bar.classList.remove(
+      "active"
+    );
+
+    return;
+  }
+
+
+  bar.classList.add(
+    "active"
+  );
+
+  button.textContent =
+    `Kirim postingan ke ${selectedFriends.length} teman`;
+}
+
+
+/* =====================================================
+   KIRIM POSTINGAN
+   ===================================================== */
+
+function sendPostToFriends() {
+
+  if (!postId) {
+
+    alert(
+      "Postingan yang akan dibagikan tidak ditemukan."
+    );
+
+    return;
+  }
+
+
+  if (!selectedFriends.length) {
+
+    return;
+  }
+
+
+  /*
+   * BACKEND PENGIRIMAN AKAN KITA SAMBUNG
+   * SETELAH SISTEM TEMAN SELESAI.
+   */
+
+  console.log(
+    "MEXA SHARE POST:",
+    {
+      post_id: postId,
+      friend_ids:
+        selectedFriends
+    }
+  );
+
+
+  alert(
+    "Pilihan teman sudah siap. Sistem pengiriman MEXA akan disambungkan berikutnya."
+  );
+}
+
+
+/* =====================================================
+   PENCARIAN TEMAN
+   ===================================================== */
+
+document
+  .getElementById(
+    "friendSearch"
+  )
+  ?.addEventListener(
+    "input",
+    function () {
+
+      const keyword =
+        this.value
+          .toLowerCase()
+          .trim();
+
+
+      if (!keyword) {
+
+        renderFriends();
+
+        return;
+      }
+
+
+      const filtered =
+        mexaFriends.filter(
+          friend =>
+            String(
+              friend.name || ""
+            )
+              .toLowerCase()
+              .includes(keyword) ||
+
+            String(
+              friend.username || ""
+            )
+              .toLowerCase()
+              .includes(keyword)
+        );
+
+
+      const original =
+        mexaFriends;
+
+      mexaFriends =
+        filtered;
+
+      renderFriends();
+
+      mexaFriends =
+        original;
+    }
+  );
+
+
+/* =====================================================
+   ESCAPE HTML
+   ===================================================== */
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+/* =====================================================
+   START
+   ===================================================== */
+
+renderFriends();
+
+</script>
+
+</body>
+</html>
