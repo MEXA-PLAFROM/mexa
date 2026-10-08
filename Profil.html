@@ -794,12 +794,19 @@ function renderProfile(profile, metadata = {}) {
           .select("id, username, display_name, avatar_url, cover_url, bio")
           .single();
 
-        if (error) throw error;
+if (error) throw error;
 
-        renderProfile(data, currentUser.user_metadata || {});
-        closeEditor();
-        inform("Profil berhasil disimpan ke akun MEXA.");
-      } catch (error) {
+// Perbarui tampilan memakai data terbaru dari Supabase
+currentProfile = data;
+renderProfile(data, currentUser.user_metadata || {});
+
+// Tutup editor setelah penyimpanan berhasil
+closeEditor();
+
+// Beri tahu bahwa nama dan username berhasil disimpan
+inform("Nama panggilan dan username berhasil disimpan!");
+      } 
+        catch (error) {
         const errorMessage =
           error?.message || "Kesalahan tidak diketahui.";
 
