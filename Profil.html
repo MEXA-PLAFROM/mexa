@@ -766,13 +766,12 @@ function renderProfile(profile, metadata = {}) {
       }
 
       if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
-        setEditorStatus(
-          "Username harus 3–30 karakter: huruf, angka, titik, atau garis bawah.",
-          true
-        );
-        return;
-      }
-
+  setEditorStatus(
+    "Username belum sesuai format. Gunakan 3–30 karakter berupa huruf, angka, titik (.) atau garis bawah (_). Spasi tidak diperbolehkan. Contoh: mexa_platfrom atau mexaplatfrom.",
+    true
+  );
+  return;
+    }
       saveButton.disabled = true;
       saveButton.textContent = "Menyimpan...";
       setEditorStatus("Sedang menyimpan profil...");
