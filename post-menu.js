@@ -1203,29 +1203,42 @@
 
     /* FRIEND */
 
-    if (action === "friend") {
+  if (action === "friend") {
 
-      if (
-        typeof window.openShareToFriend ===
-        "function"
-      ) {
-        window.openShareToFriend(
-          post
-        );
-      } else {
-        window.dispatchEvent(
-          new CustomEvent(
-            "mexa:share-to-friend",
-            {
-              detail: { post }
-            }
-          )
-        );
-      }
+  closePostMenu();
 
-      return;
+  const postId =
+    getPostId(post);
+
+  if (!postId) {
+
+    if (typeof showToast === "function") {
+      showToast(
+        "Postingan tidak ditemukan."
+      );
+    } else {
+      alert(
+        "Postingan tidak ditemukan."
+      );
     }
 
+    return;
+  }
+
+  /*
+   * Buka halaman Teman.
+   * post_id dibawa otomatis dari
+   * postingan yang sedang dipilih.
+   */
+  const friendPage =
+    "Teman.html?post_id=" +
+    encodeURIComponent(postId);
+
+  window.location.href =
+    friendPage;
+
+  return;
+  }
     /* GROUP */
 
     if (action === "group") {
