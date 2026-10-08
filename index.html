@@ -1827,7 +1827,7 @@
   <script>
 
     /* ==========================================
-       SUPABASE
+        SUPABASE
     ========================================== */
 
     const MEXA_SUPABASE_URL =
@@ -2100,6 +2100,9 @@
       }
 
       currentPosts = posts || [];
+
+// Jembatan untuk modul MEXA eksternal
+window.MEXA_POSTS = currentPosts;
 
       if (!currentPosts.length) {
 
