@@ -56,38 +56,45 @@
     ========================= */
 
     .mexa-logo {
-      display: inline-flex;
-      align-items: center;
-      gap: 0;
-      font-weight: 900;
-      letter-spacing: -2px;
-      font-size: 30px;
-      line-height: 1;
-    }
-
-    .logo-m,
-    .logo-a {
-      color: #111827;
-    }
-
-    .logo-x {
-      color: #ff3b30;
-   .logo-e {
-  width: 18px;
-  height: 17px;
   display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.logo-m,
+.logo-a {
+  color: var(--primary2);
+  text-shadow: 0 0 20px rgba(124,92,255,.35);
+}
+
+.logo-x {
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(0,229,255,.35);
+}
+
+.logo-e {
+  width: 20px;
+  height: 22px;
+  display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  margin-right: 1px;
+  justify-content: center;
+  gap: 4px;
 }
 
 .logo-e span {
   display: block;
-  height: 2.5px;
-  width: 18px;
-  border-radius: 3px;
-  background: #111827;
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--primary2);
+  box-shadow: 0 0 10px rgba(124,92,255,.25);
 }
+
+    
     /* =========================
        TOPBAR
     ========================= */
