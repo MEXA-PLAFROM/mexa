@@ -4,1068 +4,1080 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>MEXA — Connect. Share. Grow.</title>
+  <title>MEXA — Home</title>
 
-  <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    :root {
-      --bg: #f4f7fb;
-      --surface: #ffffff;
-      --surface-2: #f8fafc;
-      --border: #e6eaf0;
-      --text: #101828;
-      --muted: #667085;
-
-      --primary: #2563eb;
-      --primary-soft: #eff6ff;
-
-      --accent: #ef4444;
-
-      --shadow:
-        0 12px 35px rgba(15, 23, 42, 0.07);
-
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
+    :root{
+      --primary:#635bff;
+      --primary-dark:#5148e8;
+      --accent:#ff4d8d;
+      --text:#171923;
+      --muted:#777b88;
+      --line:#ececf2;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --success:#22b573;
+      --danger:#ef4444;
+      --shadow:0 8px 30px rgba(25,25,50,.06);
+      --radius:20px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
     }
 
-    html {
-      scroll-behavior: smooth;
+    html{
+      scroll-behavior:smooth;
     }
 
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(
-          circle at 50% -20%,
-          rgba(37, 99, 235, 0.08),
-          transparent 35%
-        ),
-        var(--bg);
-
-      color: var(--text);
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+    body{
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
     }
 
     button,
     input,
-    textarea {
-      font: inherit;
+    textarea{
+      font:inherit;
     }
 
-    button {
-      border: 0;
-      cursor: pointer;
+    button{
+      border:0;
+      cursor:pointer;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    /* =========================
+       LOGO
+    ========================== */
 
-    /* =========================================
-       MEXA LOGO
-    ========================================= */
-
-    .mexa-logo {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      font-weight: 950;
-      font-size: 29px;
-      line-height: 1;
-      letter-spacing: -2.5px;
-      user-select: none;
+    .mexa-logo{
+      display:flex;
+      align-items:center;
+      gap:2px;
+      font-weight:900;
+      letter-spacing:-2px;
+      user-select:none;
     }
 
     .logo-m,
-    .logo-a {
-      color: var(--primary);
+    .logo-a{
+      color:var(--primary);
     }
 
-    .logo-x {
-      color: var(--accent);
+    .logo-x{
+      color:var(--accent);
     }
 
-    .logo-e {
-      width: 19px;
-      height: 23px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin: 0 1px;
+    .logo-e{
+      width:22px;
+      height:20px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      margin-right:1px;
     }
 
-    .logo-e span {
-      display: block;
-      width: 19px;
-      height: 4px;
-      background: var(--primary);
-      border-radius: 999px;
+    .logo-e span{
+      display:block;
+      height:4px;
+      border-radius:4px;
+      background:var(--primary);
     }
 
-    /* =========================================
-       APP
-    ========================================= */
-
-    .mexa-app {
-      min-height: 100vh;
+    .logo-e span:nth-child(2){
+      background:var(--accent);
     }
 
-    /* =========================================
-       TOP HEADER
-    ========================================= */
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: 72px;
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(230, 234, 240, 0.9);
+    .logo-e span:nth-child(3){
+      background:var(--primary);
     }
 
-    .topbar-inner {
-      width: min(1440px, calc(100% - 40px));
-      height: 100%;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 250px minmax(300px, 650px) 250px;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
+    /* =========================
+       HEADER
+    ========================== */
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:100;
+      height:72px;
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--line);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
+    .topbar-inner{
+      max-width:1450px;
+      height:100%;
+      margin:auto;
+      padding:0 24px;
+      display:flex;
+      align-items:center;
+      gap:22px;
     }
 
-    /* =========================================
-       SEARCH
-    ========================================= */
-
-    .search-box {
-      position: relative;
-      width: 100%;
+    .brand{
+      flex-shrink:0;
+      font-size:30px;
+      line-height:1;
     }
 
-    .search-box input {
-      width: 100%;
-      height: 43px;
-      padding: 0 18px 0 45px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      outline: none;
-      background: var(--surface-2);
-      color: var(--text);
-      transition:
-        border-color 0.2s,
-        box-shadow 0.2s,
-        background 0.2s;
+    .search{
+      width:300px;
+      height:42px;
+      background:#f3f4f8;
+      border-radius:13px;
+      display:flex;
+      align-items:center;
+      padding:0 14px;
+      gap:10px;
+      color:var(--muted);
     }
 
-    .search-box input:focus {
-      background: #fff;
-      border-color: rgba(37, 99, 235, 0.4);
-      box-shadow:
-        0 0 0 4px rgba(37, 99, 235, 0.08);
+    .search svg{
+      width:18px;
+      height:18px;
+      flex-shrink:0;
     }
 
-    .search-icon {
-      position: absolute;
-      left: 17px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 17px;
+    .search input{
+      width:100%;
+      border:0;
+      outline:0;
+      background:transparent;
+      color:var(--text);
+      font-size:14px;
     }
 
-    /* =========================================
-       HEADER ACTIONS
-    ========================================= */
-
-    .top-actions {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 8px;
+    .top-actions{
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
 
-    .icon-btn {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: transparent;
-      color: #475467;
-      font-size: 18px;
-      transition:
-        background 0.2s,
-        transform 0.2s;
+    .icon-btn{
+      width:42px;
+      height:42px;
+      border-radius:13px;
+      background:#f4f4f8;
+      display:grid;
+      place-items:center;
+      color:#454857;
+      transition:.2s;
     }
 
-    .icon-btn:hover {
-      background: #f2f4f7;
-      transform: translateY(-1px);
+    .icon-btn:hover{
+      background:#e9e9f3;
+      transform:translateY(-1px);
     }
 
-    .avatar-mini {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #7c3aed
-        );
-      color: #fff;
-      font-size: 14px;
-      font-weight: 800;
-      border: 2px solid #fff;
-      box-shadow:
-        0 3px 10px rgba(37, 99, 235, 0.2);
+    .avatar-small{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),#938cff);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      overflow:hidden;
     }
 
-    /* =========================================
-       MAIN LAYOUT
-    ========================================= */
-
-    .main-layout {
-      width: min(1440px, calc(100% - 40px));
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns:
-        230px
-        minmax(400px, 650px)
-        250px;
-      gap: 26px;
-      padding:
-        28px 0 90px;
+    .avatar-small img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    /* =========================================
-       LEFT SIDEBAR
-    ========================================= */
+    /* =========================
+       LAYOUT
+    ========================== */
 
-    .sidebar {
-      position: sticky;
-      top: 98px;
-      align-self: start;
+    .page{
+      max-width:1450px;
+      margin:auto;
+      padding:24px;
+      display:grid;
+      grid-template-columns:245px minmax(420px,680px) 285px;
+      justify-content:center;
+      gap:24px;
+      align-items:start;
     }
 
-    .profile-card {
-      padding: 18px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      margin-bottom: 16px;
+    .left-column,
+    .right-column{
+      position:sticky;
+      top:96px;
     }
 
-    .profile-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    /* =========================
+       LEFT
+    ========================== */
+
+    .profile-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
     }
 
-    .avatar {
-      width: 46px;
-      height: 46px;
-      flex: 0 0 46px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #7c3aed
-        );
-      color: #fff;
-      font-size: 15px;
-      font-weight: 800;
+    .profile-main{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
     }
 
-    .profile-name {
-      font-size: 14px;
-      font-weight: 800;
+    .profile-avatar{
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),#938cff);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-size:20px;
+      font-weight:800;
+      overflow:hidden;
+      flex-shrink:0;
     }
 
-    .profile-username {
-      margin-top: 3px;
-      font-size: 12px;
-      color: var(--muted);
+    .profile-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .profile-link {
-      display: block;
-      margin-top: 15px;
-      text-align: center;
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 750;
+    .profile-name{
+      font-weight:800;
+      font-size:15px;
     }
 
-    .side-menu {
-      padding: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
+    .profile-username{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:3px;
     }
 
-    .side-item {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      padding: 12px 13px;
-      border-radius: 12px;
-      background: transparent;
-      color: #475467;
-      text-align: left;
-      font-size: 13px;
-      font-weight: 700;
-      transition:
-        background 0.2s,
-        color 0.2s;
+    .menu{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
     }
 
-    .side-item:hover,
-    .side-item.active {
-      background: var(--primary-soft);
-      color: var(--primary);
+    .menu-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-height:44px;
+      padding:0 12px;
+      border-radius:12px;
+      color:#555866;
+      font-size:14px;
+      font-weight:600;
+      background:transparent;
+      text-align:left;
+      transition:.2s;
+      width:100%;
     }
 
-    .side-icon {
-      width: 22px;
-      text-align: center;
-      font-size: 17px;
+    .menu-item svg{
+      width:19px;
+      height:19px;
+      flex-shrink:0;
     }
 
-    /* =========================================
+    .menu-item:hover{
+      background:#f4f4fa;
+      color:var(--primary);
+    }
+
+    .menu-item.active{
+      color:var(--primary);
+      background:#f0efff;
+    }
+
+    .left-footer{
+      color:#a0a2ad;
+      font-size:11px;
+      line-height:1.7;
+      padding:8px 12px;
+    }
+
+    /* =========================
        CENTER
-    ========================================= */
+    ========================== */
 
-    .feed {
-      min-width: 0;
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
     }
 
-    /* =========================================
-       STORIES
-    ========================================= */
-
-    .stories {
-      display: grid;
-      grid-template-columns:
-        repeat(5, 1fr);
-      gap: 9px;
-      margin-bottom: 18px;
+    .section-title h2{
+      font-size:17px;
+      font-weight:800;
     }
 
-    .story {
-      position: relative;
-      min-height: 112px;
-      overflow: hidden;
-      border-radius: 17px;
-      background:
-        linear-gradient(
-          145deg,
-          #dbeafe,
-          #eef2ff
-        );
-      border: 1px solid var(--border);
-      box-shadow:
-        0 5px 18px rgba(15, 23, 42, 0.05);
-      cursor: pointer;
+    .section-title span{
+      color:var(--muted);
+      font-size:12px;
     }
 
-    .story:nth-child(2) {
-      background:
-        linear-gradient(
-          145deg,
-          #fce7f3,
-          #f5d0fe
-        );
+    /* STORIES */
+
+    .stories{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      scrollbar-width:none;
+      padding-bottom:4px;
+      margin-bottom:18px;
     }
 
-    .story:nth-child(3) {
-      background:
-        linear-gradient(
-          145deg,
-          #dcfce7,
-          #d1fae5
-        );
+    .stories::-webkit-scrollbar{
+      display:none;
     }
 
-    .story:nth-child(4) {
-      background:
-        linear-gradient(
-          145deg,
-          #fef3c7,
-          #ffedd5
-        );
+    .story{
+      min-width:104px;
+      height:142px;
+      border-radius:18px;
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(160deg,#dadcf0,#9b9fb6);
+      flex-shrink:0;
+      cursor:pointer;
     }
 
-    .story:nth-child(5) {
-      background:
-        linear-gradient(
-          145deg,
-          #e0e7ff,
-          #ede9fe
-        );
+    .story::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(transparent 30%,rgba(0,0,0,.65));
     }
 
-    .story::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(
-          transparent 35%,
-          rgba(15, 23, 42, 0.55)
-        );
+    .story-add{
+      background:white;
+      border:1px solid var(--line);
+      color:var(--text);
     }
 
-    .story-avatar {
-      position: absolute;
-      top: 9px;
-      left: 9px;
-      z-index: 2;
-      width: 32px;
-      height: 32px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: #fff;
-      color: var(--primary);
-      font-size: 11px;
-      font-weight: 850;
-      border: 2px solid #fff;
+    .story-add::after{
+      display:none;
     }
 
-    .story-name {
-      position: absolute;
-      z-index: 3;
-      left: 10px;
-      bottom: 10px;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 800;
+    .story-add-content{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
     }
 
-    /* =========================================
-       CREATE POST
-    ========================================= */
-
-    .create-post {
-      padding: 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
+    .story-add-icon{
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      background:#f0efff;
+      color:var(--primary);
+      display:grid;
+      place-items:center;
+      font-size:23px;
+      font-weight:700;
     }
 
-    .create-row {
-      display: flex;
-      gap: 12px;
-      align-items: center;
+    .story-add-content strong{
+      font-size:12px;
     }
 
-    .create-input {
-      flex: 1;
-      min-width: 0;
-      height: 45px;
-      padding: 0 17px;
-      display: flex;
-      align-items: center;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      color: #98a2b3;
-      font-size: 13px;
-      cursor: pointer;
+    .story-avatar{
+      position:absolute;
+      z-index:2;
+      top:10px;
+      left:10px;
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      background:var(--primary);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-size:12px;
+      font-weight:800;
+      border:2px solid white;
     }
 
-    .create-input:hover {
-      background: #f2f4f7;
+    .story-name{
+      position:absolute;
+      z-index:2;
+      bottom:11px;
+      left:11px;
+      right:8px;
+      color:white;
+      font-size:12px;
+      font-weight:700;
     }
 
-    .create-actions {
-      display: flex;
-      gap: 5px;
-      margin-top: 13px;
-      padding-top: 13px;
-      border-top: 1px solid #f0f2f5;
+    /* CREATE POST */
+
+    .create-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:17px;
+      box-shadow:var(--shadow);
+      margin-bottom:18px;
     }
 
-    .create-action {
-      flex: 1;
-      padding: 8px 5px;
-      border-radius: 10px;
-      background: transparent;
-      color: #667085;
-      font-size: 12px;
-      font-weight: 750;
+    .create-top{
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
 
-    .create-action:hover {
-      background: #f8fafc;
-      color: var(--primary);
+    .create-input{
+      flex:1;
+      height:44px;
+      border-radius:14px;
+      background:#f5f5f8;
+      display:flex;
+      align-items:center;
+      padding:0 15px;
+      color:#9295a0;
+      font-size:14px;
+      cursor:pointer;
     }
 
-    /* =========================================
-       POST
-    ========================================= */
-
-    .post {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
-      overflow: hidden;
+    .create-actions{
+      display:flex;
+      gap:6px;
+      margin-top:13px;
+      padding-top:13px;
+      border-top:1px solid #f0f0f4;
     }
 
-    .post-header {
-      display: flex;
-      align-items: center;
-      padding: 17px 17px 10px;
-      gap: 11px;
+    .create-action{
+      flex:1;
+      height:40px;
+      background:transparent;
+      color:#646775;
+      border-radius:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      font-size:12px;
+      font-weight:700;
     }
 
-    .post-author {
-      flex: 1;
-      min-width: 0;
+    .create-action:hover{
+      background:#f5f5f8;
     }
 
-    .post-author-name {
-      font-size: 14px;
-      font-weight: 850;
+    /* POST */
+
+    .post{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
     }
 
-    .post-meta {
-      display: flex;
-      gap: 5px;
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 11px;
+    .post-head{
+      display:flex;
+      align-items:center;
+      gap:11px;
     }
 
-    .post-menu {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: transparent;
-      color: #667085;
-      font-size: 18px;
+    .post-avatar{
+      width:43px;
+      height:43px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),#9a94ff);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-size:15px;
+      font-weight:800;
+      flex-shrink:0;
+      overflow:hidden;
     }
 
-    .post-menu:hover {
-      background: #f2f4f7;
+    .post-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .post-content {
-      padding: 6px 17px 15px;
-      font-size: 14px;
-      line-height: 1.65;
-      color: #344054;
-      white-space: pre-wrap;
+    .post-author{
+      min-width:0;
+      flex:1;
     }
 
-    .post-image {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background:
-        linear-gradient(
-          135deg,
-          #dbeafe,
-          #e0e7ff,
-          #fce7f3
-        );
-      display: grid;
-      place-items: center;
-      color: rgba(37, 99, 235, 0.45);
-      font-size: 40px;
+    .post-author strong{
+      display:block;
+      font-size:14px;
     }
 
-    .post-stats {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 11px 17px;
-      border-bottom: 1px solid #f0f2f5;
-      color: var(--muted);
-      font-size: 11px;
+    .post-meta{
+      color:var(--muted);
+      font-size:11px;
+      margin-top:3px;
     }
 
-    .post-actions {
-      display: grid;
-      grid-template-columns:
-        repeat(3, 1fr);
-      padding: 5px 8px;
+    .post-menu{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      background:transparent;
+      color:#888b96;
+      font-size:20px;
     }
 
-    .post-action {
-      padding: 10px;
-      background: transparent;
-      border-radius: 10px;
-      color: #667085;
-      font-size: 12px;
-      font-weight: 750;
+    .post-menu:hover{
+      background:#f2f2f6;
     }
 
-    .post-action:hover {
-      background: #f8fafc;
-      color: var(--primary);
+    .post-content{
+      margin-top:14px;
+      font-size:14px;
+      line-height:1.65;
+      color:#30323c;
+      white-space:pre-wrap;
+      word-break:break-word;
     }
 
-    /* =========================================
-       RIGHT SIDEBAR
-    ========================================= */
-
-    .right-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      margin-bottom: 16px;
+    .post-image{
+      width:100%;
+      max-height:480px;
+      object-fit:cover;
+      border-radius:16px;
+      margin-top:14px;
+      display:block;
     }
 
-    .right-title {
-      font-size: 14px;
-      font-weight: 850;
-      margin-bottom: 15px;
+    .post-stats{
+      display:flex;
+      justify-content:space-between;
+      color:#8b8e99;
+      font-size:11px;
+      padding:13px 2px 10px;
     }
 
-    .trend {
-      display: block;
-      padding: 9px 0;
-      border-bottom: 1px solid #f2f4f7;
+    .post-actions{
+      border-top:1px solid #f0f0f4;
+      display:flex;
+      gap:5px;
+      padding-top:9px;
     }
 
-    .trend:last-child {
-      border-bottom: 0;
+    .post-action{
+      flex:1;
+      height:38px;
+      border-radius:10px;
+      background:transparent;
+      color:#666976;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      font-size:12px;
+      font-weight:700;
     }
 
-    .trend-tag {
-      color: var(--primary);
-      font-size: 12px;
-      font-weight: 800;
+    .post-action:hover{
+      background:#f5f5f8;
+      color:var(--primary);
     }
 
-    .trend-count {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 11px;
+    .empty-state{
+      background:white;
+      border:1px dashed #dcdde5;
+      border-radius:20px;
+      padding:40px 20px;
+      text-align:center;
+      color:var(--muted);
     }
 
-    .creator-card {
-      background:
-        linear-gradient(
-          145deg,
-          #eff6ff,
-          #eef2ff
-        );
-      border: 1px solid #dbeafe;
+    .empty-state .empty-icon{
+      font-size:36px;
+      margin-bottom:10px;
     }
 
-    .creator-card p {
-      color: #667085;
-      font-size: 12px;
-      line-height: 1.6;
-      margin-bottom: 14px;
+    .empty-state strong{
+      display:block;
+      color:var(--text);
+      margin-bottom:5px;
     }
 
-    .creator-button {
-      width: 100%;
-      height: 38px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
-      box-shadow:
-        0 6px 15px rgba(37, 99, 235, 0.2);
+    /* =========================
+       RIGHT
+    ========================== */
+
+    .side-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
     }
 
-    .creator-button:hover {
-      filter: brightness(0.96);
+    .side-title{
+      font-size:15px;
+      font-weight:800;
+      margin-bottom:15px;
     }
 
-    /* =========================================
-       MOBILE NAV
-    ========================================= */
-
-    .mobile-nav {
-      display: none;
-      position: fixed;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      z-index: 200;
-      height: 62px;
-      padding: 5px;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(230, 234, 240, 0.95);
-      border-radius: 19px;
-      box-shadow:
-        0 15px 35px rgba(15, 23, 42, 0.13);
-      grid-template-columns:
-        repeat(5, 1fr);
+    .trend{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:11px 0;
+      border-bottom:1px solid #f1f1f4;
     }
 
-    .mobile-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      background: transparent;
-      border-radius: 13px;
-      color: #667085;
-      font-size: 10px;
-      font-weight: 750;
+    .trend:last-child{
+      border-bottom:0;
     }
 
-    .mobile-item span:first-child {
-      font-size: 18px;
+    .trend-name{
+      font-size:13px;
+      font-weight:700;
     }
 
-    .mobile-item.active {
-      color: var(--primary);
-      background: var(--primary-soft);
+    .trend-count{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:3px;
     }
 
-    /* =========================================
+    .trend-arrow{
+      color:#aaa;
+    }
+
+    .creator-box{
+      text-align:center;
+      padding:6px 2px;
+    }
+
+    .creator-icon{
+      width:52px;
+      height:52px;
+      border-radius:16px;
+      margin:0 auto 12px;
+      display:grid;
+      place-items:center;
+      background:#f0efff;
+      color:var(--primary);
+      font-size:23px;
+    }
+
+    .creator-box strong{
+      display:block;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    .creator-box p{
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.6;
+      margin-bottom:14px;
+    }
+
+    .creator-btn{
+      width:100%;
+      height:38px;
+      border-radius:11px;
+      background:var(--primary);
+      color:white;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .creator-btn:hover{
+      background:var(--primary-dark);
+    }
+
+    /* =========================
        MODAL
-    ========================================= */
+    ========================== */
 
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(15, 23, 42, 0.48);
-      backdrop-filter: blur(5px);
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      z-index:300;
+      background:rgba(15,16,25,.5);
+      backdrop-filter:blur(5px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
     }
 
-    .modal.show {
-      display: flex;
+    .modal-backdrop.show{
+      display:flex;
     }
 
-    .modal-card {
-      width: min(520px, 100%);
-      background: #fff;
-      border-radius: 22px;
-      box-shadow:
-        0 30px 80px rgba(15, 23, 42, 0.25);
-      overflow: hidden;
+    .modal{
+      width:min(560px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:white;
+      border-radius:24px;
+      box-shadow:0 25px 80px rgba(0,0,0,.2);
     }
 
-    .modal-header {
-      height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-      border-bottom: 1px solid var(--border);
+    .modal-head{
+      height:64px;
+      padding:0 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
     }
 
-    .modal-title {
-      font-size: 15px;
-      font-weight: 850;
+    .modal-head h3{
+      font-size:17px;
     }
 
-    .modal-close {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #f2f4f7;
-      color: #475467;
-      font-size: 17px;
+    .close-btn{
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      background:#f3f3f6;
+      color:#666;
+      font-size:20px;
     }
 
-    .modal-body {
-      padding: 18px;
+    .modal-body{
+      padding:20px;
     }
 
-    .post-textarea {
-      width: 100%;
-      min-height: 150px;
-      resize: vertical;
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      outline: none;
-      color: var(--text);
-      font-size: 14px;
-      line-height: 1.6;
+    .modal-user{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:15px;
     }
 
-    .post-textarea:focus {
-      border-color: rgba(37, 99, 235, 0.4);
-      box-shadow:
-        0 0 0 4px rgba(37, 99, 235, 0.08);
+    .modal-user-avatar{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:var(--primary);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      overflow:hidden;
     }
 
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 14px;
+    .modal-user-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .modal-button {
-      height: 40px;
-      padding: 0 18px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
+    .modal-user strong{
+      font-size:14px;
     }
 
-    .modal-cancel {
-      background: #f2f4f7;
-      color: #475467;
+    .modal-user span{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      margin-top:2px;
     }
 
-    .modal-publish {
-      background: var(--primary);
-      color: #fff;
+    #postText{
+      width:100%;
+      min-height:170px;
+      resize:vertical;
+      border:0;
+      outline:0;
+      font-size:15px;
+      line-height:1.6;
+      color:var(--text);
     }
 
-    /* =========================================
-       RESPONSIVE TABLET
-    ========================================= */
-
-    @media (max-width: 1100px) {
-
-      .topbar-inner {
-        grid-template-columns:
-          190px
-          minmax(260px, 1fr)
-          190px;
-      }
-
-      .main-layout {
-        grid-template-columns:
-          200px
-          minmax(380px, 1fr);
-        max-width: 950px;
-      }
-
-      .right-sidebar {
-        display: none;
-      }
+    #postText::placeholder{
+      color:#aaaeb8;
     }
 
-    /* =========================================
-       RESPONSIVE MOBILE
-    ========================================= */
+    .modal-tools{
+      display:flex;
+      gap:8px;
+      padding:12px 0;
+      border-top:1px solid #f0f0f4;
+      border-bottom:1px solid #f0f0f4;
+    }
 
-    @media (max-width: 760px) {
+    .modal-tool{
+      height:36px;
+      padding:0 12px;
+      border-radius:10px;
+      background:#f5f5f8;
+      color:#626572;
+      font-size:11px;
+      font-weight:700;
+    }
 
-      body {
-        background: #f5f7fb;
-      }
+    .modal-footer{
+      padding-top:14px;
+      display:flex;
+      justify-content:flex-end;
+    }
 
-      .topbar {
-        height: 62px;
-      }
+    .publish-btn{
+      min-width:110px;
+      height:40px;
+      border-radius:11px;
+      background:var(--primary);
+      color:white;
+      font-size:12px;
+      font-weight:800;
+    }
 
-      .topbar-inner {
-        width: calc(100% - 24px);
-        display: grid;
-        grid-template-columns:
-          auto
-          1fr
-          auto;
-        gap: 10px;
-      }
+    .publish-btn:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
 
-      .brand .mexa-logo {
-        font-size: 24px;
-      }
+    /* =========================
+       LOADING
+    ========================== */
 
-      .brand .logo-e {
-        width: 16px;
-        height: 19px;
-      }
+    .loading{
+      padding:35px;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+    }
 
-      .brand .logo-e span {
-        width: 16px;
-        height: 3px;
-      }
+    .spinner{
+      width:26px;
+      height:26px;
+      border:3px solid #e8e8ee;
+      border-top-color:var(--primary);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+      margin:0 auto 10px;
+    }
 
-      .search-box input {
-        height: 38px;
-        padding-left: 39px;
-        font-size: 12px;
-      }
-
-      .search-icon {
-        left: 14px;
-        font-size: 14px;
-      }
-
-      .top-actions {
-        gap: 1px;
-      }
-
-      .top-actions .icon-btn {
-        display: none;
-      }
-
-      .top-actions .avatar-mini {
-        width: 36px;
-        height: 36px;
-      }
-
-      .main-layout {
-        width: 100%;
-        display: block;
-        padding:
-          14px 12px 100px;
-      }
-
-      .left-sidebar,
-      .right-sidebar {
-        display: none;
-      }
-
-      .stories {
-        grid-template-columns:
-          repeat(5, 1fr);
-        gap: 6px;
-        margin-bottom: 12px;
-      }
-
-      .story {
-        min-height: 94px;
-        border-radius: 13px;
-      }
-
-      .story-avatar {
-        width: 27px;
-        height: 27px;
-        top: 7px;
-        left: 7px;
-        font-size: 9px;
-      }
-
-      .story-name {
-        left: 7px;
-        bottom: 7px;
-        font-size: 9px;
-      }
-
-      .create-post {
-        padding: 13px;
-        border-radius: 17px;
-      }
-
-      .create-actions {
-        margin-top: 10px;
-        padding-top: 10px;
-      }
-
-      .create-action {
-        font-size: 11px;
-      }
-
-      .post {
-        border-radius: 17px;
-        margin-bottom: 12px;
-      }
-
-      .post-header {
-        padding: 14px 14px 8px;
-      }
-
-      .post-content {
-        padding:
-          5px 14px 13px;
-        font-size: 13px;
-      }
-
-      .post-stats {
-        padding: 9px 14px;
-      }
-
-      .post-actions {
-        padding: 4px 6px;
-      }
-
-      .post-action {
-        padding: 9px 4px;
-        font-size: 11px;
-      }
-
-      .mobile-nav {
-        display: grid;
-      }
-
-      .modal {
-        align-items: flex-end;
-        padding: 0;
-      }
-
-      .modal-card {
-        width: 100%;
-        border-radius:
-          22px 22px 0 0;
+    @keyframes spin{
+      to{
+        transform:rotate(360deg);
       }
     }
 
-    @media (max-width: 430px) {
+    /* =========================
+       TOAST
+    ========================== */
 
-      .search-box {
-        min-width: 0;
+    .toast{
+      position:fixed;
+      z-index:500;
+      left:50%;
+      bottom:85px;
+      transform:translate(-50%,20px);
+      background:#1d1f29;
+      color:white;
+      padding:11px 16px;
+      border-radius:12px;
+      font-size:12px;
+      opacity:0;
+      pointer-events:none;
+      transition:.25s;
+    }
+
+    .toast.show{
+      opacity:1;
+      transform:translate(-50%,0);
+    }
+
+    /* =========================
+       MOBILE NAV
+    ========================== */
+
+    .mobile-nav{
+      display:none;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media(max-width:1100px){
+      .page{
+        grid-template-columns:210px minmax(400px,680px);
       }
 
-      .search-box input {
-        font-size: 11px;
+      .right-column{
+        display:none;
       }
 
-      .stories {
-        gap: 5px;
+      .search{
+        width:240px;
+      }
+    }
+
+    @media(max-width:760px){
+      body{
+        padding-bottom:70px;
       }
 
-      .story {
-        min-height: 88px;
+      .topbar{
+        height:62px;
       }
 
-      .story-name {
-        font-size: 8px;
+      .topbar-inner{
+        padding:0 14px;
+        gap:10px;
+      }
+
+      .brand{
+        font-size:25px;
+      }
+
+      .search{
+        flex:1;
+        width:auto;
+        height:38px;
+      }
+
+      .top-actions{
+        margin-left:0;
+      }
+
+      .top-actions .icon-btn:nth-child(1),
+      .top-actions .icon-btn:nth-child(2){
+        display:none;
+      }
+
+      .avatar-small{
+        width:38px;
+        height:38px;
+      }
+
+      .page{
+        display:block;
+        padding:14px 12px 20px;
+      }
+
+      .left-column{
+        display:none;
+      }
+
+      .center-column{
+        width:100%;
+      }
+
+      .stories{
+        margin-left:-12px;
+        margin-right:-12px;
+        padding-left:12px;
+        padding-right:12px;
+      }
+
+      .story{
+        min-width:94px;
+        height:130px;
+      }
+
+      .create-card,
+      .post{
+        border-radius:17px;
+      }
+
+      .post{
+        padding:15px;
+      }
+
+      .mobile-nav{
+        position:fixed;
+        left:0;
+        right:0;
+        bottom:0;
+        z-index:200;
+        height:64px;
+        background:rgba(255,255,255,.96);
+        backdrop-filter:blur(15px);
+        border-top:1px solid var(--line);
+        display:flex;
+        align-items:center;
+        justify-content:space-around;
+      }
+
+      .mobile-nav-item{
+        width:20%;
+        height:58px;
+        background:transparent;
+        color:#858894;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:4px;
+        font-size:9px;
+        font-weight:700;
+      }
+
+      .mobile-nav-item svg{
+        width:20px;
+        height:20px;
+      }
+
+      .mobile-nav-item.active{
+        color:var(--primary);
+      }
+
+      .mobile-create{
+        width:43px;
+        height:43px;
+        border-radius:14px;
+        background:var(--primary);
+        color:white;
+        margin-top:-16px;
+        box-shadow:0 8px 20px rgba(99,91,255,.3);
+      }
+    }
+
+    @media(max-width:420px){
+      .search{
+        display:none;
+      }
+
+      .top-actions{
+        margin-left:auto;
+      }
+
+      .stories{
+        gap:8px;
+      }
+
+      .story{
+        min-width:88px;
+      }
+
+      .create-action{
+        font-size:11px;
       }
     }
   </style>
@@ -1073,518 +1085,442 @@
 
 <body>
 
-  <div class="mexa-app">
+  <!-- =========================
+       TOPBAR
+  ========================== -->
 
-    <header class="topbar">
+  <header class="topbar">
+    <div class="topbar-inner">
 
-      <div class="topbar-inner">
+      <div class="mexa-logo brand" aria-label="MEXA">
+        <span class="logo-m">M</span>
+        <div class="logo-e">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="logo-x">X</span>
+        <span class="logo-a">A</span>
+      </div>
 
-        <div class="brand">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-4-4"></path>
+        </svg>
+        <input id="searchInput" type="text" placeholder="Cari di MEXA...">
+      </div>
 
-          <div class="mexa-logo">
+      <div class="top-actions">
 
-            <span class="logo-m">M</span>
+        <button class="icon-btn" title="Notifikasi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+            <path d="M10 21h4"></path>
+          </svg>
+        </button>
 
-            <span class="logo-e">
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
+        <button class="icon-btn" title="Pesan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.8L4 20l1.8-3.6A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7z"></path>
+          </svg>
+        </button>
 
-            <span class="logo-x">X</span>
+        <button class="avatar-small" id="topAvatar" title="Profil">
+          M
+        </button>
 
-            <span class="logo-a">A</span>
+      </div>
+    </div>
+  </header>
 
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+
+  <main class="page">
+
+    <!-- LEFT COLUMN -->
+
+    <aside class="left-column">
+
+      <div class="profile-card">
+
+        <div class="profile-main">
+          <div class="profile-avatar" id="profileAvatar">
+            M
+          </div>
+
+          <div>
+            <div class="profile-name" id="profileName">
+              Memuat...
+            </div>
+
+            <div class="profile-username" id="profileUsername">
+              @mexa
+            </div>
+          </div>
+        </div>
+
+        <nav class="menu">
+
+          <button class="menu-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m3 11 9-8 9 8"></path>
+              <path d="M5 10v10h14V10"></path>
+            </svg>
+            Beranda
+          </button>
+
+          <button class="menu-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21a8 8 0 0 1 16 0"></path>
+            </svg>
+            Profil
+          </button>
+
+          <button class="menu-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="3" width="14" height="18" rx="3"></rect>
+              <path d="m10 8 5 4-5 4z"></path>
+            </svg>
+            Reels
+          </button>
+
+          <button class="menu-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 7h16"></path>
+              <path d="M4 12h16"></path>
+              <path d="M4 17h10"></path>
+            </svg>
+            Grup
+          </button>
+
+          <button class="menu-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="8"></circle>
+              <path d="M12 8v8M8 12h8"></path>
+            </svg>
+            Komunitas
+          </button>
+
+          <button class="menu-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 20V10l8-6 8 6v10"></path>
+              <path d="M9 20v-6h6v6"></path>
+            </svg>
+            Halaman
+          </button>
+
+          <button class="menu-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v18"></path>
+              <path d="M3 12h18"></path>
+            </svg>
+            Kreator
+          </button>
+
+          <button class="menu-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1-1.6 1.6-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1.1 1.7V20h-2.3v-.1a1.8 1.8 0 0 0-1.1-1.7 1.8 1.8 0 0 0-2 .4l-.1.1L8 17.1l.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.7-1.1H6v-2.3h.1a1.8 1.8 0 0 0 1.7-1.1 1.8 1.8 0 0 0-.4-2L7.3 8.4 9 6.8l.1.1a1.8 1.8 0 0 0 2 .4A1.8 1.8 0 0 0 12.2 5V4h2.3v1a1.8 1.8 0 0 0 1.1 1.7 1.8 1.8 0 0 0 2-.4l.1-.1 1.6 1.6-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.7 1.1h.1v2.3h-.1a1.8 1.8 0 0 0-1.1 1.7z"></path>
+            </svg>
+            Pengaturan
+          </button>
+
+        </nav>
+      </div>
+
+      <div class="left-footer">
+        © 2026 MEXA<br>
+        Platform sosial generasi baru.
+      </div>
+
+    </aside>
+
+
+    <!-- CENTER COLUMN -->
+
+    <section class="center-column">
+
+      <!-- STORIES -->
+
+      <div class="section-title">
+        <h2>Cerita</h2>
+        <span>Lihat semua</span>
+      </div>
+
+      <div class="stories">
+
+        <div class="story story-add" id="storyAdd">
+          <div class="story-add-content">
+            <div class="story-add-icon">+</div>
+            <strong>Buat cerita</strong>
+          </div>
+        </div>
+
+        <div class="story">
+          <div class="story-avatar">A</div>
+          <div class="story-name">Andi</div>
+        </div>
+
+        <div class="story">
+          <div class="story-avatar">R</div>
+          <div class="story-name">Rina</div>
+        </div>
+
+        <div class="story">
+          <div class="story-avatar">D</div>
+          <div class="story-name">Dika</div>
+        </div>
+
+        <div class="story">
+          <div class="story-avatar">S</div>
+          <div class="story-name">Sinta</div>
+        </div>
+
+      </div>
+
+
+      <!-- CREATE POST -->
+
+      <div class="create-card">
+
+        <div class="create-top">
+
+          <div class="profile-avatar" id="createAvatar">
+            M
+          </div>
+
+          <div class="create-input" id="openCreatePost">
+            Apa yang ingin kamu bagikan?
           </div>
 
         </div>
 
-        <div class="search-box">
+        <div class="create-actions">
 
-          <span class="search-icon">⌕</span>
+          <button class="create-action" id="createPhoto">
+            📷 Foto
+          </button>
 
-          <input
-            type="search"
-            placeholder="Cari di MEXA..."
-            aria-label="Cari di MEXA"
-          >
+          <button class="create-action" id="createVideo">
+            🎬 Video
+          </button>
+
+          <button class="create-action" id="createFeeling">
+            😊 Perasaan
+          </button>
 
         </div>
+      </div>
 
-        <div class="top-actions">
 
-          <button
-            class="icon-btn"
-            type="button"
-            aria-label="Notifikasi"
-          >
-            ♡
-          </button>
+      <!-- FEED -->
 
-          <button
-            class="icon-btn"
-            type="button"
-            aria-label="Pesan"
-          >
-            ◇
-          </button>
+      <div class="section-title">
+        <h2>Beranda</h2>
+        <span>Terbaru</span>
+      </div>
 
-          <button
-            class="avatar-mini"
-            type="button"
-            aria-label="Profil"
-          >
-            M
+      <div id="feed">
+
+        <div class="loading">
+          <div class="spinner"></div>
+          Memuat postingan...
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- RIGHT COLUMN -->
+
+    <aside class="right-column">
+
+      <div class="side-card">
+
+        <div class="side-title">
+          🔥 Tren MEXA
+        </div>
+
+        <div class="trend">
+          <div>
+            <div class="trend-name">#MEXA</div>
+            <div class="trend-count">12K postingan</div>
+          </div>
+          <div class="trend-arrow">›</div>
+        </div>
+
+        <div class="trend">
+          <div>
+            <div class="trend-name">#Gaming</div>
+            <div class="trend-count">8K postingan</div>
+          </div>
+          <div class="trend-arrow">›</div>
+        </div>
+
+        <div class="trend">
+          <div>
+            <div class="trend-name">#Kreator</div>
+            <div class="trend-count">5K postingan</div>
+          </div>
+          <div class="trend-arrow">›</div>
+        </div>
+
+      </div>
+
+
+      <div class="side-card">
+
+        <div class="creator-box">
+
+          <div class="creator-icon">✦</div>
+
+          <strong>Creator Center</strong>
+
+          <p>
+            Kelola konten dan bangun komunitasmu di MEXA.
+          </p>
+
+          <button class="creator-btn">
+            Buka Creator Center
           </button>
 
         </div>
 
       </div>
 
-    </header>
 
-    <main class="main-layout">
-
-      <aside class="sidebar left-sidebar">
-
-        <div class="profile-card">
-
-          <div class="profile-top">
-
-            <div class="avatar">
-              M
-            </div>
-
-            <div>
-
-              <div class="profile-name">
-                MEXA User
-              </div>
-
-              <div class="profile-username">
-                @mexauser
-              </div>
-
-            </div>
-
+      <div class="side-card">
+        <div class="mexa-logo" style="font-size:23px;">
+          <span class="logo-m">M</span>
+          <div class="logo-e">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
-
-          <a
-            href="#"
-            class="profile-link"
-          >
-            Lihat profil
-          </a>
-
+          <span class="logo-x">X</span>
+          <span class="logo-a">A</span>
         </div>
 
-        <nav class="side-menu">
+        <p style="font-size:11px;color:#9699a4;line-height:1.6;margin-top:9px;">
+          MEXA adalah ruang sosial baru untuk berbagi, berkarya, dan terhubung.
+        </p>
+      </div>
 
-          <button class="side-item active">
-            <span class="side-icon">⌂</span>
-            <span>Beranda</span>
-          </button>
+    </aside>
 
-          <button class="side-item">
-            <span class="side-icon">◎</span>
-            <span>Profil</span>
-          </button>
+  </main>
 
-          <button class="side-item">
-            <span class="side-icon">▶</span>
-            <span>Reels</span>
-          </button>
 
-          <button class="side-item">
-            <span class="side-icon">♧</span>
-            <span>Grup</span>
-          </button>
+  <!-- =========================
+       MOBILE NAV
+  ========================== -->
 
-          <button class="side-item">
-            <span class="side-icon">✦</span>
-            <span>Komunitas</span>
-          </button>
+  <nav class="mobile-nav">
 
-          <button class="side-item">
-            <span class="side-icon">◈</span>
-            <span>Kreator</span>
-          </button>
+    <button class="mobile-nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m3 11 9-8 9 8"></path>
+        <path d="M5 10v10h14V10"></path>
+      </svg>
+      Home
+    </button>
 
-          <button class="side-item">
-            <span class="side-icon">⚙</span>
-            <span>Pengaturan</span>
-          </button>
+    <button class="mobile-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="5" y="3" width="14" height="18" rx="3"></rect>
+        <path d="m10 8 5 4-5 4z"></path>
+      </svg>
+      Reels
+    </button>
 
-        </nav>
+    <button class="mobile-nav-item mobile-create" id="mobileCreate">
+      <span style="font-size:23px;line-height:1;">+</span>
+      <span style="font-size:9px;">Buat</span>
+    </button>
 
-      </aside>
+    <button class="mobile-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 7h16"></path>
+        <path d="M4 12h16"></path>
+        <path d="M4 17h10"></path>
+      </svg>
+      Grup
+    </button>
 
-      <section class="feed">
+    <button class="mobile-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4 21a8 8 0 0 1 16 0"></path>
+      </svg>
+      Profil
+    </button>
 
-        <div class="stories">
+  </nav>
 
-          <div class="story">
-            <div class="story-avatar">+</div>
-            <div class="story-name">Buat cerita</div>
-          </div>
 
-          <div class="story">
-            <div class="story-avatar">A</div>
-            <div class="story-name">Andi</div>
-          </div>
+  <!-- =========================
+       CREATE POST MODAL
+  ========================== -->
 
-          <div class="story">
-            <div class="story-avatar">R</div>
-            <div class="story-name">Rina</div>
-          </div>
+  <div class="modal-backdrop" id="postModal">
 
-          <div class="story">
-            <div class="story-avatar">D</div>
-            <div class="story-name">Dika</div>
-          </div>
+    <div class="modal">
 
-          <div class="story">
-            <div class="story-avatar">S</div>
-            <div class="story-name">Sinta</div>
-          </div>
+      <div class="modal-head">
+        <h3>Buat postingan</h3>
 
-        </div>
+        <button class="close-btn" id="closeModal">
+          ×
+        </button>
+      </div>
 
-        <div class="create-post">
+      <div class="modal-body">
 
-          <div class="create-row">
+        <div class="modal-user">
 
-            <div class="avatar">
-              M
-            </div>
-
-            <div class="create-input">
-              Apa yang ingin kamu bagikan?
-            </div>
-
-          </div>
-
-          <div class="create-actions">
-
-            <button class="create-action">
-              ▣ Foto
-            </button>
-
-            <button class="create-action">
-              ▶ Video
-            </button>
-
-            <button class="create-action">
-              ✦ Perasaan
-            </button>
-
-          </div>
-
-        </div>
-
-        <article class="post">
-
-          <div class="post-header">
-
-            <div class="avatar">
-              M
-            </div>
-
-            <div class="post-author">
-
-              <div class="post-author-name">
-                MEXA User
-              </div>
-
-              <div class="post-meta">
-                <span>@mexauser</span>
-                <span>•</span>
-                <span>Baru saja</span>
-              </div>
-
-            </div>
-
-            <button
-              class="post-menu"
-              type="button"
-              aria-label="Menu postingan"
-            >
-              ⋯
-            </button>
-
-          </div>
-
-          <div class="post-content">
-            Selamat datang di MEXA. Tempat baru untuk terhubung, berbagi, dan berkembang bersama.
-          </div>
-
-          <div class="post-image">
+          <div class="modal-user-avatar" id="modalAvatar">
             M
           </div>
 
-          <div class="post-stats">
-
-            <span>
-              ♡ 24 suka
-            </span>
-
-            <span>
-              8 komentar · 3 bagikan
-            </span>
-
+          <div>
+            <strong id="modalName">Memuat...</strong>
+            <span>Posting ke MEXA</span>
           </div>
-
-          <div class="post-actions">
-
-            <button class="post-action">
-              ♡ Suka
-            </button>
-
-            <button class="post-action">
-              ○ Komentar
-            </button>
-
-            <button class="post-action">
-              ↗ Bagikan
-            </button>
-
-          </div>
-
-        </article>
-
-        <article class="post">
-
-          <div class="post-header">
-
-            <div class="avatar">
-              A
-            </div>
-
-            <div class="post-author">
-
-              <div class="post-author-name">
-                Andi MEXA
-              </div>
-
-              <div class="post-meta">
-                <span>@andimexa</span>
-                <span>•</span>
-                <span>1 jam</span>
-              </div>
-
-            </div>
-
-            <button
-              class="post-menu"
-              type="button"
-              aria-label="Menu postingan"
-            >
-              ⋯
-            </button>
-
-          </div>
-
-          <div class="post-content">
-            Ini adalah contoh tampilan feed MEXA. Nantinya postingan asli akan otomatis muncul dari Supabase.
-          </div>
-
-          <div class="post-stats">
-
-            <span>
-              ♡ 17 suka
-            </span>
-
-            <span>
-              5 komentar · 2 bagikan
-            </span>
-
-          </div>
-
-          <div class="post-actions">
-
-            <button class="post-action">
-              ♡ Suka
-            </button>
-
-            <button class="post-action">
-              ○ Komentar
-            </button>
-
-            <button class="post-action">
-              ↗ Bagikan
-            </button>
-
-          </div>
-
-        </article>
-
-      </section>
-
-      <aside class="sidebar right-sidebar">
-
-        <div class="right-card">
-
-          <div class="right-title">
-            Tren MEXA
-          </div>
-
-          <a href="#" class="trend">
-
-            <div class="trend-tag">
-              #MEXA
-            </div>
-
-            <div class="trend-count">
-              12K postingan
-            </div>
-
-          </a>
-
-          <a href="#" class="trend">
-
-            <div class="trend-tag">
-              #Gaming
-            </div>
-
-            <div class="trend-count">
-              8K postingan
-            </div>
-
-          </a>
-
-          <a href="#" class="trend">
-
-            <div class="trend-tag">
-              #Kreator
-            </div>
-
-            <div class="trend-count">
-              5K postingan
-            </div>
-
-          </a>
 
         </div>
 
-        <div class="right-card creator-card">
+        <textarea
+          id="postText"
+          placeholder="Apa yang ingin kamu bagikan?"
+        ></textarea>
 
-          <div class="right-title">
-            Creator Center
-          </div>
+        <div class="modal-tools">
 
-          <p>
-            Bangun komunitasmu, bagikan karya,
-            dan kembangkan akun MEXA kamu.
-          </p>
+          <button class="modal-tool" id="modalPhoto">
+            📷 Foto
+          </button>
 
-          <button class="creator-button">
-            Buka Creator Center
+          <button class="modal-tool">
+            🎬 Video
+          </button>
+
+          <button class="modal-tool">
+            😊 Perasaan
           </button>
 
         </div>
 
-        <div class="right-card">
+        <div class="modal-footer">
 
-          <div class="right-title">
-            MEXA
-          </div>
-
-          <p
-            style="
-              color:#98a2b3;
-              font-size:11px;
-              line-height:1.6;
-            "
-          >
-            Connect. Share. Grow.
-            <br>
-            © 2026 MEXA
-          </p>
-
-        </div>
-
-      </aside>
-
-    </main>
-
-    <nav class="mobile-nav">
-
-      <button class="mobile-item active">
-        <span>⌂</span>
-        <span>Home</span>
-      </button>
-
-      <button class="mobile-item">
-        <span>▶</span>
-        <span>Reels</span>
-      </button>
-
-      <button class="mobile-item">
-        <span>＋</span>
-        <span>Buat</span>
-      </button>
-
-      <button class="mobile-item">
-        <span>♧</span>
-        <span>Grup</span>
-      </button>
-
-      <button class="mobile-item">
-        <span>◎</span>
-        <span>Profil</span>
-      </button>
-
-    </nav>
-
-    <div
-      class="modal"
-      id="postModal"
-    >
-
-      <div class="modal-card">
-
-        <div class="modal-header">
-
-          <div class="modal-title">
-            Buat postingan
-          </div>
-
-          <button
-            class="modal-close"
-            id="closeModal"
-            type="button"
-          >
-            ×
+          <button class="publish-btn" id="publishPost" disabled>
+            Posting
           </button>
-
-        </div>
-
-        <div class="modal-body">
-
-          <textarea
-            class="post-textarea"
-            placeholder="Apa yang ingin kamu bagikan?"
-          ></textarea>
-
-          <div class="modal-footer">
-
-            <button
-              class="modal-button modal-cancel"
-              id="cancelModal"
-              type="button"
-            >
-              Batal
-            </button>
-
-            <button
-              class="modal-button modal-publish"
-              id="publishPost"
-              type="button"
-            >
-              Posting
-            </button>
-
-          </div>
 
         </div>
 
@@ -1594,835 +1530,713 @@
 
   </div>
 
+
+  <div class="toast" id="toast"></div>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
   <script>
-/* =====================================
-   MEXA SUPABASE
-===================================== */
+    /* =====================================
+       MEXA SUPABASE
+    ====================================== */
 
-const MEXA_SUPABASE_URL =
-  "https://yozylignolfvkemuhfse.supabase.co";
+    const MEXA_SUPABASE_URL =
+      "https://yozylignolfvkemuhfse.supabase.co";
 
-const MEXA_SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
+    const MEXA_SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
 
-const mexaSupabase =
-  window.supabase.createClient(
-    MEXA_SUPABASE_URL,
-    MEXA_SUPABASE_PUBLISHABLE_KEY
-  );
-
-
-/* =====================================
-   ELEMENT
-===================================== */
-
-const modal =
-  document.getElementById("postModal");
-
-const createInput =
-  document.querySelector(".create-input");
-
-const createButton =
-  document.querySelector(".mobile-item:nth-child(3)");
-
-const closeModal =
-  document.getElementById("closeModal");
-
-const cancelModal =
-  document.getElementById("cancelModal");
-
-const publishPost =
-  document.getElementById("publishPost");
-
-const postTextarea =
-  document.querySelector(".post-textarea");
-
-const feed =
-  document.querySelector(".feed");
-
-
-/* =====================================
-   CURRENT USER
-===================================== */
-
-let currentUser = null;
-let currentProfile = null;
-
-
-/* =====================================
-   INIT
-===================================== */
-
-async function initMexaHome() {
-
-  try {
-
-    const {
-      data: sessionData,
-      error: sessionError
-    } = await mexaSupabase.auth.getSession();
-
-    if (sessionError) {
-      console.error(
-        "Session error:",
-        sessionError
+    const supabaseClient =
+      window.supabase.createClient(
+        MEXA_SUPABASE_URL,
+        MEXA_SUPABASE_PUBLISHABLE_KEY
       );
-      return;
+
+
+    /* =====================================
+       ELEMENTS
+    ====================================== */
+
+    const feed = document.getElementById("feed");
+
+    const postModal = document.getElementById("postModal");
+    const openCreatePost = document.getElementById("openCreatePost");
+    const closeModal = document.getElementById("closeModal");
+    const mobileCreate = document.getElementById("mobileCreate");
+
+    const postText = document.getElementById("postText");
+    const publishPost = document.getElementById("publishPost");
+
+    const profileName = document.getElementById("profileName");
+    const profileUsername = document.getElementById("profileUsername");
+
+    const profileAvatar = document.getElementById("profileAvatar");
+    const createAvatar = document.getElementById("createAvatar");
+    const modalAvatar = document.getElementById("modalAvatar");
+    const topAvatar = document.getElementById("topAvatar");
+    const modalName = document.getElementById("modalName");
+
+
+    let currentUser = null;
+    let currentProfile = null;
+
+
+    /* =====================================
+       TOAST
+    ====================================== */
+
+    function showToast(message){
+      const toast = document.getElementById("toast");
+
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(window.mexaToastTimer);
+
+      window.mexaToastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
     }
 
-    currentUser =
-      sessionData?.session?.user || null;
 
-    /*
-      Kalau tidak ada session,
-      kembali ke Login.
-    */
+    /* =====================================
+       AVATAR
+    ====================================== */
 
-    if (!currentUser) {
-
-      window.location.href =
-        "Login.html";
-
-      return;
-    }
-
-    console.log(
-      "MEXA LOGIN AKTIF:",
-      currentUser.email
-    );
-
-
-    /*
-      Ambil profil dari tabel profiles
-    */
-
-    await loadCurrentProfile();
-
-
-    /*
-      Ambil postingan asli
-    */
-
-    await loadPosts();
-
-  } catch (error) {
-
-    console.error(
-      "MEXA INIT ERROR:",
-      error
-    );
-
-  }
-
-}
-
-
-/* =====================================
-   LOAD PROFILE
-===================================== */
-
-async function loadCurrentProfile() {
-
-  if (!currentUser) return;
-
-  const {
-    data,
-    error
-  } = await mexaSupabase
-    .from("profiles")
-    .select(
-      "id, username, display_name, avatar_url"
-    )
-    .eq(
-      "id",
-      currentUser.id
-    )
-    .maybeSingle();
-
-  if (error) {
-
-    console.error(
-      "Gagal mengambil profil:",
-      error
-    );
-
-    return;
-  }
-
-  currentProfile = data;
-
-  if (!currentProfile) {
-
-    console.warn(
-      "Profil belum ditemukan."
-    );
-
-    return;
-  }
-
-  updateProfileUI();
-
-}
-
-
-/* =====================================
-   UPDATE PROFILE UI
-===================================== */
-
-function updateProfileUI() {
-
-  if (!currentProfile) return;
-
-  const displayName =
-    currentProfile.display_name ||
-    "MEXA User";
-
-  const username =
-    currentProfile.username ||
-    "mexauser";
-
-  /*
-    Semua nama profil utama
-  */
-
-  const profileName =
-    document.querySelector(".profile-name");
-
-  const profileUsername =
-    document.querySelector(".profile-username");
-
-  if (profileName) {
-    profileName.textContent =
-      displayName;
-  }
-
-  if (profileUsername) {
-    profileUsername.textContent =
-      "@" + username;
-  }
-
-
-  /*
-    Avatar berdasarkan huruf pertama
-  */
-
-  const firstLetter =
-    displayName
-      .trim()
-      .charAt(0)
-      .toUpperCase() || "M";
-
-  document
-    .querySelectorAll(".avatar, .avatar-mini")
-    .forEach(function(element) {
-
-      element.textContent =
-        firstLetter;
-
-    });
-
-
-  /*
-    Create post avatar
-  */
-
-  const createAvatar =
-    document.querySelector(
-      ".create-row .avatar"
-    );
-
-  if (createAvatar) {
-    createAvatar.textContent =
-      firstLetter;
-  }
-
-}
-
-
-/* =====================================
-   LOAD POSTS
-===================================== */
-
-async function loadPosts() {
-
-  const {
-    data,
-    error
-  } = await mexaSupabase
-    .from("posts")
-    .select(`
-      id,
-      user_id,
-      content,
-      image_url,
-      created_at,
-      updated_at,
-      profiles (
-        username,
-        display_name,
-        avatar_url
-      )
-    `)
-    .order(
-      "created_at",
-      {
-        ascending: false
+    function getInitial(name){
+      if(!name){
+        return "M";
       }
-    );
 
-  if (error) {
-
-    console.error(
-      "Gagal mengambil postingan:",
-      error
-    );
-
-    return;
-  }
-
-  renderPosts(data || []);
-
-}
-
-
-/* =====================================
-   RENDER POSTS
-===================================== */
-
-function renderPosts(posts) {
-
-  /*
-    Hapus post lama.
-    Stories + create post tetap.
-  */
-
-  document
-    .querySelectorAll(".feed .post")
-    .forEach(function(post) {
-
-      post.remove();
-
-    });
-
-
-  if (!posts.length) {
-
-    const emptyPost =
-      document.createElement("article");
-
-    emptyPost.className =
-      "post";
-
-    emptyPost.innerHTML = `
-      <div
-        style="
-          padding:35px 20px;
-          text-align:center;
-          color:#667085;
-          font-size:13px;
-        "
-      >
-        Belum ada postingan di MEXA.
-        <br>
-        Jadilah yang pertama membuat postingan.
-      </div>
-    `;
-
-    feed.appendChild(
-      emptyPost
-    );
-
-    return;
-  }
-
-
-  posts.forEach(function(post) {
-
-    const profile =
-      post.profiles || {};
-
-    const displayName =
-      profile.display_name ||
-      "MEXA User";
-
-    const username =
-      profile.username ||
-      "mexauser";
-
-    const avatarLetter =
-      displayName
+      return name
         .trim()
         .charAt(0)
-        .toUpperCase() || "M";
+        .toUpperCase();
+    }
 
-    const timeText =
-      formatMexаTime(
-        post.created_at
+
+    function setAvatar(element, profile){
+      if(!element){
+        return;
+      }
+
+      if(profile && profile.avatar_url){
+        element.innerHTML =
+          `<img src="${escapeHtml(profile.avatar_url)}" alt="Avatar">`;
+      }else{
+        element.textContent =
+          getInitial(profile?.display_name || profile?.username);
+      }
+    }
+
+
+    /* =====================================
+       ESCAPE HTML
+    ====================================== */
+
+    function escapeHtml(value){
+      return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+
+    /* =====================================
+       TIME
+    ====================================== */
+
+    function formatMexaTime(dateString){
+
+      const date = new Date(dateString);
+
+      if(Number.isNaN(date.getTime())){
+        return "";
+      }
+
+      const now = new Date();
+
+      const seconds =
+        Math.floor((now - date) / 1000);
+
+      if(seconds < 60){
+        return "baru saja";
+      }
+
+      const minutes =
+        Math.floor(seconds / 60);
+
+      if(minutes < 60){
+        return `${minutes} menit lalu`;
+      }
+
+      const hours =
+        Math.floor(minutes / 60);
+
+      if(hours < 24){
+        return `${hours} jam lalu`;
+      }
+
+      const days =
+        Math.floor(hours / 24);
+
+      if(days < 7){
+        return `${days} hari lalu`;
+      }
+
+      return date.toLocaleDateString(
+        "id-ID",
+        {
+          day:"numeric",
+          month:"short",
+          year:"numeric"
+        }
       );
+    }
 
 
-    const article =
-      document.createElement("article");
+    /* =====================================
+       SESSION
+    ====================================== */
 
-    article.className =
-      "post";
+    async function checkSession(){
 
-    article.dataset.postId =
-      post.id;
+      const {
+        data,
+        error
+      } = await supabaseClient.auth.getSession();
+
+      if(error){
+        console.error(error);
+        window.location.href = "Login.html";
+        return null;
+      }
+
+      const session = data.session;
+
+      if(!session){
+        window.location.href = "Login.html";
+        return null;
+      }
+
+      currentUser = session.user;
+
+      return currentUser;
+    }
 
 
-    let imageHTML = "";
+    /* =====================================
+       PROFILE
+    ====================================== */
 
-    if (post.image_url) {
+    async function loadProfile(){
 
-      imageHTML = `
-        <img
-          src="${escapeHTML(post.image_url)}"
-          alt="Postingan MEXA"
-          style="
-            width:100%;
-            display:block;
-            max-height:600px;
-            object-fit:cover;
-          "
-        >
+      if(!currentUser){
+        return;
+      }
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+        .from("profiles")
+        .select("id, username, display_name, avatar_url")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if(error){
+        console.error("Profile error:",error);
+        showToast("Profil belum bisa dimuat.");
+        return;
+      }
+
+      currentProfile = data;
+
+      const displayName =
+        data?.display_name ||
+        currentUser.user_metadata?.display_name ||
+        "MEXA User";
+
+      const username =
+        data?.username ||
+        currentUser.user_metadata?.username ||
+        "mexauser";
+
+      profileName.textContent = displayName;
+      profileUsername.textContent =
+        "@" + username;
+
+      modalName.textContent = displayName;
+
+      setAvatar(profileAvatar,data);
+      setAvatar(createAvatar,data);
+      setAvatar(modalAvatar,data);
+      setAvatar(topAvatar,data);
+    }
+
+
+    /* =====================================
+       LOAD POSTS
+    ====================================== */
+
+    async function loadPosts(){
+
+      feed.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          Memuat postingan...
+        </div>
       `;
 
-    }
-
-
-    article.innerHTML = `
-
-      <div class="post-header">
-
-        <div class="avatar">
-          ${escapeHTML(avatarLetter)}
-        </div>
-
-        <div class="post-author">
-
-          <div class="post-author-name">
-            ${escapeHTML(displayName)}
-          </div>
-
-          <div class="post-meta">
-            <span>
-              @${escapeHTML(username)}
-            </span>
-
-            <span>•</span>
-
-            <span>
-              ${escapeHTML(timeText)}
-            </span>
-          </div>
-
-        </div>
-
-        <button
-          class="post-menu"
-          type="button"
-          aria-label="Menu postingan"
-          data-post-id="${escapeHTML(post.id)}"
-        >
-          ⋯
-        </button>
-
-      </div>
-
-      ${
-        post.content
-          ? `
-            <div class="post-content">
-              ${escapeHTML(post.content)}
-            </div>
-          `
-          : ""
-      }
-
-      ${
-        imageHTML
-          ? `
-            <div class="post-image">
-              ${imageHTML}
-            </div>
-          `
-          : ""
-      }
-
-      <div class="post-stats">
-
-        <span>
-          ♡ 0 suka
-        </span>
-
-        <span>
-          0 komentar · 0 bagikan
-        </span>
-
-      </div>
-
-      <div class="post-actions">
-
-        <button
-          class="post-action"
-          type="button"
-        >
-          ♡ Suka
-        </button>
-
-        <button
-          class="post-action"
-          type="button"
-        >
-          ○ Komentar
-        </button>
-
-        <button
-          class="post-action"
-          type="button"
-        >
-          ↗ Bagikan
-        </button>
-
-      </div>
-
-    `;
-
-
-    feed.appendChild(
-      article
-    );
-
-  });
-
-}
-
-
-/* =====================================
-   FORMAT TIME
-===================================== */
-
-function formatMexаTime(dateString) {
-
-  const date =
-    new Date(dateString);
-
-  const now =
-    new Date();
-
-  const seconds =
-    Math.floor(
-      (now - date) / 1000
-    );
-
-  if (seconds < 60) {
-    return "Baru saja";
-  }
-
-  const minutes =
-    Math.floor(
-      seconds / 60
-    );
-
-  if (minutes < 60) {
-    return minutes + " menit lalu";
-  }
-
-  const hours =
-    Math.floor(
-      minutes / 60
-    );
-
-  if (hours < 24) {
-    return hours + " jam lalu";
-  }
-
-  const days =
-    Math.floor(
-      hours / 24
-    );
-
-  if (days < 7) {
-    return days + " hari lalu";
-  }
-
-  return date.toLocaleDateString(
-    "id-ID",
-    {
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    }
-  );
-
-}
-
-
-/* =====================================
-   ESCAPE HTML
-===================================== */
-
-function escapeHTML(value) {
-
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-}
-
-
-/* =====================================
-   OPEN MODAL
-===================================== */
-
-function openModal() {
-
-  modal.classList.add(
-    "show"
-  );
-
-  setTimeout(function() {
-
-    postTextarea.focus();
-
-  }, 100);
-
-}
-
-
-/* =====================================
-   CLOSE MODAL
-===================================== */
-
-function closePostModal() {
-
-  modal.classList.remove(
-    "show"
-  );
-
-  postTextarea.value = "";
-
-}
-
-
-/* =====================================
-   CREATE POST
-===================================== */
-
-async function createMexaPost() {
-
-  if (!currentUser) {
-
-    alert(
-      "Sesi login tidak ditemukan."
-    );
-
-    return;
-  }
-
-
-  const content =
-    postTextarea.value.trim();
-
-
-  if (!content) {
-
-    alert(
-      "Tulis sesuatu sebelum posting."
-    );
-
-    return;
-  }
-
-
-  publishPost.disabled =
-    true;
-
-  publishPost.textContent =
-    "Memposting...";
-
-
-  try {
-
-    const {
-      data,
-      error
-    } = await mexaSupabase
-      .from("posts")
-      .insert({
-
-        user_id:
-          currentUser.id,
-
-        content:
-          content
-
-      })
-      .select()
-      .single();
-
-
-    if (error) {
-
-      console.error(
-        "Post error:",
+      const {
+        data,
         error
-      );
+      } = await supabaseClient
+        .from("posts")
+        .select(`
+          id,
+          user_id,
+          content,
+          image_url,
+          created_at,
+          updated_at,
+          profiles (
+            id,
+            username,
+            display_name,
+            avatar_url
+          )
+        `)
+        .order("created_at",{ascending:false});
 
-      alert(
-        "Gagal membuat postingan: " +
-        error.message
-      );
+      if(error){
 
-      return;
+        console.error("Posts error:",error);
+
+        feed.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <strong>Postingan belum bisa dimuat</strong>
+            <span>Silakan coba refresh halaman.</span>
+          </div>
+        `;
+
+        return;
+      }
+
+      if(!data || data.length === 0){
+
+        feed.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">✨</div>
+            <strong>Belum ada postingan</strong>
+            <span>Jadilah orang pertama yang berbagi di MEXA.</span>
+          </div>
+        `;
+
+        return;
+      }
+
+      feed.innerHTML =
+        data.map(renderPost).join("");
     }
 
 
-    console.log(
-      "Postingan berhasil:",
-      data
+    /* =====================================
+       RENDER POST
+    ====================================== */
+
+    function renderPost(post){
+
+      const profile = post.profiles || {};
+
+      const displayName =
+        profile.display_name ||
+        profile.username ||
+        "MEXA User";
+
+      const username =
+        profile.username ||
+        "mexauser";
+
+      const initial =
+        getInitial(displayName);
+
+      const avatarHtml =
+        profile.avatar_url
+          ? `<img src="${escapeHtml(profile.avatar_url)}" alt="Avatar">`
+          : initial;
+
+      const content =
+        escapeHtml(post.content || "");
+
+      const image =
+        post.image_url
+          ? `<img class="post-image"
+              src="${escapeHtml(post.image_url)}"
+              alt="Postingan MEXA">`
+          : "";
+
+      return `
+        <article class="post" data-post-id="${escapeHtml(post.id)}">
+
+          <div class="post-head">
+
+            <div class="post-avatar">
+              ${avatarHtml}
+            </div>
+
+            <div class="post-author">
+
+              <strong>
+                ${escapeHtml(displayName)}
+              </strong>
+
+              <div class="post-meta">
+                @${escapeHtml(username)}
+                ·
+                ${formatMexaTime(post.created_at)}
+              </div>
+
+            </div>
+
+            <button
+              class="post-menu"
+              type="button"
+              title="Menu postingan"
+              onclick="openPostMenu('${escapeHtml(post.id)}')"
+            >
+              ⋯
+            </button>
+
+          </div>
+
+          ${
+            content
+              ? `<div class="post-content">${content}</div>`
+              : ""
+          }
+
+          ${image}
+
+          <div class="post-stats">
+
+            <span>
+              0 suka
+            </span>
+
+            <span>
+              0 komentar · 0 dibagikan
+            </span>
+
+          </div>
+
+          <div class="post-actions">
+
+            <button class="post-action">
+              ♡ Suka
+            </button>
+
+            <button class="post-action">
+              ◯ Komentar
+            </button>
+
+            <button class="post-action">
+              ↗ Bagikan
+            </button>
+
+          </div>
+
+        </article>
+      `;
+    }
+
+
+    /* =====================================
+       POST MENU
+    ====================================== */
+
+    window.openPostMenu = function(postId){
+
+      const post =
+        document.querySelector(
+          `[data-post-id="${CSS.escape(postId)}"]`
+        );
+
+      if(!post){
+        return;
+      }
+
+      showToast("Menu postingan akan kita lanjutkan berikutnya.");
+    };
+
+
+    /* =====================================
+       OPEN MODAL
+    ====================================== */
+
+    function openModal(){
+
+      postModal.classList.add("show");
+
+      setTimeout(() => {
+        postText.focus();
+      },100);
+    }
+
+
+    function closePostModal(){
+
+      postModal.classList.remove("show");
+
+      postText.value = "";
+
+      publishPost.disabled = true;
+    }
+
+
+    openCreatePost.addEventListener(
+      "click",
+      openModal
+    );
+
+    mobileCreate.addEventListener(
+      "click",
+      openModal
+    );
+
+    closeModal.addEventListener(
+      "click",
+      closePostModal
     );
 
 
-    closePostModal();
+    postModal.addEventListener(
+      "click",
+      event => {
 
-    await loadPosts();
+        if(event.target === postModal){
+          closePostModal();
+        }
 
-
-  } catch (error) {
-
-    console.error(
-      "Create post error:",
-      error
+      }
     );
 
-    alert(
-      "Terjadi kesalahan saat membuat postingan."
+
+    /* =====================================
+       POST TEXT
+    ====================================== */
+
+    postText.addEventListener(
+      "input",
+      () => {
+
+        publishPost.disabled =
+          postText.value.trim().length === 0;
+
+      }
     );
 
-  } finally {
 
-    publishPost.disabled =
-      false;
+    /* =====================================
+       CREATE POST
+    ====================================== */
 
-    publishPost.textContent =
-      "Posting";
+    publishPost.addEventListener(
+      "click",
+      async () => {
 
-  }
+        const content =
+          postText.value.trim();
 
-}
+        if(!content){
+          return;
+        }
 
+        if(!currentUser){
+          showToast("Sesi login tidak ditemukan.");
+          return;
+        }
 
-/* =====================================
-   EVENTS
-===================================== */
+        publishPost.disabled = true;
+        publishPost.textContent = "Memposting...";
 
-if (createInput) {
+        const {
+          data,
+          error
+        } = await supabaseClient
+          .from("posts")
+          .insert({
+            user_id:currentUser.id,
+            content:content
+          })
+          .select()
+          .single();
 
-  createInput.addEventListener(
-    "click",
-    openModal
-  );
+        if(error){
 
-}
+          console.error(
+            "Create post error:",
+            error
+          );
 
+          showToast(
+            "Posting gagal. Coba lagi."
+          );
 
-if (createButton) {
+          publishPost.disabled = false;
+          publishPost.textContent = "Posting";
 
-  createButton.addEventListener(
-    "click",
-    openModal
-  );
-
-}
-
-
-if (closeModal) {
-
-  closeModal.addEventListener(
-    "click",
-    closePostModal
-  );
-
-}
-
-
-if (cancelModal) {
-
-  cancelModal.addEventListener(
-    "click",
-    closePostModal
-  );
-
-}
-
-
-if (publishPost) {
-
-  publishPost.addEventListener(
-    "click",
-    createMexaPost
-  );
-
-}
-
-
-if (modal) {
-
-  modal.addEventListener(
-    "click",
-    function(event) {
-
-      if (
-        event.target === modal
-      ) {
+          return;
+        }
 
         closePostModal();
 
+        showToast(
+          "Postingan berhasil dibuat."
+        );
+
+        await loadPosts();
+
+        publishPost.textContent = "Posting";
       }
-
-    }
-  );
-
-}
-
-
-/* =====================================
-   SUPABASE AUTH STATE
-===================================== */
-
-mexaSupabase.auth.onAuthStateChange(
-  function(event, session) {
-
-    console.log(
-      "MEXA AUTH:",
-      event
     );
 
-    if (
-      event === "SIGNED_OUT"
-    ) {
 
-      window.location.href =
-        "Login.html";
+    /* =====================================
+       PHOTO BUTTON
+    ====================================== */
 
+    document.getElementById("createPhoto")
+      .addEventListener("click",() => {
+
+        openModal();
+
+        showToast(
+          "Upload foto kita sambungkan setelah feed dasar selesai."
+        );
+
+      });
+
+
+    document.getElementById("createVideo")
+      .addEventListener("click",() => {
+
+        showToast(
+          "Fitur video akan kita sambungkan berikutnya."
+        );
+
+      });
+
+
+    document.getElementById("createFeeling")
+      .addEventListener("click",() => {
+
+        openModal();
+
+        showToast(
+          "Pilihan perasaan akan kita buat berikutnya."
+        );
+
+      });
+
+
+    document.getElementById("storyAdd")
+      .addEventListener("click",() => {
+
+        showToast(
+          "Fitur cerita akan kita buat berikutnya."
+        );
+
+      });
+
+
+    document.getElementById("modalPhoto")
+      .addEventListener("click",() => {
+
+        showToast(
+          "Upload foto akan kita sambungkan berikutnya."
+        );
+
+      });
+
+
+    /* =====================================
+       SEARCH
+    ====================================== */
+
+    document.getElementById("searchInput")
+      .addEventListener(
+        "input",
+        event => {
+
+          const keyword =
+            event.target.value
+              .trim()
+              .toLowerCase();
+
+          const posts =
+            document.querySelectorAll(".post");
+
+          posts.forEach(post => {
+
+            const text =
+              post.textContent.toLowerCase();
+
+            post.style.display =
+              !keyword || text.includes(keyword)
+                ? ""
+                : "none";
+
+          });
+
+        }
+      );
+
+
+    /* =====================================
+       AUTH LISTENER
+    ====================================== */
+
+    supabaseClient.auth.onAuthStateChange(
+      (event,session) => {
+
+        if(event === "SIGNED_OUT"){
+          window.location.href =
+            "Login.html";
+        }
+
+      }
+    );
+
+
+    /* =====================================
+       START MEXA
+    ====================================== */
+
+    async function startMEXA(){
+
+      const user =
+        await checkSession();
+
+      if(!user){
+        return;
+      }
+
+      await loadProfile();
+
+      await loadPosts();
     }
 
-  }
-);
 
+    startMEXA();
 
-/* =====================================
-   START MEXA HOME
-===================================== */
+  </script>
 
-initMexaHome();
-
-</script>
-  
 </body>
 </html>
