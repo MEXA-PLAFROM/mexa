@@ -1,19 +1,455 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0b12">
-  <title>MEXA Messenger</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0a12">
+<title>MEXA Messenger</title>
+<style>
+:root{
+  --bg:#0b0a12;--panel:#12111d;--panel2:#191827;
+  --line:#29263c;--text:#f6f3ff;--muted:#9894b1;
+  --purple:#9565ff;--cyan:#43e5ed;--green:#51e6a5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--cyan);outline-offset:3px}
+.app{height:100dvh;min-height:480px;display:grid;
+  grid-template-columns:76px 340px minmax(0,1fr);overflow:hidden}
+.rail{background:#0e0d16;border-right:1px solid var(--line);
+  display:flex;align-items:center;flex-direction:column;padding:20px 0;gap:15px}
+.logo{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;
+  font-size:20px;font-weight:1000;background:linear-gradient(135deg,#a77bff,#5530b9);
+  box-shadow:0 0 28px #9565ff2b}
+.logo span{color:var(--cyan)}
+.rail-divider{height:1px;width:34px;background:var(--line);margin:4px}
+.rail-btn{width:46px;height:46px;display:grid;place-items:center;
+  border:1px solid transparent;border-radius:15px;background:transparent;
+  color:var(--muted);font-size:21px;text-decoration:none;position:relative}
+.rail-btn:hover,.rail-btn.active{background:#9565ff1c;color:#fff;border-color:#9565ff45}
+.rail-btn.active:before{content:"";position:absolute;left:-16px;width:3px;height:23px;
+  border-radius:0 4px 4px 0;background:var(--cyan)}
+.rail-bottom{margin-top:auto}
+.inbox{min-width:0;display:flex;flex-direction:column;
+  background:var(--panel);border-right:1px solid var(--line)}
+.inbox-head{padding:23px 19px 15px}
+.brandline{display:flex;align-items:center;justify-content:space-between}
+.eyebrow{font-size:10px;letter-spacing:2.4px;color:var(--cyan);font-weight:900}
+h1{font-size:27px;letter-spacing:-1px;margin:5px 0 0}
+.new-btn{width:40px;height:40px;border:1px solid #9565ff55;
+  border-radius:13px;background:#9565ff20;color:#c9b4ff;font-size:23px}
+.search{display:flex;align-items:center;gap:10px;margin-top:19px;padding:12px 13px;
+  border:1px solid var(--line);background:#0e0d16;border-radius:13px;color:var(--muted)}
+.search input{width:100%;min-width:0;background:transparent;border:0;outline:0;color:white}
+.tabs{display:flex;gap:8px;margin-top:14px}
+.tab{border:1px solid var(--line);border-radius:10px;padding:8px 12px;
+  color:var(--muted);background:transparent;font-size:12px}
+.tab.active{background:#9565ff1c;color:#d6c7ff;border-color:#9565ff45}
+.online-row{display:flex;gap:14px;overflow-x:auto;padding:17px 17px 19px;
+  border-bottom:1px solid var(--line)}
+.online-person{min-width:53px;text-align:center;font-size:10px;color:var(--muted)}
+.avatar-wrap{width:48px;height:48px;position:relative;margin:0 auto 7px}
+.avatar{width:100%;height:100%;display:grid;place-items:center;overflow:hidden;
+  border-radius:50%;font-size:17px;font-weight:850;color:#fff;
+  background:linear-gradient(140deg,#7753d8,#23576d)}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.online-dot{position:absolute;width:12px;height:12px;right:0;bottom:0;
+  border:2px solid var(--panel);border-radius:50%;background:var(--green)}
+.section-label{padding:17px 19px 8px;display:flex;justify-content:space-between;
+  color:var(--muted);font-size:10px;font-weight:850;letter-spacing:1.6px}
+.conversations{overflow-y:auto;flex:1;padding:0 8px 12px}
+.conversation{width:100%;display:flex;align-items:center;gap:11px;
+  padding:12px 10px;text-align:left;border:1px solid transparent;
+  border-radius:14px;background:transparent}
+.conversation:hover{background:#ffffff06}
+.conversation.active{background:linear-gradient(100deg,#9565ff20,#43e5ed06);
+  border-color:#9565ff30}
+.person-avatar{width:47px;height:47px;flex:0 0 47px;position:relative}
+.person-avatar .avatar{font-size:16px}
+.conversation-info{flex:1;min-width:0}
+.person-line{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.person-name{font-size:13px;font-weight:780;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.time{font-size:10px;color:var(--muted);white-space:nowrap}
+.preview{margin-top:6px;display:flex;justify-content:space-between;gap:5px;
+  color:var(--muted);font-size:11px}
+.preview-text{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.unread{min-width:18px;height:18px;border-radius:7px;background:var(--purple);
+  display:grid;place-items:center;color:white;font-size:10px;padding:0 4px}
+.inbox-footer{padding:13px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.main{min-width:0;display:flex;flex-direction:column;position:relative;
+  background:radial-gradient(ellipse at 65% 0%,#8050c710,transparent 45%),var(--bg)}
+.chat-head{height:78px;flex-shrink:0;padding:0 22px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);
+  background:#100f19d9}
+.chat-person{display:flex;align-items:center;gap:12px;min-width:0}
+.chat-person .avatar{width:44px;height:44px;flex:0 0 44px}
+.chat-name{font-weight:800;font-size:14px}
+.chat-status{margin-top:5px;font-size:11px;color:var(--muted)}
+.chat-actions{display:flex;gap:8px}
+.action-btn{width:39px;height:39px;display:grid;place-items:center;border:1px solid var(--line);
+  background:var(--panel);border-radius:12px;font-size:17px;color:#c8c3e1}
+.action-btn:hover{border-color:#9565ff77;color:var(--cyan)}
+.back-btn{display:none}
+.chat-body{flex:1;overflow:auto;padding:24px clamp(15px,4vw,48px);display:flex;
+  flex-direction:column;gap:15px}
+.day-label{align-self:center;font-size:10px;color:var(--muted);padding:7px 12px;
+  background:#ffffff05;border:1px solid var(--line);border-radius:20px}
+.welcome{margin:auto;max-width:390px;text-align:center;padding:25px 12px}
+.welcome-icon{width:76px;height:76px;display:grid;place-items:center;margin:0 auto 20px;
+  font-size:33px;border-radius:26px;background:linear-gradient(140deg,#9565ff28,#43e5ed0d);
+  border:1px solid #9565ff42;box-shadow:0 0 45px #9565ff0d}
+.welcome h2{font-size:23px;margin:0 0 10px;letter-spacing:-.6px}
+.welcome p{font-size:12px;color:var(--muted);line-height:1.8;margin:0}
+.message{max-width:min(76%,440px);display:flex;flex-direction:column;gap:6px}
+.message.incoming{align-self:flex-start}
+.message.outgoing{align-self:flex-end;align-items:flex-end}
+.bubble{padding:12px 15px;border-radius:17px;font-size:13px;line-height:1.65;
+  overflow-wrap:anywhere;background:#191827;border:1px solid #29263c}
+.outgoing .bubble{background:linear-gradient(135deg,#8050dc,#6040b6);
+  border-color:#a17aff40;border-bottom-right-radius:5px}
+.incoming .bubble{border-bottom-left-radius:5px}
+.message-meta{font-size:10px;color:var(--muted);padding:0 4px}
+.shared-card{width:min(310px,100%);padding:13px;border:1px solid #9565ff40;
+  border-radius:14px;background:#9565ff12}
+.shared-tag{color:var(--cyan);font-size:10px;letter-spacing:1px;font-weight:800}
+.shared-title{font-size:13px;font-weight:800;margin-top:7px}
+.shared-desc{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.composer-wrap{padding:13px 20px 18px;border-top:1px solid var(--line);
+  background:#100f19}
+.composer{display:flex;align-items:flex-end;gap:9px;padding:8px;
+  border:1px solid #343149;border-radius:17px;background:#181725}
+.composer button{width:37px;height:37px;flex:0 0 37px;border:0;border-radius:11px;
+  background:transparent;color:#b4aecf;font-size:20px}
+.composer textarea{flex:1;min-width:0;max-height:120px;resize:none;padding:10px 0;
+  color:white;background:transparent;border:0;outline:0;font-size:13px}
+.send-btn{background:linear-gradient(135deg,var(--purple),#6845cb)!important;color:white!important}
+.composer-note{margin:8px 3px 0;font-size:10px;color:#77738f}
+.profile-panel{display:none;position:absolute;right:15px;top:88px;width:250px;z-index:4;
+  padding:19px;border:1px solid var(--line);border-radius:19px;background:#171624;
+  box-shadow:0 15px 50px #0009}
+.profile-panel.show{display:block}
+.profile-panel .avatar{width:67px;height:67px;margin-bottom:12px}
+.profile-panel strong{display:block;font-size:16px}
+.profile-panel p{font-size:11px;color:var(--muted)}
+.profile-link{display:block;text-align:center;text-decoration:none;color:white;
+  padding:11px;border-radius:11px;background:#9565ff24;border:1px solid #9565ff45;font-size:12px}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);z-index:20;
+  padding:12px 16px;border:1px solid var(--line);border-radius:12px;
+  background:#242238;box-shadow:0 10px 40px #0008;font-size:12px;max-width:90%}
+[hidden]{display:none!important}
+@media(max-width:850px){
+  .app{grid-template-columns:64px 300px minmax(0,1fr)}
+  .rail-btn.active:before{left:-10px}
+  .chat-head{padding:0 13px}
+  .chat-actions{gap:4px}
+  .action-btn{width:34px;height:36px}
+}
+@media(max-width:650px){
+  .app{display:block;height:100dvh;min-height:0}
+  .rail{display:none}
+  .inbox{height:100%;border:0}
+  .main{display:none;height:100dvh}
+  .app.chat-open .inbox{display:none}
+  .app.chat-open .main{display:flex}
+  .inbox-head{padding:19px 16px 13px}
+  .chat-head{height:70px;padding:0 10px}
+  .back-btn{display:grid}
+  .chat-actions .optional{display:none}
+  .chat-body{padding:18px 14px}
+  .composer-wrap{padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
+  .message{max-width:87%}
+  .inbox-footer{padding-bottom:calc(13px + env(safe-area-inset-bottom))}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="rail">
+    <a class="logo" href="index.html" aria-label="MEXA Home">M<span>X</span>A</a>
+    <div class="rail-divider"></div>
+    <a class="rail-btn" href="index.html" title="Home">⌂</a>
+    <a class="rail-btn" href="Teman.html" title="Teman">♧</a>
+    <a class="rail-btn" href="Reels.html" title="Reels">▷</a>
+    <a class="rail-btn" href="Grup.html" title="Grup">♧</a>
+    <a class="rail-btn active" href="Messenger.html" title="Messenger">▰</a>
+    <a class="rail-btn" href="Profil.html" title="Profil">◉</a>
+    <a class="rail-btn rail-bottom" href="Pengaturan.html" title="Pengaturan">⚙</a>
+  </aside>
 
-  <style>
-    :root {
-      --bg: #0b0b12;
-      --panel: #13131e;
-      --panel2: #191927;
-      --border: #29283b;
-      --text: #f5f4ff;
-      --muted: #9998b2;
-      --purple
-```
+  <aside class="inbox">
+    <div class="inbox-head">
+      <div class="brandline">
+        <div>
+          <div class="eyebrow">MEXA CONNECT</div>
+          <h1>Messenger</h1>
+        </div>
+        <button class="new-btn" id="newChat" aria-label="Percakapan baru">＋</button>
+      </div>
+      <label class="search">
+        <span>⌕</span>
+        <input id="search" type="search" placeholder="Cari pesan atau teman...">
+      </label>
+      <div class="tabs">
+        <button class="tab active" data-filter="all">Semua</button>
+        <button class="tab" data-filter="unread">Belum dibaca</button>
+      </div>
+    </div>
+
+    <div class="online-row" id="onlineRow">
+      <div class="online-person">
+        <div class="avatar-wrap">
+          <div class="avatar">M</div>
+          <span class="online-dot"></span>
+        </div>
+        Kamu
+      </div>
+      <div class="online-person">
+        <div class="avatar-wrap"><div class="avatar">+</div></div>
+        Temukan
+      </div>
+    </div>
+
+    <div class="section-label">
+      <span>PESAN TERBARU</span><span id="countLabel">0</span>
+    </div>
+
+    <div class="conversations" id="conversationList">
+      <div style="padding:24px 15px;color:#9894b1;font-size:12px;line-height:1.8">
+        <div style="font-size:25px;margin-bottom:9px">✦</div>
+        Inbox MEXA siap digunakan setelah sistem percakapan dihubungkan.
+      </div>
+    </div>
+
+    <div class="inbox-footer" id="accountFooter">MEXA Messenger · Ruang obrolanmu</div>
+  </aside>
+
+  <main class="main" id="main">
+    <header class="chat-head">
+      <div class="chat-person">
+        <button class="action-btn back-btn" id="back" aria-label="Kembali">‹</button>
+        <div class="avatar" id="chatAvatar">M</div>
+        <div>
+          <div class="chat-name" id="chatName">MEXA Messenger</div>
+          <div class="chat-status" id="chatStatus">Ruang komunikasi MEXA</div>
+        </div>
+      </div>
+      <div class="chat-actions">
+        <button class="action-btn optional" data-action="voice" title="Panggilan suara" aria-label="Panggilan suara">♩</button>
+        <button class="action-btn optional" data-action="video" title="Panggilan video" aria-label="Panggilan video">▣</button>
+        <button class="action-btn" id="showProfile" title="Profil kontak" aria-label="Profil kontak">ⓘ</button>
+        <button class="action-btn" id="more" title="Lainnya" aria-label="Lainnya">•••</button>
+      </div>
+    </header>
+
+    <section class="chat-body" id="chatBody">
+      <div class="welcome">
+        <div class="welcome-icon">✉</div>
+        <h2>Semua koneksi, satu MEXA.</h2>
+        <p>
+          Ruang untuk mengobrol, berbagi postingan, dan tetap terhubung
+          dengan teman-temanmu di MEXA. Pilih percakapan untuk memulai.
+        </p>
+      </div>
+    </section>
+
+    <div class="composer-wrap">
+      <div class="composer">
+        <button id="attach" title="Lampiran" aria-label="Lampiran">＋</button>
+        <button id="image" title="Foto" aria-label="Foto">▧</button>
+        <textarea id="messageInput" rows="1" placeholder="Tulis pesan di MEXA..." aria-label="Tulis pesan"></textarea>
+        <button id="voice" title="Pesan suara" aria-label="Pesan suara">♫</button>
+        <button class="send-btn" id="send" title="Kirim pesan" aria-label="Kirim pesan">➤</button>
+      </div>
+      <div class="composer-note">Percakapan pribadi · Jangan bagikan informasi sensitif.</div>
+    </div>
+
+    <aside class="profile-panel" id="profilePanel">
+      <div class="avatar" id="panelAvatar">M</div>
+      <strong id="panelName">Profil MEXA</strong>
+      <p id="panelUsername">Informasi profil kontak</p>
+      <a class="profile-link" href="Profil.html">Buka profil MEXA</a>
+    </aside>
+  </main>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<input id="fileInput" type="file" accept="image/*" hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+
+const MEXA_URL="https://yozylignolfvkemuhfse.supabase.co";
+const MEXA_KEY="sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
+const db=window.supabase.createClient(MEXA_URL,MEXA_KEY);
+const $=id=>document.getElementById(id);
+let activeFilter="all";
+let activeConversation=null;
+let currentUser=null;
+let currentProfile=null;
+let toastTimer;
+
+function toast(message){
+  $("toast").textContent=message;
+  $("toast").hidden=false;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>$("toast").hidden=true,2800);
+}
+
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[char]));
+}
+
+function avatarMarkup(name,url){
+  const safeName=escapeHTML(name||"M");
+  if(url){
+    return '<img src="'+escapeHTML(url)+'" alt="" referrerpolicy="no-referrer">';
+  }
+  return safeName.trim().charAt(0).toUpperCase()||"M";
+}
+
+async function loadAccount(){
+  try{
+    const {data,error}=await db.auth.getSession();
+    if(error)throw error;
+    currentUser=data.session?.user||null;
+
+    if(!currentUser){
+      $("accountFooter").textContent="Belum login · Login melalui Home MEXA";
+      $("chatStatus").textContent="Login ke MEXA untuk melanjutkan";
+      $("chatName").textContent="Selamat datang di Messenger";
+      return;
+    }
+
+    $("accountFooter").textContent="Akun MEXA terhubung";
+    $("chatStatus").textContent="Akun login terdeteksi";
+
+    const {data:profile,error:profileError}=await db
+      .from("profiles")
+      .select("id,username,display_name,avatar_url")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+    if(profileError)throw profileError;
+    currentProfile=profile;
+
+    if(profile){
+      const name=profile.display_name||profile.username||"Pengguna MEXA";
+      $("accountFooter").textContent="Login sebagai "+name;
+      $("panelName").textContent=name;
+      $("panelUsername").textContent=profile.username?"@"+profile.username:"Profil MEXA";
+      $("panelAvatar").innerHTML=avatarMarkup(name,profile.avatar_url);
+    }else{
+      $("accountFooter").textContent="Akun terhubung · Profil belum ditemukan";
+    }
+  }catch(error){
+    console.error("MEXA Messenger account:",error);
+    $("accountFooter").textContent="Koneksi akun belum dapat diperiksa";
+  }
+}
+
+function openConversation(contact){
+  activeConversation=contact;
+  $("app").classList.add("chat-open");
+  $("chatName").textContent=contact.name;
+  $("chatStatus").textContent=contact.status||"Pengguna MEXA";
+  $("chatAvatar").innerHTML=avatarMarkup(contact.name,contact.avatar_url);
+  $("panelAvatar").innerHTML=avatarMarkup(contact.name,contact.avatar_url);
+  $("panelName").textContent=contact.name;
+  $("panelUsername").textContent=contact.username?"@"+contact.username:"Profil MEXA";
+  $("chatBody").innerHTML=
+    '<div class="welcome"><div class="welcome-icon">✉</div>'+
+    '<h2>Mulai percakapan</h2>'+
+    '<p>Ruang chat ini siap menampilkan pesan setelah layanan pesan MEXA tersambung.</p></div>';
+}
+
+$("back").addEventListener("click",()=>$("app").classList.remove("chat-open"));
+
+$("showProfile").addEventListener("click",()=>{
+  $("profilePanel").classList.toggle("show");
+});
+
+$("more").addEventListener("click",()=>{
+  toast("Menu percakapan akan tersedia setelah chat terhubung.");
+});
+
+$("newChat").addEventListener("click",()=>{
+  toast("Pencarian teman akan dihubungkan ke profil MEXA.");
+});
+
+$("search").addEventListener("input",()=>{
+  const query=$("search").value.trim().toLowerCase();
+  document.querySelectorAll(".conversation").forEach(item=>{
+    item.hidden=!item.dataset.search.includes(query);
+  });
+});
+
+document.querySelectorAll(".tab").forEach(button=>{
+  button.addEventListener("click",()=>{
+    activeFilter=button.dataset.filter;
+    document.querySelectorAll(".tab").forEach(tab=>
+      tab.classList.toggle("active",tab===button));
+    document.querySelectorAll(".conversation").forEach(item=>{
+      item.hidden=(activeFilter==="unread"&&item.dataset.unread!=="true")||
+        !item.dataset.search.includes($("search").value.trim().toLowerCase());
+    });
+    if(activeFilter==="unread"){
+      toast("Pesan belum dibaca akan muncul setelah data chat terhubung.");
+    }
+  });
+});
+
+["attach","image","voice"].forEach(id=>{
+  $(id).addEventListener("click",()=>{
+    if(id==="image")$("fileInput").click();
+    else toast(id==="voice"?
+      "Pesan suara akan diaktifkan setelah sistem chat tersambung.":
+      "Lampiran akan tersedia setelah sistem chat tersambung.");
+  });
+});
+
+$("fileInput").addEventListener("change",()=>{
+  if($("fileInput").files.length){
+    toast("Foto dipilih. Pengiriman akan tersedia setelah backend chat aktif.");
+    $("fileInput").value="";
+  }
+});
+
+$("send").addEventListener("click",()=>{
+  if(!$("messageInput").value.trim()){
+    toast("Tulis pesan terlebih dahulu.");
+    return;
+  }
+  toast("Pengiriman pesan belum diaktifkan. Kita sambungkan backend berikutnya.");
+});
+
+$("messageInput").addEventListener("keydown",event=>{
+  if(event.key==="Enter"&&!event.shiftKey){
+    event.preventDefault();
+    $("send").click();
+  }
+});
+
+$("messageInput").addEventListener("input",()=>{
+  $("messageInput").style.height="auto";
+  $("messageInput").style.height=Math.min($("messageInput").scrollHeight,120)+"px";
+});
+
+document.querySelectorAll('[data-action]').forEach(button=>{
+  button.addEventListener("click",()=>{
+    toast(button.dataset.action==="video"?
+      "Panggilan video akan dikembangkan setelah chat aktif.":
+      "Panggilan suara akan dikembangkan setelah chat aktif.");
+  });
+});
+
+loadAccount();
+</script>
+</body>
+</html>
