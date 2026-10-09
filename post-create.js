@@ -228,18 +228,27 @@
   // API publik untuk dipanggil dari tombol atau modul lain.
   window.MEXACreatePost = createPost;
 
-  // Tombol submit dengan selector khusus.
-  document.addEventListener("click", function (event) {
-    const button = event.target.closest(
-      "#mexaSubmitPost, [data-create-post]"
-    );
+// MEXA — PEMANGGIL TOMBOL POSTING
+document.addEventListener("click", function (event) {
+  const target = event.target;
 
-    if (!button) return;
+  if (!(target instanceof Element)) return;
 
-    event.preventDefault();
-    createPost();
-  });
+  const button = target.closest(
+    "#mexaSubmitPost, #mexaPublishPost, [data-create-post]"
+  );
 
+  if (!button) return;
+
+  event.preventDefault();
+
+  if (typeof window.MEXACreatePost === "function") {
+    window.MEXACreatePost();
+  } else {
+    console.error("MEXA: fungsi MEXACreatePost belum dimuat.");
+  }
+});
+   
   // Form postingan jika memakai form HTML.
   document.addEventListener("submit", function (event) {
     if (!event.target.matches("#mexaPostForm")) return;
