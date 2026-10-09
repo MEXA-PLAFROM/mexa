@@ -773,7 +773,6 @@ overlay.addEventListener("click", event => {
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && !saveInProgress) closeEditor();
 });
-
 async function loadProfile() {
   inform("Memuat profil MEXA...");
 
@@ -789,56 +788,36 @@ async function loadProfile() {
     return;
   }
 
+  // Akun yang sedang login
   currentUser = session.user;
+
   const metadata = currentUser.user_metadata || {};
+  const params = new URLSearchParams(location.search);
+  const requestedUserId = params.get("user");
+
+  // Jika URL berisi ?user=ID, buka profil pemilik ID tersebut.
+  const targetUserId = requestedUserId || currentUser.id;
+
+  // Hanya pemilik akun yang boleh mengedit profilnya.
+  const isOwnProfile = targetUserId === currentUser.id;
+  visitorMode = !isOwnProfile;
 
   const { data, error } = await mexaSupabase
     .from("profiles")
     .select("id, username, display_name, avatar_url, cover_url, bio")
-    .eq("id", currentUser.id)
+    .eq("id", targetUserId)
     .maybeSingle();
 
   if (error) throw error;
 
-  if (data) {
-    renderProfile(data, metadata);
-  } else {
-    const seedName =
-      metadata.display_name ||
-      metadata.full_name ||
-      "Pengguna MEXA";
-
-    const rawUsername =
-      metadata.username ||
-      (currentUser.email || "mexauser").split("@")[0];
-
-    const seedUsername =
-      rawUsername.toLowerCase().replace(/[^a-z0-9_.]/g, "").slice(0, 30) ||
-      ("mexa" + currentUser.id.replace(/-/g, "").slice(0, 8));
-
-    const initialProfile = {
-      id: currentUser.id,
-      username: seedUsername,
-      display_name: seedName,
-      avatar_url: metadata.avatar_url || null,
-      cover_url: null,
-      bio: ""
-    };
-
-    const { data: inserted, error: insertError } = await mexaSupabase
-      .from("profiles")
-      .upsert(initialProfile, { onConflict: "id" })
-      .select("id, username, display_name, avatar_url, cover_url, bio")
-      .single();
-
-    if (insertError) {
-      console.error("MEXA initial profile error:", insertError);
-      renderProfile(initialProfile, metadata);
-      inform("Profil tampil, tetapi belum tersimpan: " + insertError.message);
-    } else {
-      renderProfile(inserted, metadata);
-    }
+  if (!data) {
+    actions.innerHTML = "";
+    inform("Profil pengguna tidak ditemukan.");
+    return;
   }
+
+  // Tampilkan profil yang dipilih, bukan selalu profil sendiri.
+  renderProfile(data, isOwnProfile ? metadata : {});
 
   document.getElementById("followers").textContent = "—";
   document.getElementById("friends").textContent = "—";
@@ -846,7 +825,17 @@ async function loadProfile() {
 
   actions.innerHTML = "";
 
-  if (visitorMode) {
+  if (isOwnProfile) {
+    addButton("✎ Edit Profil", "primary", openEditor);
+
+    addButton("+ Reels", "cyan", () => {
+      location.href = "./Reels.html";
+    });
+
+    addButton("🔒 Live", "", () => {
+      inform("Fitur Live memerlukan pemeriksaan kelayakan akun.");
+    });
+  } else {
     addButton("+ Ikuti", "primary", () => {
       inform("Fitur Ikuti belum terhubung ke tabel relasi.");
     });
@@ -857,16 +846,6 @@ async function loadProfile() {
 
     addButton("••• Menu", "", () => {
       inform("Menu profil akan tersedia pada tahap berikutnya.");
-    });
-  } else {
-    addButton("✎ Edit Profil", "primary", openEditor);
-
-    addButton("+ Reels", "cyan", () => {
-      location.href = "./reels.html";
-    });
-
-    addButton("🔒 Live", "", () => {
-      inform("Fitur Live memerlukan pemeriksaan kelayakan akun.");
     });
   }
 
