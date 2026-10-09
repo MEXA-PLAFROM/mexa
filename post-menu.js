@@ -274,15 +274,21 @@
       return;
     }
 
-    if (action === "friend") {
-      if (typeof window.openShareToFriend === "function") {
-        window.openShareToFriend(post);
-      } else {
-        showMessage("Fitur berbagi ke teman belum terhubung.");
-      }
-      return;
-    }
+   
+if (action === "friend") {
+  const postId = getPostId(post);
 
+  if (!postId) {
+    showMessage("ID postingan tidak ditemukan.");
+    return;
+  }
+
+  const url = new URL("Teman.html", window.location.href);
+  url.searchParams.set("post_id", postId);
+
+  window.location.href = url.href;
+  return;
+  }
     if (action === "group") {
       if (typeof window.openShareToGroup === "function") {
         window.openShareToGroup(post);
