@@ -60,38 +60,37 @@
           <div id="mexa-stories-list"></div>
         </section>
 
-        <section id="mexa-composer" aria-label="Buat postingan">
-          <div id="mexa-composer-profile"></div>
-          <button type="button" id="mexaOpenComposer">
-            Apa yang ingin kamu bagikan?
-          </button>
-          <div class="mx-composer-actions">
-            <button type="button" data-create="photo">📷 Foto</button>
-            <button type="button" data-create="video">🎬 Video</button>
-            <button type="button" data-create="feeling">😊 Perasaan</button>
-          </div>
-        </section>
+<section id="mexa-composer" class="mx-composer" aria-label="Buat postingan">
+  <div id="mexa-composer-profile"></div>
 
-        <section id="mexa-feed" aria-label="Postingan">
-          <div id="mexaFeedStatus" role="status"></div>
-          <div id="mexaFeedList"></div>
-        </section>
-      </main>
+  <label class="mx-composer-label" for="mexaPostContent">
+    Buat postingan baru
+  </label>
 
-      <aside id="mexa-right-sidebar" class="mx-right-sidebar">
-        <section id="mexa-trending">
-          <h2>Tren MEXA</h2>
-          <div id="mexaTrendingList"></div>
-        </section>
-        <section id="mexa-creator-center">
-          <h2>Creator Center</h2>
-          <p>Bangun komunitasmu dan kembangkan konten di MEXA.</p>
-          <button type="button" data-action="creator">
-            Mulai jadi Kreator
-          </button>
-        </section>
-      </aside>
-    </div>
+  <textarea
+    id="mexaPostContent"
+    name="content"
+    placeholder="Apa yang ingin kamu bagikan?"
+    rows="3"
+    maxlength="10000"
+  ></textarea>
+
+  <div class="mx-composer-actions">
+    <button type="button" data-create="photo">📷 Foto</button>
+    <button type="button" data-create="video">🎬 Video</button>
+    <button type="button" data-create="feeling">😊 Perasaan</button>
+  </div>
+
+  <div class="mx-publish-row">
+    <span id="mexaPublishStatus" role="status">
+      Bagikan cerita kamu ke MEXA
+    </span>
+
+    <button type="button" id="mexaPublishPost">
+      Posting
+    </button>
+  </div>
+</section>
 
     <nav id="mexa-bottom-nav" aria-label="Navigasi utama">
       <a href="./index.html">⌂<span>Home</span></a>
