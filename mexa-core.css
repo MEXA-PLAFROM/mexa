@@ -3,27 +3,27 @@
    File: mexa-core.css
    ===================================================== */
 
-#mexa-core-panel {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
-  color: #f2f8ff;
-}
-
-#mexa-core-panel *,
-#mexa-core-panel *::before,
-#mexa-core-panel *::after {
-  box-sizing: border-box;
-}
-
 #mexa-core-panel .mexa-core-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(2, 8, 20, 0.76);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  animation: mexaCoreFadeIn 0.2s ease;
+position: fixed;
+inset: 0;
+background: rgba(3, 5, 18, 0.94);
+backdrop-filter: blur(14px);
+-webkit-backdrop-filter: blur(14px);
+animation: mexaCoreFadeIn 0.2s ease;
+z-index: 0;
+}
+
+#mexa-core-panel .mexa-core-window {
+z-index: 1;
+isolation: isolate;
+background: #0B1020;
+color: #F5F8FF;
+}
+
+#mexa-core-panel .mexa-core-header,
+#mexa-core-panel .mexa-core-content,
+#mexa-core-panel .mexa-core-footer {
+position: relative;
 }
 
 #mexa-core-panel .mexa-core-window {
