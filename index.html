@@ -1903,6 +1903,10 @@
       currentUser =
         sessionData?.session?.user || null;
 
+      window.MEXA_GET_CURRENT_USER = function () {
+        return currentUser;
+      };
+      
       if (!currentUser) {
 
         window.location.href = "Login.html";
