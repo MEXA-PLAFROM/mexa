@@ -3551,190 +3551,466 @@ async function loadStories() {
 
     }
 
-    /* ==========================================
-       EDIT POST
-    ========================================== */
+  
+/* =====================================================
+   MEXA PREMIUM — INLINE EDIT & DELETE
+   Edit langsung di postingan + dialog Hapus MEXA
+===================================================== */
 
-    async function editPost(
-      post
-    ) {
+(function () {
+  "use strict";
 
-      if (
-        post.user_id !==
-        currentUser?.id
-      ) {
+  function addMexaEditorStyles() {
+    if (document.getElementById("mexa-edit-premium-css")) return;
 
-        showToast(
-          "Kamu hanya bisa mengedit postingan milikmu sendiri."
-        );
+    const style = document.createElement("style");
+    style.id = "mexa-edit-premium-css";
+    style.textContent = `
+      .mexa-inline-editor {
+        margin: 12px 0;
+        padding: 14px;
+        border: 1px solid rgba(120, 90, 255, .35);
+        border-radius: 16px;
+        background: var(--mx-editor-bg, rgba(120, 90, 255, .045));
+        box-sizing: border-box;
+      }
 
+      .mexa-editor-heading {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 12px;
+        font-weight: 750;
+      }
+
+      .mexa-editor-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        color: white;
+        background: linear-gradient(135deg, #7957ff, #19b8ff);
+        font-size: 13px;
+      }
+
+      .mexa-editor-textarea {
+        display: block;
+        width: 100%;
+        min-height: 110px;
+        padding: 13px;
+        border: 1px solid rgba(127,127,127,.28);
+        border-radius: 12px;
+        outline: none;
+        resize: vertical;
+        box-sizing: border-box;
+        font: inherit;
+        line-height: 1.6;
+        color: inherit;
+        background: var(--mx-input-bg, rgba(127,127,127,.055));
+      }
+
+      .mexa-editor-textarea:focus {
+        border-color: #7957ff;
+        box-shadow: 0 0 0 3px rgba(121,87,255,.12);
+      }
+
+      .mexa-editor-hint {
+        margin-top: 8px;
+        font-size: 12px;
+        opacity: .65;
+      }
+
+      .mexa-editor-actions {
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 12px;
+      }
+
+      .mexa-editor-btn {
+        min-height: 39px;
+        padding: 9px 15px;
+        border: 0;
+        border-radius: 10px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .mexa-editor-cancel {
+        color: inherit;
+        background: rgba(127,127,127,.13);
+      }
+
+      .mexa-editor-save {
+        color: #fff;
+        background: linear-gradient(135deg, #7957ff, #3978ff);
+      }
+
+      .mexa-editor-btn:disabled {
+        opacity: .55;
+        cursor: wait;
+      }
+
+      .mexa-dialog-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(8, 10, 22, .65);
+        backdrop-filter: blur(7px);
+      }
+
+      .mexa-dialog {
+        width: 100%;
+        max-width: 390px;
+        padding: 23px;
+        border: 1px solid rgba(127,127,127,.22);
+        border-radius: 22px;
+        color: var(--mx-text, var(--text-color, #222));
+        background: var(--mx-card-bg, var(--card-bg, #fff));
+        box-shadow: 0 24px 80px rgba(0,0,0,.25);
+        box-sizing: border-box;
+      }
+
+      .mexa-dialog-icon {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 14px;
+        border-radius: 15px;
+        color: #e5484d;
+        background: rgba(229,72,77,.12);
+        font-size: 23px;
+      }
+
+      .mexa-dialog-title {
+        margin: 0 0 9px;
+        font-size: 19px;
+        font-weight: 800;
+      }
+
+      .mexa-dialog-text {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.65;
+        opacity: .78;
+      }
+
+      .mexa-dialog-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .mexa-dialog-actions button {
+        flex: 1;
+        min-height: 43px;
+        padding: 10px;
+        border: 0;
+        border-radius: 11px;
+        font: inherit;
+        font-weight: 750;
+        cursor: pointer;
+      }
+
+      .mexa-dialog-cancel {
+        color: inherit;
+        background: rgba(127,127,127,.13);
+      }
+
+      .mexa-dialog-delete {
+        color: #fff;
+        background: #df3948;
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function getPostCard(postId) {
+    return document.getElementById("post-" + postId);
+  }
+
+  function isPostOwner(post) {
+    return Boolean(
+      currentUser &&
+      post &&
+      post.user_id &&
+      String(currentUser.id) === String(post.user_id)
+    );
+  }
+
+  // EDIT: ketik langsung di dalam postingan
+  async function editPost(post) {
+    if (!currentUser || !post || !isPostOwner(post)) {
+      showToast("Kamu hanya bisa mengedit postingan milikmu sendiri.");
+      return;
+    }
+
+    addMexaEditorStyles();
+
+    const card = getPostCard(post.id);
+    const body = card && card.querySelector(".mx-post-body");
+
+    if (!card || !body) {
+      showToast("Postingan tidak ditemukan. Muat ulang halaman.");
+      return;
+    }
+
+    if (body.querySelector(".mexa-inline-editor")) {
+      body.querySelector(".mexa-editor-textarea").focus();
+      return;
+    }
+
+    const originalContent = post.content || "";
+    const feelingMatch = originalContent.match(
+      /^__MEXA_FEELING__(.*?)__END_FEELING__\n?/
+    );
+
+    const feeling = feelingMatch ? feelingMatch[1] : "";
+    const visibleContent = feelingMatch
+      ? originalContent.replace(feelingMatch[0], "")
+      : originalContent;
+
+    const editor = document.createElement("section");
+    editor.className = "mexa-inline-editor";
+
+    const heading = document.createElement("div");
+    heading.className = "mexa-editor-heading";
+
+    const mark = document.createElement("span");
+    mark.className = "mexa-editor-mark";
+    mark.textContent = "M";
+
+    const headingText = document.createElement("span");
+    headingText.textContent = "Edit postingan MEXA";
+
+    heading.append(mark, headingText);
+
+    const textarea = document.createElement("textarea");
+    textarea.className = "mexa-editor-textarea";
+    textarea.setAttribute("aria-label", "Edit isi postingan");
+    textarea.placeholder = "Apa yang ingin kamu bagikan?";
+    textarea.value = visibleContent;
+
+    const hint = document.createElement("div");
+    hint.className = "mexa-editor-hint";
+    hint.textContent = "Perubahan akan ditampilkan langsung di postingan setelah disimpan.";
+
+    const actions = document.createElement("div");
+    actions.className = "mexa-editor-actions";
+
+    const cancelButton = document.createElement("button");
+    cancelButton.type = "button";
+    cancelButton.className = "mexa-editor-btn mexa-editor-cancel";
+    cancelButton.textContent = "Batal";
+
+    const saveButton = document.createElement("button");
+    saveButton.type = "button";
+    saveButton.className = "mexa-editor-btn mexa-editor-save";
+    saveButton.textContent = "Simpan perubahan";
+
+    actions.append(cancelButton, saveButton);
+    editor.append(heading, textarea, hint, actions);
+
+    // Sisipkan editor di lokasi teks postingan.
+    const contentElement = body.querySelector(".mx-post-content");
+    const mediaElement = body.querySelector(".mx-post-media");
+
+    if (contentElement) {
+      contentElement.insertAdjacentElement("afterend", editor);
+      contentElement.hidden = true;
+    } else if (mediaElement) {
+      body.insertBefore(editor, mediaElement);
+    } else {
+      body.appendChild(editor);
+    }
+
+    textarea.focus();
+    textarea.setSelectionRange(
+      textarea.value.length,
+      textarea.value.length
+    );
+
+    function closeEditor() {
+      editor.remove();
+      if (contentElement) contentElement.hidden = false;
+    }
+
+    cancelButton.addEventListener("click", closeEditor);
+
+    saveButton.addEventListener("click", async function () {
+      if (!isPostOwner(post)) {
+        showToast("Sesi pemilik postingan tidak valid.");
         return;
-
       }
 
+      const newText = textarea.value.trim();
 
-      let oldContent =
-        post.content || "";
-
-
-      const feelingMatch =
-        oldContent.match(
-          /^__MEXA_FEELING__(.*?)__END_FEELING__\n?/
-        );
-
-
-      let feeling =
-        "";
-
-
-      if (feelingMatch) {
-
-        feeling =
-          feelingMatch[1];
-
-        oldContent =
-          oldContent.replace(
-            feelingMatch[0],
-            ""
-          );
-
+      if (!newText && !post.image_url) {
+        showToast("Tuliskan sesuatu sebelum menyimpan.");
+        textarea.focus();
+        return;
       }
 
-
-      const newContent =
-        window.prompt(
-          "Edit postingan:",
-          oldContent
-        );
-
-
-      if (
-        newContent ===
-        null
-      ) return;
-
-
-      let finalContent =
-        newContent.trim();
-
+      let finalContent = newText;
 
       if (feeling) {
-
         finalContent =
-          `__MEXA_FEELING__${feeling}__END_FEELING__\n` +
-          finalContent;
-
+          "__MEXA_FEELING__" + feeling +
+          "__END_FEELING__\n" + newText;
       }
 
+      saveButton.disabled = true;
+      cancelButton.disabled = true;
+      saveButton.textContent = "Menyimpan...";
 
-      const {
-        error
-      } = await supabaseClient
-        .from("posts")
-        .update({
-          content:
-            finalContent
-        })
-        .eq(
-          "id",
-          post.id
-        )
-        .eq(
-          "user_id",
-          currentUser.id
-        );
+      try {
+        const { error } = await supabaseClient
+          .from("posts")
+          .update({ content: finalContent })
+          .eq("id", post.id)
+          .eq("user_id", currentUser.id);
 
+        if (error) throw error;
 
-      if (error) {
+        closeEditor();
+        showToast("Postingan berhasil diperbarui!");
 
-        console.error(
-          error
-        );
-
-        showToast(
-          "Postingan gagal diedit."
-        );
-
-        return;
-
+        await loadPosts();
+        await loadStories();
+      } catch (error) {
+        console.error("MEXA inline edit error:", error);
+        saveButton.disabled = false;
+        cancelButton.disabled = false;
+        saveButton.textContent = "Coba simpan lagi";
+        showToast("Gagal menyimpan perubahan. Periksa koneksi lalu coba lagi.");
       }
+    });
+  }
 
-
-      showToast(
-        "Postingan berhasil diedit."
-      );
-
-
-      await loadPosts();
-
-      await loadStories();
-
+  // HAPUS: dialog konfirmasi bergaya MEXA
+  async function deletePost(postId) {
+    if (!currentUser) {
+      showToast("Silakan login kembali.");
+      return;
     }
 
+    const post = (Array.isArray(currentPosts) ? currentPosts : [])
+      .find(item => String(item.id) === String(postId));
 
-    /* ==========================================
-       DELETE POST
-    ========================================== */
-
-    async function deletePost(
-      postId
-    ) {
-
-      if (
-        !currentUser
-      ) return;
-
-
-      const yes =
-        window.confirm(
-          "Hapus postingan ini?"
-        );
-
-
-      if (!yes) return;
-
-
-      const {
-        error
-      } = await supabaseClient
-        .from("posts")
-        .delete()
-        .eq(
-          "id",
-          postId
-        )
-        .eq(
-          "user_id",
-          currentUser.id
-        );
-
-
-      if (error) {
-
-        console.error(
-          error
-        );
-
-        showToast(
-          "Postingan gagal dihapus."
-        );
-
-        return;
-
-      }
-
-
-      showToast(
-        "Postingan berhasil dihapus."
-      );
-
-
-      await loadPosts();
-
-      await loadStories();
-
+    if (!post || !isPostOwner(post)) {
+      showToast("Kamu hanya bisa menghapus postingan milikmu sendiri.");
+      return;
     }
 
+    addMexaEditorStyles();
+
+    // Hindari dialog ganda.
+    const existing = document.querySelector(".mexa-dialog-overlay");
+    if (existing) existing.remove();
+
+    const overlay = document.createElement("div");
+    overlay.className = "mexa-dialog-overlay";
+
+    const dialog = document.createElement("div");
+    dialog.className = "mexa-dialog";
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-labelledby", "mexa-delete-title");
+
+    const icon = document.createElement("div");
+    icon.className = "mexa-dialog-icon";
+    icon.textContent = "⌫";
+
+    const title = document.createElement("h2");
+    title.className = "mexa-dialog-title";
+    title.id = "mexa-delete-title";
+    title.textContent = "Hapus postingan?";
+
+    const description = document.createElement("p");
+    description.className = "mexa-dialog-text";
+    description.textContent =
+      "Postingan ini akan dihapus dari MEXA. Tindakan ini tidak dapat dibatalkan.";
+
+    const actions = document.createElement("div");
+    actions.className = "mexa-dialog-actions";
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "mexa-dialog-cancel";
+    cancel.textContent = "Batal";
+
+    const confirm = document.createElement("button");
+    confirm.type = "button";
+    confirm.className = "mexa-dialog-delete";
+    confirm.textContent = "Ya, hapus";
+
+    actions.append(cancel, confirm);
+    dialog.append(icon, title, description, actions);
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    function closeDialog() {
+      overlay.remove();
+    }
+
+    cancel.addEventListener("click", closeDialog);
+
+    overlay.addEventListener("click", function (event) {
+      if (event.target === overlay) closeDialog();
+    });
+
+    confirm.addEventListener("click", async function () {
+      if (!currentUser || !isPostOwner(post)) {
+        closeDialog();
+        showToast("Kamu tidak memiliki izin menghapus postingan ini.");
+        return;
+      }
+
+      confirm.disabled = true;
+      cancel.disabled = true;
+      confirm.textContent = "Menghapus...";
+
+      try {
+        const { error } = await supabaseClient
+          .from("posts")
+          .delete()
+          .eq("id", postId)
+          .eq("user_id", currentUser.id);
+
+        if (error) throw error;
+
+        closeDialog();
+        showToast("Postingan berhasil dihapus.");
+
+        await loadPosts();
+        await loadStories();
+      } catch (error) {
+        console.error("MEXA delete error:", error);
+        confirm.disabled = false;
+        cancel.disabled = false;
+        confirm.textContent = "Coba lagi";
+        showToast("Postingan gagal dihapus.");
+      }
+    });
+  }
+
+  // Hubungkan ke menu titik tiga di post-menu.js.
+  window.editPost = editPost;
+  window.deletePost = deletePost;
+
+  console.log("MEXA Premium Inline Edit & Delete aktif.");
+})();
 
     /* ==========================================
        LIKE
