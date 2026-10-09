@@ -4105,7 +4105,7 @@ async function likePost(postId) {
 
 async function commentPost(postId) {
   if (!currentUser) {
-    showToast("Silakan login untuk melihat komentar.");
+    showToast("Silakan login untuk berkomentar.");
     return;
   }
 
@@ -4114,26 +4114,20 @@ async function commentPost(postId) {
     return;
   }
 
-  // Cari fungsi panel komentar yang mungkin sudah tersedia.
-  const openCommentPanel =
-    window.openComments ||
-    window.openCommentPanel ||
-    window.showCommentPanel;
-
-  if (typeof openCommentPanel === "function") {
-    await openCommentPanel(postId);
-    return;
+  if (typeof window.openComments === "function") {
+    return window.openComments(postId);
   }
 
-  showToast(
-    "Panel komentar MEXA sedang disambungkan."
-  );
+  if (typeof window.openCommentPanel === "function") {
+    return window.openCommentPanel(postId);
+  }
+
+  showToast("Panel komentar belum dibuat.");
 
   console.warn(
-    "MEXA: Fungsi panel komentar belum ditemukan."
+    "MEXA: Fungsi openComments/openCommentPanel belum tersedia."
   );
 }
-
     /* ==========================================
        SHARE
     ========================================== */
