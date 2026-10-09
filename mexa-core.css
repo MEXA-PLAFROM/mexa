@@ -1,0 +1,218 @@
+/* =====================================================
+   MEXA CORE — PREMIUM UI
+   File: mexa-core.css
+   ===================================================== */
+
+#mexa-core-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  color: #f2f8ff;
+}
+
+#mexa-core-panel *,
+#mexa-core-panel *::before,
+#mexa-core-panel *::after {
+  box-sizing: border-box;
+}
+
+#mexa-core-panel .mexa-core-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 8, 20, 0.76);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: mexaCoreFadeIn 0.2s ease;
+}
+
+#mexa-core-panel .mexa-core-window {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(440px, calc(100% - 28px));
+  max-height: min(680px, calc(100dvh - 32px));
+  overflow-y: auto;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(67, 207, 255, 0.25);
+  border-radius: 24px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(0, 190, 255, 0.12),
+      transparent 42%
+    ),
+    linear-gradient(160deg, #101d34, #080f1e 72%);
+  box-shadow:
+    0 24px 90px rgba(0, 0, 0, 0.55),
+    0 0 35px rgba(0, 190, 255, 0.08);
+  animation: mexaCoreAppear 0.25s ease;
+}
+
+#mexa-core-panel .mexa-core-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 25px 23px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#mexa-core-panel .mexa-core-eyebrow {
+  margin-bottom: 8px;
+  color: #42d7ff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+}
+
+#mexa-core-panel #mexa-core-title {
+  margin: 0;
+  color: #f5fbff;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+#mexa-core-panel .mexa-core-header p {
+  margin: 8px 0 0;
+  color: #9aabc4;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+#mexa-core-panel .mexa-core-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #eaf6ff;
+  font-size: 25px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+#mexa-core-panel .mexa-core-close:hover {
+  background: rgba(50, 205, 255, 0.12);
+  border-color: rgba(67, 207, 255, 0.45);
+}
+
+#mexa-core-panel .mexa-core-content {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+}
+
+#mexa-core-panel .mexa-core-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  min-height: 72px;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #f3f8ff;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.2s;
+}
+
+#mexa-core-panel .mexa-core-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(67, 207, 255, 0.35);
+  background: rgba(34, 185, 240, 0.09);
+}
+
+#mexa-core-panel .mexa-core-symbol {
+  display: grid;
+  place-items: center;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  border: 1px solid rgba(67, 207, 255, 0.2);
+  border-radius: 13px;
+  background: rgba(30, 190, 245, 0.1);
+  color: #43d7ff;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+#mexa-core-panel .mexa-core-item > span:nth-child(2) {
+  display: grid;
+  flex: 1;
+  gap: 5px;
+  min-width: 0;
+}
+
+#mexa-core-panel .mexa-core-item strong {
+  font-size: 13px;
+  font-weight: 750;
+}
+
+#mexa-core-panel .mexa-core-item small {
+  color: #96a9c3;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+#mexa-core-panel .mexa-core-arrow {
+  color: #6f8ba8;
+  font-size: 24px;
+}
+
+#mexa-core-panel .mexa-core-footer {
+  padding: 15px 20px 20px;
+  color: #71849e;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: 0.4px;
+}
+
+@keyframes mexaCoreFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mexaCoreAppear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -47%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (max-width: 480px) {
+  #mexa-core-panel .mexa-core-window {
+    border-radius: 20px;
+  }
+
+  #mexa-core-panel .mexa-core-header {
+    padding: 21px 18px;
+  }
+
+  #mexa-core-panel .mexa-core-content {
+    padding: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mexa-core-panel *,
+  #mexa-core-panel *::before,
+  #mexa-core-panel *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
