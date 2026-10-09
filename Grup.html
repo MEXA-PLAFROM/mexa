@@ -533,18 +533,283 @@
       `).join("");
     }
 
+  
+    let allGroups = [];
+    let currentGroupSession = null;
+
+    function closeCreateModal() {
+      createModal.style.display = "none";
+      createModal.hidden = true;
+    }
+
+    function openCreateModal() {
+      createModal.innerHTML = `
+        <div style="width:min(440px,92vw);margin:auto;background:#171923;
+          color:#f4f5ff;border:1px solid #34364b;border-radius:22px;
+          padding:24px;box-shadow:0 24px 80px #0009">
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;gap:12px">
+            <h2 style="margin:0;font-size:21px">Buat Ruang Grup</h2>
+            <button type="button" id="mxCloseCreate"
+              style="background:#282b3b;color:white;border:0;border-radius:10px;
+              padding:9px 13px;cursor:pointer">Tutup</button>
+          </div>
+          <p style="color:#aeb2ca;font-size:13px;line-height:1.6">
+            Buat ruang untuk berkumpul dan berbagi postingan di MEXA.
+          </p>
+          <form id="mxCreateGroupForm">
+            <label for="mxGroupName">Nama grup</label>
+            <input id="mxGroupName" maxlength="80" minlength="2"
+              required placeholder="Contoh: Kreator MEXA"
+              style="box-sizing:border-box;width:100%;margin:8px 0 16px;
+              padding:13px;border-radius:12px;border:1px solid #454960;
+              background:#10121b;color:white">
+            <label for="mxGroupDescription">Deskripsi</label>
+            <textarea id="mxGroupDescription" maxlength="500" rows="3"
+              placeholder="Ceritakan tentang grup ini..."
+              style="box-sizing:border-box;width:100%;margin:8px 0 16px;
+              padding:13px;border-radius:12px;border:1px solid #454960;
+              background:#10121b;color:white;resize:vertical"></textarea>
+            <button id="mxSubmitGroup" type="submit"
+              style="width:100%;padding:13px;border:0;border-radius:12px;
+              color:white;font-weight:700;cursor:pointer;
+              background:linear-gradient(100deg,#8058ff,#18c8d8)">
+              Buat Grup
+            </button>
+            <p id="mxCreateStatus" style="font-size:13px;color:#b9bdd4"></p>
+          </form>
+        </div>
+      `;
+      createModal.hidden = false;
+      createModal.style.display = "flex";
+
+      document.getElementById("mxCloseCreate").onclick = closeCreateModal;
+
+      document.getElementById("mxCreateGroupForm").onsubmit =
+        async function(event) {
+          event.preventDefault();
+
+          const name = document.getElementById("mxGroupName").value.trim();
+          const description =
+            document.getElementById("mxGroupDescription").value.trim();
+          const submitButton = document.getElementById("mxSubmitGroup");
+          const status = document.getElementById("mxCreateStatus");
+
+          if (name.length < 2 || name.length > 80) {
+            status.textContent = "Nama grup harus 2–80 karakter.";
+            return;
+          }
+
+          submitButton.disabled = true;
+          submitButton.textContent = "Menyimpan...";
+          status.textContent = "";
+
+          try {
+            const { data, error } = await supabaseClient.rpc(
+              "mexa_create_group",
+              {
+                p_name: name,
+                p_description: description
+              }
+            );
+
+            if (error) throw error;
+
+            status.textContent = "Grup berhasil dibuat!";
+            await loadMyGroups();
+
+            setTimeout(() => {
+              closeCreateModal();
+              if (data && data.id) {
+                const created = allGroups.find(g => g.id === data.id);
+                if (created) {
+                  showToast("Grup MEXA berhasil dibuat.");
+                }
+              }
+            }, 500);
+          } catch (error) {
+            console.error("Gagal membuat grup:", error);
+            status.textContent =
+              error.message || "Grup gagal dibuat. Coba lagi.";
+          } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = "Buat Grup";
+          }
+        };
+    }
+
+    async function loadMyGroups() {
+      if (!currentGroupSession) return;
+
+      groupCount.textContent = "Memuat grup...";
+
+      const userId = currentGroupSession.user.id;
+
+      const { data: memberships, error: memberError } =
+        await supabaseClient
+          .from("mexa_group_members")
+          .select("group_id, role")
+          .eq("user_id", userId);
+
+      if (memberError) {
+        console.error("Gagal membaca keanggotaan:", memberError);
+        renderEmpty("Daftar grup gagal dimuat: " + memberError.message);
+        return;
+      }
+
+      const groupIds = [...new Set(
+        (memberships || []).map(item => item.group_id)
+      )];
+
+      if (groupIds.length === 0) {
+        allGroups = [];
+        renderGroups(allGroups);
+        return;
+      }
+
+      const { data: groups, error: groupError } = await supabaseClient
+        .from("mexa_groups")
+        .select("id, name, description, avatar_url, created_by, created_at")
+        .in("id", groupIds)
+        .order("created_at", { ascending: false });
+
+      if (groupError) {
+        console.error("Gagal membaca grup:", groupError);
+        renderEmpty("Grup gagal dimuat: " + groupError.message);
+        return;
+      }
+
+      const roles = new Map(
+        (memberships || []).map(item => [item.group_id, item.role])
+      );
+
+      allGroups = (groups || []).map(group => ({
+        ...group,
+        my_role: roles.get(group.id) || "member"
+      }));
+
+      renderGroups(allGroups);
+    }
+
+    function renderGroups(groups) {
+      const keyword = (searchInput.value || "").trim().toLowerCase();
+
+      const filtered = (groups || []).filter(group =>
+        (group.name || "").toLowerCase().includes(keyword) ||
+        (group.description || "").toLowerCase().includes(keyword)
+      );
+
+      groupCount.textContent =
+        filtered.length + (filtered.length === 1 ? " grup" : " grup");
+
+      if (!filtered.length) {
+        groupList.innerHTML = `
+          <div style="padding:24px;text-align:center;
+            border:1px dashed #454960;border-radius:18px;color:#b9bdd4">
+            <div style="font-size:30px;margin-bottom:10px">✦</div>
+            <strong>${keyword ? "Grup tidak ditemukan" : "Belum ada grup"}</strong>
+            <p style="font-size:13px;line-height:1.6">
+              ${keyword
+                ? "Coba kata pencarian yang berbeda."
+                : "Buat Ruang Grup untuk memulai komunitas MEXA kamu."}
+            </p>
+          </div>`;
+        return;
+      }
+
+      groupList.innerHTML = filtered.map(group => `
+        <article style="padding:17px;margin-bottom:12px;
+          border:1px solid #34364b;border-radius:18px;background:#171923">
+          <div style="display:flex;align-items:center;gap:13px">
+            <div style="width:48px;height:48px;flex-shrink:0;
+              display:grid;place-items:center;border-radius:15px;
+              color:white;font-size:21px;font-weight:800;
+              background:linear-gradient(135deg,#8058ff,#18c8d8)">
+              ${escapeHTML((group.name || "G").charAt(0).toUpperCase())}
+            </div>
+            <div style="flex:1;min-width:0">
+              <strong style="display:block;overflow-wrap:anywhere">
+                ${escapeHTML(group.name)}
+              </strong>
+              <span style="font-size:12px;color:#aeb2ca">
+                Peran: ${escapeHTML(group.my_role)}
+              </span>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#b9bdd4;line-height:1.6;
+            overflow-wrap:anywhere">
+            ${escapeHTML(group.description || "Ruang komunitas MEXA.")}
+          </p>
+          ${postId ? `
+            <button type="button" data-share-group="${escapeHTML(group.id)}"
+              style="width:100%;padding:12px;border:0;border-radius:12px;
+              background:linear-gradient(100deg,#8058ff,#18c8d8);
+              color:white;font-weight:700;cursor:pointer">
+              Bagikan Postingan ke Grup
+            </button>` : `
+            <div style="font-size:12px;color:#9298b5">
+              Kamu anggota grup ini.
+            </div>`}
+        </article>
+      `).join("");
+    }
+
+    searchInput.addEventListener("input", () => {
+      renderGroups(allGroups);
+    });
+
+    groupList.addEventListener("click", async event => {
+      const button = event.target.closest("[data-share-group]");
+      if (!button || !postId) return;
+
+      const groupId = button.getAttribute("data-share-group");
+      button.disabled = true;
+      button.textContent = "Mengirim...";
+
+      try {
+        const { error } = await supabaseClient
+          .from("mexa_group_posts")
+          .insert({
+            group_id: groupId,
+            post_id: postId,
+            shared_by: currentGroupSession.user.id
+          });
+
+        if (error) {
+          if (error.code === "23505") {
+            showToast("Postingan ini sudah dibagikan ke grup tersebut.");
+          } else {
+            throw error;
+          }
+        } else {
+          showToast("Postingan berhasil dibagikan ke grup!");
+          button.textContent = "Berhasil Dibagikan";
+        }
+      } catch (error) {
+        console.error("Gagal membagikan postingan:", error);
+        showToast(error.message || "Postingan gagal dibagikan.");
+        button.textContent = "Bagikan Postingan ke Grup";
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    createModal.addEventListener("click", event => {
+      if (event.target === createModal) closeCreateModal();
+    });
+
     async function initPage() {
       if (postId) {
         shareNotice.hidden = false;
         shareNotice.innerHTML =
           "<strong>Bagikan postingan ke Grup</strong><br>" +
-          "Postingan yang dipilih sudah dikenali. Pilihan grup dan pengiriman akan aktif setelah backend grup tersambung.";
+          "Pilih grup di bawah untuk membagikan postingan ini.";
       }
 
       const { data, error } = await supabaseClient.auth.getSession();
 
       if (error) {
-        renderEmpty("Sesi login belum bisa diperiksa. Silakan coba buka ulang halaman.");
+        renderEmpty("Sesi login gagal diperiksa. Silakan muat ulang halaman.");
         return;
       }
 
@@ -553,20 +818,9 @@
         return;
       }
 
-      // Belum melakukan query ke tabel grup yang belum dikonfirmasi.
-      renderEmpty("Halaman siap. Langkah berikutnya adalah memastikan tabel grup yang tersedia di Supabase.");
+      currentGroupSession = data.session;
+      await loadMyGroups();
     }
-
-    searchInput.addEventListener("input", () => {
-      // Pencarian akan memfilter data setelah daftar grup tersambung.
-      if (!groupList.children.length) {
-        groupCount.textContent = "Menunggu data grup";
-      }
-    });
-
-    document.getElementById("createModal").addEventListener("click", event => {
-      if (event.target.id === "createModal") closeCreateModal();
-    });
 
     initPage();
   </script>
