@@ -800,7 +800,7 @@ async function loadProfile() {
 
   // Hanya pemilik akun yang boleh mengedit profilnya.
   const isOwnProfile = targetUserId === currentUser.id;
-  visitorMode = !isOwnProfile;
+  
 
   const { data, error } = await mexaSupabase
     .from("profiles")
