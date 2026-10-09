@@ -3452,66 +3452,48 @@ async function loadStories() {
            UPLOAD FOTO / VIDEO
         ====================================== */
 
-        if (selectedFile) {
+    
+if (selectedFile) {
+  const safeName = selectedFile.name.replace(
+    /[^a-zA-Z0-9._-]/g,
+    "_"
+  );
 
-          const safeName =
-            selectedFile.name
-              .replace(
-                /[^a-zA-Z0-9._-]/g,
-                "_"
-              );
+  const filePath =
+    `${currentUser.id}/${Date.now()}-${safeName}`;
 
+  const {
+    error: uploadError
+  } = await supabaseClient
+    .storage
+    .from("media")
+    .upload(
+      filePath,
+      selectedFile,
+      {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: selectedFile.type
+      }
+    );
 
-          const filePath =
-            `${currentUser.id}/${Date.now()}-${safeName}`;
+  if (uploadError) {
+    console.error("MEXA upload error:", uploadError);
 
+    throw new Error(
+      "Upload media gagal: " + uploadError.message
+    );
+  }
 
-          const {
-            error: uploadError
-          } = await supabaseClient
-            .storage
-            .from("mexa-media")
-            .upload(
-              filePath,
-              selectedFile,
-              {
-                cacheControl: "3600",
-                upsert: false,
-                contentType:
-                  selectedFile.type
-              }
-            );
+  const {
+    data: publicData
+  } = supabaseClient
+    .storage
+    .from("media")
+    .getPublicUrl(filePath);
 
-
-          if (uploadError) {
-
-            console.error(
-              uploadError
-            );
-
-            throw new Error(
-              "Upload media gagal. Pastikan bucket mexa-media sudah dibuat."
-            );
-
-          }
-
-
-          const {
-            data: publicData
-          } =
-            supabaseClient
-              .storage
-              .from("mexa-media")
-              .getPublicUrl(
-                filePath
-              );
-
-
-          mediaUrl =
-            publicData?.publicUrl ||
-            null;
-
-        }
+  mediaUrl = publicData?.publicUrl || null;
+}
 
 
         /* ======================================
