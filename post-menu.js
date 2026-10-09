@@ -1,4 +1,4 @@
-```javascript
+
 /* =========================================================
    MEXA — POST OWNER FIX
    Menghubungkan menu titik tiga dengan Edit dan Hapus.
