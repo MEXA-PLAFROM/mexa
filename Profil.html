@@ -532,61 +532,110 @@
   </div>
 
   <script>
-    // HARUS sama dengan project Supabase yang digunakan Login.html dan Home.
-    const SUPABASE_URL = "https://yozylignolfvkemuhfse.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
+   
+const SUPABASE_URL = "https://yozylignolfvkemuhfse.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
 
-    const mexaSupabase = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+const mexaSupabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
-    const params = new URLSearchParams(location.search);
-    const visitorMode = params.get("mode") === "visitor";
+const params = new URLSearchParams(location.search);
+const visitorMode = params.get("mode") === "visitor";
 
-    const actions = document.getElementById("actions");
-    const message = document.getElementById("message");
-    const overlay = document.getElementById("editorOverlay");
-    const profileForm = document.getElementById("profileForm");
-    const editorStatus = document.getElementById("editorStatus");
-    const saveButton = document.getElementById("saveProfile");
+const actions = document.getElementById("actions");
+const message = document.getElementById("message");
+const overlay = document.getElementById("editorOverlay");
+const profileForm = document.getElementById("profileForm");
+const editorStatus = document.getElementById("editorStatus");
+const saveButton = document.getElementById("saveProfile");
 
-    let currentUser = null;
-    let currentProfile = null;
-    
 const avatarFileInput = document.getElementById("editAvatarFile");
 const coverFileInput = document.getElementById("editCoverFile");
 const avatarPreview = document.getElementById("avatarPreview");
 const coverPreview = document.getElementById("coverPreview");
 
+let currentUser = null;
+let currentProfile = null;
+let saveInProgress = false;
+
+function inform(text) {
+  message.textContent = text;
+  message.classList.add("show");
+}
+
+function setEditorStatus(text, isError = false) {
+  editorStatus.textContent = text;
+  editorStatus.style.color = isError ? "#ff9eac" : "#9cecff";
+}
+
+function initials(name) {
+  return (String(name || "MEXA").trim().charAt(0) || "M").toUpperCase();
+}
+
+function addButton(label, className, callback) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "btn " + className;
+  button.textContent = label;
+  button.addEventListener("click", callback);
+  actions.appendChild(button);
+}
+
 function previewImage(input, preview) {
   input.addEventListener("change", () => {
-    const file = input.files?.[0];
-    if (!file) return;
+    const file = input.files && input.files[0];
+
+    if (!file) {
+      preview.removeAttribute("src");
+      preview.style.display = "none";
+      return;
+    }
 
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
       alert("Pilih foto JPG, PNG, atau WebP.");
       input.value = "";
+      preview.removeAttribute("src");
+      preview.style.display = "none";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
       alert("Ukuran foto maksimal 5 MB.");
       input.value = "";
+      preview.removeAttribute("src");
+      preview.style.display = "none";
       return;
     }
 
-    preview.src = URL.createObjectURL(file);
+    if (preview.dataset.objectUrl) {
+      URL.revokeObjectURL(preview.dataset.objectUrl);
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    preview.dataset.objectUrl = objectUrl;
+    preview.src = objectUrl;
     preview.style.display = "block";
   });
 }
 
+function clearPreview(input, preview) {
+  input.value = "";
+
+  if (preview.dataset.objectUrl) {
+    URL.revokeObjectURL(preview.dataset.objectUrl);
+    delete preview.dataset.objectUrl;
+  }
+
+  preview.removeAttribute("src");
+  preview.style.display = "none";
+}
+
 previewImage(avatarFileInput, avatarPreview);
 previewImage(coverFileInput, coverPreview);
-    
-async function uploadProfileImage(file, type) {
-  if (!file) return null;
 
+async function uploadProfileImage(file, type) {
   if (!currentUser) {
     throw new Error("Sesi login tidak ditemukan. Silakan login ulang.");
   }
@@ -609,104 +658,52 @@ async function uploadProfileImage(file, type) {
     "image/webp": "webp"
   }[file.type];
 
-  const path =
-    `${currentUser.id}/${type}-${Date.now()}.${extension}`;
+  const path = `${currentUser.id}/${type}-${Date.now()}.${extension}`;
 
-  try {
-    const uploadPromise = mexaSupabase.storage
+  const { data: uploadData, error: uploadError } =
+    await mexaSupabase.storage
       .from("profile-media")
       .upload(path, file, {
         contentType: file.type,
         upsert: false
       });
 
-    // Hindari proses upload menunggu tanpa batas.
-    let timeoutId;
-
-    const timeoutPromise = new Promise((_, reject) => {
-      timeoutId = setTimeout(() => {
-        reject(new Error(
-          "Upload foto terlalu lama. Periksa koneksi internet lalu coba lagi."
-        ));
-      }, 30000);
-    });
-
-    let result;
-
-    try {
-      result = await Promise.race([
-        uploadPromise,
-        timeoutPromise
-      ]);
-    } finally {
-      clearTimeout(timeoutId);
-    }
-
-    if (result.error) {
-      console.error("MEXA upload error:", result.error);
-      throw new Error(
-        result.error.message || "Gagal mengunggah foto ke Supabase."
-      );
-    }
-
-    const { data } = mexaSupabase.storage
-      .from("profile-media")
-      .getPublicUrl(path);
-
-    if (!data || !data.publicUrl) {
-      throw new Error("URL foto tidak berhasil dibuat.");
-    }
-
-    return data.publicUrl;
-
-  } catch (error) {
-    console.error("MEXA profile image error:", error);
-    throw error;
+  if (uploadError) {
+    console.error("MEXA upload error:", uploadError);
+    throw new Error(
+      "Upload " + type + " gagal: " + uploadError.message
+    );
   }
+
+  const { data: publicData } = mexaSupabase.storage
+    .from("profile-media")
+    .getPublicUrl(uploadData.path);
+
+  if (!publicData || !publicData.publicUrl) {
+    throw new Error("URL foto tidak berhasil dibuat.");
+  }
+
+  return publicData.publicUrl;
 }
 
-    function inform(text) {
-      message.textContent = text;
-      message.classList.add("show");
-    }
-
-    function setEditorStatus(text, isError = false) {
-      editorStatus.textContent = text;
-      editorStatus.style.color = isError ? "#ff9eac" : "#9cecff";
-    }
-
-    function addButton(label, className, callback) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "btn " + className;
-      button.textContent = label;
-      button.addEventListener("click", callback);
-      actions.appendChild(button);
-    }
-
-    function initials(name) {
-      const cleaned = (name || "MEXA").trim();
-      return cleaned ? cleaned.charAt(0).toUpperCase() : "M";
-    }
-
-   
 function renderProfile(profile, metadata = {}) {
-  const name = (
+  const name = String(
     profile?.display_name ||
     metadata.display_name ||
     metadata.full_name ||
-    ""
-  ).trim() || "Pengguna MEXA";
+    "Pengguna MEXA"
+  ).trim();
 
-  const username = (
+  const emailUsername = (currentUser?.email || "").split("@")[0];
+
+  const username = String(
     profile?.username ||
     metadata.username ||
-    (currentUser?.email || "").split("@")[0] ||
-    ""
-  ).trim().replace(/^@/, "") || ("mexa" + (currentUser?.id || "").slice(0, 6));
+    emailUsername ||
+    ("mexa" + (currentUser?.id || "").slice(0, 6))
+  ).trim().replace(/^@/, "");
 
   const bio = profile?.bio || "";
-
   const avatarUrl = profile?.avatar_url || metadata.avatar_url || "";
   const coverUrl = profile?.cover_url || "";
 
@@ -736,282 +733,263 @@ function renderProfile(profile, metadata = {}) {
     display_name: name,
     avatar_url: avatarUrl,
     cover_url: coverUrl,
-    bio: profile?.bio || ""
+    bio
   };
 }
-    function openEditor() {
-      if (!currentUser || !currentProfile) {
-        inform("Profil belum siap. Muat ulang halaman dan pastikan kamu sudah login.");
-        return;
-      }
 
-      document.getElementById("editDisplayName").value =
-        currentProfile.display_name || "";
-      document.getElementById("editUsername").value =
-        currentProfile.username || "";
-      document.getElementById("editBio").value =
-        currentProfile.bio || "";
-      avatarFileInput.value = "";
-        coverFileInput.value = "";
-
-      avatarPreview.style.display = "none";
-       coverPreview.style.display = "none";
-      setEditorStatus("");
-      overlay.classList.add("show");
-    }
-
-    function closeEditor() {
-      overlay.classList.remove("show");
-    }
-
-    document.getElementById("closeEditor").addEventListener("click", closeEditor);
-
-    overlay.addEventListener("click", event => {
-      if (event.target === overlay) closeEditor();
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") closeEditor();
-    });
-
-    async function loadProfile() {
-      const { data: sessionData, error: sessionError } =
-        await mexaSupabase.auth.getSession();
-
-      if (sessionError) throw sessionError;
-
-      const session = sessionData?.session;
-
-      if (!session?.user) {
-        location.replace("./Login.html");
-        return;
-      }
-
-      currentUser = session.user;
-      const metadata = currentUser.user_metadata || {};
-
-      const { data, error } = await mexaSupabase
-        .from("profiles")
-        .select("id, username, display_name, avatar_url, cover_url, bio")
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data) {
-        renderProfile(data, metadata);
-      } else {
-        const seedName =
-          metadata.display_name ||
-          metadata.full_name ||
-          "Pengguna MEXA";
-
-        const seedUsername = (
-          metadata.username ||
-          (currentUser.email || "mexauser").split("@")[0]
-        )
-          .toLowerCase()
-          .replace(/[^a-z0-9_.]/g, "")
-          .slice(0, 30) || ("mexa" + currentUser.id.slice(0, 6));
-
-        const initialProfile = {
-          id: currentUser.id,
-          username: seedUsername,
-          display_name: seedName,
-          avatar_url: metadata.avatar_url || null,
-          cover_url: null,
-          bio: ""
-        };
-
-        const { data: inserted, error: insertError } = await mexaSupabase
-          .from("profiles")
-          .upsert(initialProfile, { onConflict: "id" })
-          .select("id, username, display_name, avatar_url, cover_url, bio")
-          .single();
-
-        if (insertError) {
-          renderProfile(initialProfile, metadata);
-          inform(
-            "Profil tampil, tetapi belum tersimpan di database: " +
-            insertError.message
-          );
-        } else {
-          renderProfile(inserted, metadata);
-        }
-      }
-
-      // Angka ini tetap placeholder sampai tabel relasi dan postingan dihubungkan.
-      document.getElementById("followers").textContent = "—";
-      document.getElementById("friends").textContent = "—";
-      document.getElementById("posts").textContent = "0";
-
-      actions.innerHTML = "";
-
-      if (visitorMode) {
-        addButton("+ Ikuti", "primary", () => {
-          inform("Fitur Ikuti belum terhubung ke tabel relasi.");
-        });
-
-        addButton("✉ Pesan", "", () => {
-          inform("Fitur Pesan akan dihubungkan pada tahap berikutnya.");
-        });
-
-        addButton("••• Menu", "", () => {
-          inform("Menu profil akan tersedia pada tahap berikutnya.");
-        });
-      } else {
-        addButton("✎ Edit Profil", "primary", openEditor);
-
-        addButton("+ Reels", "cyan", () => {
-          location.href = "./reels.html";
-        });
-
-        addButton("🔒 Live", "", () => {
-          inform("Fitur Live memerlukan pemeriksaan kelayakan akun.");
-        });
-      }
-    }
-
-   profileForm.addEventListener("submit", async event => {
-event.preventDefault();
-
-if (!currentUser || !currentProfile) {
-setEditorStatus(
-"Sesi login atau profil tidak ditemukan. Muat ulang halaman dan coba lagi.",
-true
-);
-return;
-}
-
-const displayName =
-document.getElementById("editDisplayName").value.trim();
-
-const username =
-document.getElementById("editUsername").value.trim().toLowerCase();
-
-const bio =
-document.getElementById("editBio").value.trim();
-
-if (!displayName || !username) {
-setEditorStatus("Nama panggilan dan username wajib diisi.", true);
-return;
-}
-
-if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
-setEditorStatus(
-"Username harus 3–30 karakter, berupa huruf kecil, angka, titik, atau garis bawah.",
-true
-);
-return;
-}
-
-saveButton.disabled = true;
-saveButton.textContent = "Menyimpan...";
-     
-try {
-  setEditorStatus("Memeriksa data profil...");
-
-  console.log("MEXA: mulai menyiapkan profil");
-
-  let avatarUrl = currentProfile.avatar_url || null;
-  let coverUrl = currentProfile.cover_url || null;
-
-  // Upload foto profil jika dipilih.
-  const avatarFile =
-    avatarFileInput?.files?.[0] || null;
-
-  if (avatarFile) {
-    setEditorStatus("Sedang mengunggah foto profil...");
-    console.log("MEXA: mulai upload avatar");
-
-    avatarUrl = await uploadProfileImage(
-      avatarFile,
-      "avatar"
-    );
-
-    console.log("MEXA: upload avatar selesai");
+function openEditor() {
+  if (!currentUser || !currentProfile) {
+    inform("Profil belum siap. Muat ulang halaman dan pastikan kamu sudah login.");
+    return;
   }
 
-  // Upload banner jika dipilih.
-  const coverFile =
-    coverFileInput?.files?.[0] || null;
+  document.getElementById("editDisplayName").value =
+    currentProfile.display_name || "";
 
-  if (coverFile) {
-    setEditorStatus("Sedang mengunggah banner...");
-    console.log("MEXA: mulai upload banner");
+  document.getElementById("editUsername").value =
+    currentProfile.username || "";
 
-    coverUrl = await uploadProfileImage(
-      coverFile,
-      "cover"
-    );
+  document.getElementById("editBio").value =
+    currentProfile.bio || "";
 
-    console.log("MEXA: upload banner selesai");
-  }
+  clearPreview(avatarFileInput, avatarPreview);
+  clearPreview(coverFileInput, coverPreview);
 
-  // Siapkan data untuk database.
-  const payload = {
-    id: currentUser.id,
-    username: username,
-    display_name: displayName,
-    bio: bio || null,
-    avatar_url: avatarUrl,
-    cover_url: coverUrl
-  };
-
-  console.log("MEXA: payload profil siap");
-```
-
-
-setEditorStatus("Menyimpan profil ke database...");
-
-const { data, error } = await mexaSupabase
-  .from("profiles")
-  .upsert(payload, { onConflict: "id" })
-  .select("id, username, display_name, avatar_url, cover_url, bio")
-  .single();
-
-if (error) throw error;
-
-currentProfile = data;
-renderProfile(data, currentUser.user_metadata || {});
-
-closeEditor();
-inform("Profil MEXA berhasil disimpan!");
-```
-
-} catch (error) {
-console.error("MEXA save profile error:", error);
-
-```
-const errorMessage =
-  error?.message || "Kesalahan tidak diketahui.";
-
-if (/duplicate key|unique constraint/i.test(errorMessage)) {
-  setEditorStatus(
-    "Username sudah digunakan. Coba username lain.",
-    true
-  );
-} else {
-  setEditorStatus(
-    "Gagal menyimpan: " + errorMessage,
-    true
-  );
+  setEditorStatus("");
+  overlay.classList.add("show");
 }
-```
 
-} finally {
-saveButton.disabled = false;
-saveButton.textContent = "Simpan Perubahan";
+function closeEditor() {
+  if (saveInProgress) return;
+  overlay.classList.remove("show");
 }
+
+document.getElementById("closeEditor").addEventListener("click", closeEditor);
+
+overlay.addEventListener("click", event => {
+  if (event.target === overlay) closeEditor();
 });
-    
-    loadProfile().catch(error => {
-      console.error("MEXA profile error:", error);
-      inform(
-        "Gagal memuat profil: " +
-        (error?.message || "Periksa koneksi dan izin tabel profiles.")
-      );
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !saveInProgress) closeEditor();
+});
+
+async function loadProfile() {
+  inform("Memuat profil MEXA...");
+
+  const { data: sessionData, error: sessionError } =
+    await mexaSupabase.auth.getSession();
+
+  if (sessionError) throw sessionError;
+
+  const session = sessionData?.session;
+
+  if (!session?.user) {
+    location.replace("./Login.html");
+    return;
+  }
+
+  currentUser = session.user;
+  const metadata = currentUser.user_metadata || {};
+
+  const { data, error } = await mexaSupabase
+    .from("profiles")
+    .select("id, username, display_name, avatar_url, cover_url, bio")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  if (data) {
+    renderProfile(data, metadata);
+  } else {
+    const seedName =
+      metadata.display_name ||
+      metadata.full_name ||
+      "Pengguna MEXA";
+
+    const rawUsername =
+      metadata.username ||
+      (currentUser.email || "mexauser").split("@")[0];
+
+    const seedUsername =
+      rawUsername.toLowerCase().replace(/[^a-z0-9_.]/g, "").slice(0, 30) ||
+      ("mexa" + currentUser.id.replace(/-/g, "").slice(0, 8));
+
+    const initialProfile = {
+      id: currentUser.id,
+      username: seedUsername,
+      display_name: seedName,
+      avatar_url: metadata.avatar_url || null,
+      cover_url: null,
+      bio: ""
+    };
+
+    const { data: inserted, error: insertError } = await mexaSupabase
+      .from("profiles")
+      .upsert(initialProfile, { onConflict: "id" })
+      .select("id, username, display_name, avatar_url, cover_url, bio")
+      .single();
+
+    if (insertError) {
+      console.error("MEXA initial profile error:", insertError);
+      renderProfile(initialProfile, metadata);
+      inform("Profil tampil, tetapi belum tersimpan: " + insertError.message);
+    } else {
+      renderProfile(inserted, metadata);
+    }
+  }
+
+  document.getElementById("followers").textContent = "—";
+  document.getElementById("friends").textContent = "—";
+  document.getElementById("posts").textContent = "0";
+
+  actions.innerHTML = "";
+
+  if (visitorMode) {
+    addButton("+ Ikuti", "primary", () => {
+      inform("Fitur Ikuti belum terhubung ke tabel relasi.");
     });
-  </script>
+
+    addButton("✉ Pesan", "", () => {
+      inform("Fitur Pesan akan dihubungkan pada tahap berikutnya.");
+    });
+
+    addButton("••• Menu", "", () => {
+      inform("Menu profil akan tersedia pada tahap berikutnya.");
+    });
+  } else {
+    addButton("✎ Edit Profil", "primary", openEditor);
+
+    addButton("+ Reels", "cyan", () => {
+      location.href = "./reels.html";
+    });
+
+    addButton("🔒 Live", "", () => {
+      inform("Fitur Live memerlukan pemeriksaan kelayakan akun.");
+    });
+  }
+
+  message.classList.remove("show");
+}
+
+profileForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (saveInProgress) return;
+
+  if (!currentUser || !currentProfile) {
+    setEditorStatus(
+      "Sesi login atau profil tidak ditemukan. Silakan muat ulang halaman.",
+      true
+    );
+    return;
+  }
+
+  const displayName =
+    document.getElementById("editDisplayName").value.trim();
+
+  const username =
+    document.getElementById("editUsername").value.trim().toLowerCase();
+
+  const bio =
+    document.getElementById("editBio").value.trim();
+
+  if (!displayName || !username) {
+    setEditorStatus("Nama panggilan dan username wajib diisi.", true);
+    return;
+  }
+
+  if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
+    setEditorStatus(
+      "Username harus 3–30 karakter: huruf kecil, angka, titik, atau garis bawah.",
+      true
+    );
+    return;
+  }
+
+  saveInProgress = true;
+  saveButton.disabled = true;
+  saveButton.textContent = "Menyimpan...";
+
+  try {
+    setEditorStatus("Memeriksa data profil...");
+
+    let avatarUrl = currentProfile.avatar_url || null;
+    let coverUrl = currentProfile.cover_url || null;
+
+    const avatarFile = avatarFileInput.files?.[0] || null;
+    const coverFile = coverFileInput.files?.[0] || null;
+
+    if (avatarFile) {
+      setEditorStatus("Sedang mengunggah foto profil...");
+      avatarUrl = await uploadProfileImage(avatarFile, "avatar");
+    }
+
+    if (coverFile) {
+      setEditorStatus("Sedang mengunggah banner...");
+      coverUrl = await uploadProfileImage(coverFile, "cover");
+    }
+
+    const payload = {
+      id: currentUser.id,
+      username,
+      display_name: displayName,
+      bio: bio || null,
+      avatar_url: avatarUrl,
+      cover_url: coverUrl
+    };
+
+    setEditorStatus("Menyimpan profil ke database...");
+
+    const { data, error } = await mexaSupabase
+      .from("profiles")
+      .upsert(payload, { onConflict: "id" })
+      .select("id, username, display_name, avatar_url, cover_url, bio")
+      .single();
+
+    if (error) throw error;
+    if (!data) throw new Error("Database tidak mengembalikan data profil.");
+
+    renderProfile(data, currentUser.user_metadata || {});
+
+    clearPreview(avatarFileInput, avatarPreview);
+    clearPreview(coverFileInput, coverPreview);
+
+    overlay.classList.remove("show");
+    inform("Profil MEXA berhasil disimpan!");
+
+  } catch (error) {
+    console.error("MEXA save profile error:", error);
+
+    const errorMessage = error?.message || "Kesalahan tidak diketahui.";
+
+    if (/duplicate key|unique constraint/i.test(errorMessage)) {
+      setEditorStatus("Username sudah digunakan. Coba username lain.", true);
+    } else if (/row-level security|permission denied|not allowed/i.test(errorMessage)) {
+      setEditorStatus(
+        "Izin database atau Storage menolak perubahan. Periksa kebijakan akses Supabase. Detail: " +
+          errorMessage,
+        true
+      );
+    } else {
+      setEditorStatus("Gagal menyimpan profil: " + errorMessage, true);
+    }
+
+  } finally {
+    saveInProgress = false;
+    saveButton.disabled = false;
+    saveButton.textContent = "Simpan Perubahan";
+  }
+});
+
+loadProfile().catch(error => {
+  console.error("MEXA profile error:", error);
+  inform(
+    "Gagal memuat profil: " +
+    (error?.message || "Periksa koneksi dan izin tabel profiles.")
+  );
+}); 
+    </script>
 </body>
 </html>
