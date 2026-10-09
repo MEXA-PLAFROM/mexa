@@ -67,11 +67,8 @@
     }
 
     try {
-      await window.deletePost(postId);
-    } catch (error) {
-      console.error("MEXA delete post:", error);
-      showMessage("Gagal menghapus postingan.");
-    }
+  await window.editPost(post);
+} catch (error) {
   });
 
   console.log("MEXA Post Owner Fix siap.");
