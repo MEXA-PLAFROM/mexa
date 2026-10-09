@@ -248,14 +248,24 @@ document.addEventListener("click", function (event) {
     console.error("MEXA: fungsi MEXACreatePost belum dimuat.");
   }
 });
-   
-  // Form postingan jika memakai form HTML.
-  document.addEventListener("submit", function (event) {
-    if (!event.target.matches("#mexaPostForm")) return;
+// MEXA — PEMANGGIL FORM POSTINGAN
+document.addEventListener("submit", function (event) {
+  const form = event.target;
 
-    event.preventDefault();
-    createPost();
-  });
+  if (!(form instanceof HTMLFormElement)) return;
+
+  if (!form.matches("#mexaPostForm, #mexaPostFormHome")) {
+    return;
+  }
+
+  event.preventDefault();
+
+  if (typeof window.MEXACreatePost === "function") {
+    window.MEXACreatePost();
+  } else {
+    console.error("MEXA: fungsi posting belum dimuat.");
+  }
+});
 
   // Modul feed boleh mendengarkan event ini untuk refresh.
   document.addEventListener("mexa:refresh-feed", function () {
