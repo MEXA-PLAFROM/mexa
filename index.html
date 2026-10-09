@@ -2037,13 +2037,46 @@
 
 
     /* ==========================================
-       AVATAR
+         AVATAR
     ========================================== */
+    
+function openUserProfile(userId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  if (!userId) {
+    showToast("Profil pengguna tidak ditemukan.");
+    return;
+  }
+
+  window.location.href =
+    "./Profil.html?user=" + encodeURIComponent(userId);
+}
+
+function makeAvatarClickable(element, userId) {
+  if (!element || !userId) return;
+
+  element.style.cursor = "pointer";
+  element.setAttribute("role", "link");
+  element.setAttribute("tabindex", "0");
+
+  element.onclick = function(event) {
+    openUserProfile(userId, event);
+  };
+
+  element.onkeydown = function(event) {
+    if (event.key === "Enter" || event.key === " ") {
+      openUserProfile(userId, event);
+    }
+  };
+}
 
     function setAvatar(element, profile) {
 
       if (!element) return;
-
+      makeAvatarClickable(element, profile?.id);
       const name =
         profile?.display_name ||
         profile?.username ||
