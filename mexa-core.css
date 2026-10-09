@@ -177,6 +177,61 @@ position: relative;
   text-align: center;
   letter-spacing: 0.4px;
 }
+/* MEXA — DROPDOWN MENU KECIL DAN TRANSPARAN */
+
+.mx-quick-menu {
+position: relative;
+z-index: 500;
+}
+
+.mx-quick-menu-panel {
+position: absolute;
+top: calc(100% + 6px);
+left: 0;
+width: 205px;
+max-width: calc(100vw - 24px);
+padding: 7px;
+border: 1px solid rgba(0, 229, 255, 0.25);
+border-radius: 12px;
+background: rgba(18, 16, 36, 0.86);
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+backdrop-filter: blur(6px);
+-webkit-backdrop-filter: blur(6px);
+z-index: 501;
+}
+
+.mx-quick-menu-panel[hidden] {
+display: none !important;
+}
+
+.mx-quick-menu-item {
+display: flex;
+align-items: center;
+width: 100%;
+min-height: 36px;
+margin-top: 2px;
+padding: 9px 10px;
+border: 0;
+border-radius: 8px;
+background: transparent;
+color: #F5F3FF;
+text-align: left;
+font-size: 13px;
+font-weight: 600;
+}
+
+.mx-quick-menu-item:hover {
+background: rgba(0, 229, 255, 0.1);
+}
+
+.mx-quick-menu-item.logout {
+color: #FF8B9A;
+}
+
+.mx-quick-menu-item.core {
+color: #00E5FF;
+   }
+
 
 @keyframes mexaCoreFadeIn {
   from { opacity: 0; }
