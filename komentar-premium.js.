@@ -8,9 +8,9 @@
   "use strict";
 
   let activePostId = null;
-  let sending = false;
+  let isSending = false;
 
-  function getSupabase() {
+  function getDB() {
     return window.supabaseClient || null;
   }
 
@@ -28,14 +28,13 @@
 
   function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, function (char) {
-      const map = {
+      return {
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;"
-      };
-      return map[char];
+      }[char];
     });
   }
 
@@ -55,39 +54,31 @@
 
         <header class="mexa-comments-header">
           <div>
-            <h2 id="mexaCommentsTitle"
-              class="mexa-comments-title">
+            <h2 id="mexaCommentsTitle" class="mexa-comments-title">
               Komentar MEXA
             </h2>
-            <div class="mexa-comments-subtitle">
-              Suara komunitas, satu ruang
-            </div>
+            <p class="mexa-comments-subtitle">
+              Berbagi cerita, hargai setiap suara.
+            </p>
           </div>
-
           <button type="button"
             class="mexa-comments-close"
             data-mexa-close
-            aria-label="Tutup">×</button>
+            aria-label="Tutup komentar">×</button>
         </header>
 
-        <div id="mexaCommentsList"
-          class="mexa-comments-list">
-          <div class="mexa-comments-status">
-            Memuat komentar...
-          </div>
+        <div id="mexaCommentsList" class="mexa-comments-list">
+          <div class="mexa-comments-status">Memuat komentar...</div>
         </div>
 
         <footer class="mexa-comments-composer">
-          <form id="mexaCommentForm"
-            class="mexa-comment-form">
-
+          <form id="mexaCommentForm" class="mexa-comment-form">
             <textarea id="mexaCommentInput"
               class="mexa-comment-input"
               maxlength="2000"
               rows="1"
               placeholder="Tulis komentar kamu..."
               required></textarea>
-
             <button id="mexaCommentSend"
               class="mexa-comment-send"
               type="submit">Kirim</button>
@@ -107,10 +98,7 @@
         return;
       }
 
-      const deleteButton = event.target.closest(
-        "[data-mexa-delete]"
-      );
-
+      const deleteButton = event.target.closest("[data-mexa-delete]");
       if (deleteButton) {
         removeComment(deleteButton.dataset.mexaDelete);
       }
@@ -119,31 +107,33 @@
     overlay.querySelector("#mexaCommentForm")
       .addEventListener("submit", sendComment);
 
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") close();
+    });
+
     return overlay;
   }
 
   function close() {
     const overlay = document.getElementById("mexaCommentsOverlay");
-
-    if (overlay) {
-      overlay.classList.remove("is-open");
-    }
-
+    if (overlay) overlay.classList.remove("is-open");
     activePostId = null;
   }
 
   async function open(postId) {
     const user = getUser();
-    const db = getSupabase();
+    const db = getDB();
 
     if (!user) {
-      notify("Silakan login untuk berkomentar.");
+      notify("Silakan login terlebih dahulu.");
       return;
     }
 
     if (!db) {
-      notify("Supabase belum terhubung. Periksa konfigurasi MEXA.");
-      console.error("MEXA Comments: window.supabaseClient tidak ditemukan.");
+      notify("Supabase belum terhubung ke modul komentar.");
+      console.error(
+        "MEXA Comments: window.supabaseClient tidak ditemukan."
+      );
       return;
     }
 
@@ -153,15 +143,12 @@
     }
 
     activePostId = postId;
-
-    const overlay = createPanel();
-    overlay.classList.add("is-open");
-
+    createPanel().classList.add("is-open");
     await load();
   }
 
   async function load() {
-    const db = getSupabase();
+    const db = getDB();
     const list = document.getElementById("mexaCommentsList");
 
     if (!db || !activePostId || !list) return;
@@ -184,9 +171,11 @@
         return;
       }
 
-      const userIds = [...new Set(comments.map(function (item) {
-        return item.user_id;
-      }))];
+      const userIds = [...new Set(
+        comments.map(function (comment) {
+          return comment.user_id;
+        })
+      )];
 
       const { data: profiles, error: profileError } = await db
         .from("profiles")
@@ -218,27 +207,23 @@
           : `<div class="mexa-comment-avatar"
                aria-hidden="true"></div>`;
 
-        const isOwner =
-          getUser() && getUser().id === comment.user_id;
+        const currentUser = getUser();
+        const canDelete =
+          currentUser && currentUser.id === comment.user_id;
 
         return `
           <article class="mexa-comment-item">
             ${avatar}
-
             <div class="mexa-comment-body">
               <div class="mexa-comment-bubble">
                 <div class="mexa-comment-name">
                   ${escapeHTML(name)}
                 </div>
-
-                <div class="mexa-comment-text">
-                  ${escapeHTML(comment.content)}
-                </div>
+                <div class="mexa-comment-text">${escapeHTML(comment.content)}</div>
               </div>
-
               <div class="mexa-comment-actions">
                 ${
-                  isOwner
+                  canDelete
                     ? `<button type="button"
                          class="mexa-comment-action"
                          data-mexa-delete="${escapeHTML(comment.id)}">
@@ -251,41 +236,38 @@
           </article>
         `;
       }).join("");
-
     } catch (error) {
       console.error("MEXA load comments:", error);
-
       list.innerHTML =
-        '<div class="mexa-comments-status">Gagal memuat komentar. Periksa izin Supabase.</div>';
+        '<div class="mexa-comments-status">Komentar gagal dimuat. Periksa koneksi dan izin Supabase.</div>';
     }
   }
 
   async function sendComment(event) {
     event.preventDefault();
-
-    if (sending) return;
+    if (isSending) return;
 
     const user = getUser();
-    const db = getSupabase();
+    const db = getDB();
     const input = document.getElementById("mexaCommentInput");
     const button = document.getElementById("mexaCommentSend");
 
     if (!user) {
-      notify("Silakan login untuk berkomentar.");
+      notify("Silakan login terlebih dahulu.");
       return;
     }
 
-    if (!db || !activePostId || !input || !button) return;
+    if (!db || !activePostId || !input || !button) {
+      notify("Modul komentar belum siap.");
+      return;
+    }
 
     const content = input.value.trim();
+    if (!content) return;
 
-    if (!content) {
-      notify("Komentar tidak boleh kosong.");
-      return;
-    }
-
-    sending = true;
+    isSending = true;
     button.disabled = true;
+    button.textContent = "Mengirim...";
 
     try {
       const { error } = await db
@@ -305,27 +287,23 @@
       if (typeof window.loadPosts === "function") {
         await window.loadPosts();
       }
-
     } catch (error) {
       console.error("MEXA send comment:", error);
-      notify("Gagal mengirim komentar. Periksa izin tabel post_comments.");
+      notify("Komentar gagal dikirim. Periksa izin tabel post_comments.");
     } finally {
-      sending = false;
+      isSending = false;
       button.disabled = false;
+      button.textContent = "Kirim";
     }
   }
 
   async function removeComment(commentId) {
     const user = getUser();
-    const db = getSupabase();
+    const db = getDB();
 
     if (!user || !db || !commentId) return;
 
-    const confirmed = window.confirm(
-      "Hapus komentar kamu? Tindakan ini tidak dapat dibatalkan."
-    );
-
-    if (!confirmed) return;
+    if (!confirm("Yakin ingin menghapus komentar ini?")) return;
 
     try {
       const { error } = await db
@@ -342,10 +320,9 @@
       if (typeof window.loadPosts === "function") {
         await window.loadPosts();
       }
-
     } catch (error) {
       console.error("MEXA delete comment:", error);
-      notify("Gagal menghapus komentar. Periksa kebijakan Supabase.");
+      notify("Komentar gagal dihapus. Periksa izin Supabase.");
     }
   }
 
@@ -357,5 +334,5 @@
 
   window.openComments = open;
 
-  console.log("MEXA Premium Comments siap.");
+  console.log("MEXA Premium Comments berhasil dimuat.");
 })();
