@@ -81,9 +81,9 @@
 
     if (!(target instanceof Element)) return;
 
-    const button = target.closest(
-      "#mexaLogout, [data-mexa-logout]"
-    );
+const button = target.closest(
+  '#mexaLogout, [data-mexa-logout], [data-action="logout"]'
+);
 
     if (!button) return;
 
