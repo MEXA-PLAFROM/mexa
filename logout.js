@@ -1,95 +1,66 @@
-
-/* =====================================================
-   MEXA — LOGOUT
-   File: logout.js
-
-   Fungsi:
-   - Keluar dari akun
-   - Menggunakan sistem logout Supabase jika tersedia
-   - Membersihkan sesi lokal MEXA
-   - Mengarahkan pengguna ke halaman Login
-   ===================================================== */
-
+/* MEXA — LOGOUT FIX */
 (function () {
   "use strict";
 
-  if (window.MEXALogoutLoaded) return;
-  window.MEXALogoutLoaded = true;
-
-  function showMessage(message) {
-    if (typeof window.showToast === "function") {
-      window.showToast(message);
-    } else {
-      alert(message);
-    }
-  }
+  if (window.MEXALogoutFixLoaded) return;
+  window.MEXALogoutFixLoaded = true;
 
   async function logout() {
-    const confirmed = window.confirm(
-      "Yakin ingin keluar dari akun MEXA?"
-    );
-
-    if (!confirmed) return;
+    if (!confirm("Yakin ingin keluar dari akun MEXA?")) return;
 
     try {
-      // Gunakan fungsi logout aplikasi jika tersedia.
-      if (typeof window.mexaLogout === "function") {
-        await window.mexaLogout();
-      } else if (
-        window.supabaseClient &&
-        typeof window.supabaseClient.auth?.signOut === "function"
-      ) {
-        const { error } =
-          await window.supabaseClient.auth.signOut();
+      // Keluar dari sesi Supabase jika client tersedia.
+      const client =
+        window.supabaseClient ||
+        window.mexaSupabase ||
+        window.supabase;
 
+      if (client?.auth?.signOut) {
+        const { error } = await client.auth.signOut();
         if (error) throw error;
+      } else if (typeof window.mexaLogout === "function") {
+        await window.mexaLogout();
       }
 
-      // Bersihkan sesi lokal MEXA yang dikenal.
-      const sessionKeys = [
+      // Hapus data sesi lokal MEXA.
+      [
         "mexa_user",
         "currentUser",
         "mexaCurrentUser"
-      ];
-
-      sessionKeys.forEach(function (key) {
+      ].forEach(function (key) {
         localStorage.removeItem(key);
         sessionStorage.removeItem(key);
       });
 
-      // Kosongkan variabel sesi jika tersedia.
       window.currentUser = null;
       window.mexaCurrentUser = null;
 
-      // Arahkan ke halaman Login.
-      window.location.href = "./Login.html";
-    } catch (error) {
-      console.error("MEXA logout:", error);
-
-      showMessage(
-        "Gagal keluar akun. Silakan coba kembali."
+      // Pindah ke Login dengan URL absolut.
+      window.location.replace(
+        new URL("./Login.html", window.location.href).href
       );
+    } catch (error) {
+      console.error("MEXA logout error:", error);
+      alert("Logout gagal. Periksa Console untuk detail error.");
     }
   }
 
-  // Fungsi publik agar dapat dipanggil dari menu mana pun.
-  window.MEXALogout = logout;
+  window.MEXALogoutFix = logout;
 
-  // Hubungkan tombol yang menggunakan selector berikut.
   document.addEventListener("click", function (event) {
     const target = event.target;
-
     if (!(target instanceof Element)) return;
 
-const button = target.closest(
-  '#mexaLogout, [data-mexa-logout], [data-action="logout"]'
-);
+    const button = target.closest(
+      '#mexaLogout, [data-mexa-logout], [data-action="logout"]'
+    );
 
     if (!button) return;
 
     event.preventDefault();
+    event.stopPropagation();
     logout();
-  });
+  }, true);
 
-  console.log("MEXA logout.js siap.");
+  console.log("MEXA Logout Fix aktif.");
 })();
