@@ -10,6 +10,9 @@
 
    <!-- MEXA Premium Comments -->
 <link rel="stylesheet" href="komentar-premium.css">
+<link rel="stylesheet" href="./mexa-core.css">
+
+  
   <style>
     * {
       box-sizing: border-box;
@@ -1929,6 +1932,10 @@
         return currentUser;
       };
       
+window.MEXA_GET_SUPABASE_CLIENT = function () {
+  return supabaseClient;
+};
+
       if (!currentUser) {
 
         window.location.href = "Login.html";
@@ -4427,8 +4434,11 @@ async function commentPost(postId) {
       }
     );
 </script>
+  
 <script src="post-menu.js"></script>
 <script src="post-share.js"></script>
 <script src="komentar-premium.js"></script>
+<script src="./mexa-core.js"></script>
+
 </body>
 </html>
