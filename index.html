@@ -4106,30 +4106,18 @@ async function likePost(postId) {
 ========================================== */
 
 async function commentPost(postId) {
-  if (!currentUser) {
-    showToast("Silakan login untuk berkomentar.");
+  if (typeof window.MEXAComments?.open === "function") {
+    await window.MEXAComments.open(postId);
     return;
   }
 
-  if (!postId) {
-    showToast("Postingan tidak ditemukan.");
-    return;
+  if (typeof window.showToast === "function") {
+    window.showToast("Panel komentar belum berhasil dimuat.");
+  } else {
+    alert("Panel komentar belum berhasil dimuat.");
   }
+      }
 
-  if (typeof window.openComments === "function") {
-    return window.openComments(postId);
-  }
-
-  if (typeof window.openCommentPanel === "function") {
-    return window.openCommentPanel(postId);
-  }
-
-  showToast("Panel komentar belum dibuat.");
-
-  console.warn(
-    "MEXA: Fungsi openComments/openCommentPanel belum tersedia."
-  );
-}
     /* ==========================================
        SHARE
     ========================================== */
