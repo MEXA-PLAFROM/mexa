@@ -4033,38 +4033,106 @@ if (selectedFile) {
   console.log("MEXA Premium Inline Edit & Delete aktif.");
 })();
 
-    /* ==========================================
-       LIKE
-    ========================================== */
+/* ==========================================
+   LIKE POST — MEXA
+   Simpan dan batalkan Like melalui Supabase
+========================================== */
 
-    async function likePost(
-      postId
-    ) {
+async function likePost(postId) {
+  if (!currentUser) {
+    showToast("Silakan login untuk menyukai postingan.");
+    return;
+  }
 
-      if (!currentUser) return;
+  if (!postId) {
+    showToast("Postingan tidak ditemukan.");
+    return;
+  }
 
+  try {
+    const { data: existingLike, error: checkError } =
+      await supabaseClient
+        .from("post_likes")
+        .select("id")
+        .eq("post_id", postId)
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
 
-      showToast(
-        "Like akan kita aktifkan setelah bagian Cerita selesai."
-      );
+    if (checkError) throw checkError;
 
+    if (existingLike) {
+      // Batalkan Like
+      const { error } = await supabaseClient
+        .from("post_likes")
+        .delete()
+        .eq("id", existingLike.id)
+        .eq("user_id", currentUser.id);
+
+      if (error) throw error;
+
+      showToast("Like dibatalkan.");
+    } else {
+      // Tambahkan Like
+      const { error } = await supabaseClient
+        .from("post_likes")
+        .insert({
+          post_id: postId,
+          user_id: currentUser.id
+        });
+
+      if (error) throw error;
+
+      showToast("Kamu menyukai postingan ini.");
     }
 
-
-    /* ==========================================
-       COMMENT
-    ========================================== */
-
-    async function commentPost(
-      postId
-    ) {
-
-      showToast(
-        "Komentar akan kita sambungkan berikutnya."
-      );
-
+    // Muat ulang postingan jika fungsi tersedia
+    if (typeof loadPosts === "function") {
+      await loadPosts();
     }
+  } catch (error) {
+    console.error("MEXA Like Error:", error);
+    showToast(
+      "Like gagal: " +
+      (error.message || "Terjadi kesalahan.")
+    );
+  }
+}
+ 
+/* ==========================================
+   COMMENT — MEXA PREMIUM
+   Membuka panel komentar MEXA yang sudah ada
+========================================== */
 
+async function commentPost(postId) {
+  if (!currentUser) {
+    showToast("Silakan login untuk melihat komentar.");
+    return;
+  }
+
+  if (!postId) {
+    showToast("Postingan tidak ditemukan.");
+    return;
+  }
+
+  // Cari fungsi panel komentar yang mungkin sudah tersedia.
+  const openCommentPanel =
+    window.openComments ||
+    window.openCommentPanel ||
+    window.showCommentPanel;
+
+  if (typeof openCommentPanel === "function") {
+    await openCommentPanel(postId);
+    return;
+  }
+
+  showToast(
+    "Panel komentar MEXA sedang disambungkan."
+  );
+
+  console.warn(
+    "MEXA: Fungsi panel komentar belum ditemukan."
+  );
+}
 
     /* ==========================================
        SHARE
