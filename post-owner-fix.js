@@ -1,9 +1,9 @@
+
 /* =========================================================
    MEXA — POST OWNER FIX
    File: post-owner-fix.js
 
-   Menghubungkan menu titik tiga dengan fungsi
-   editPost() dan deletePost() yang sudah ada.
+   Menghubungkan event edit dan hapus postingan.
    ========================================================= */
 
 (function () {
@@ -12,9 +12,7 @@
   function getPostId(post) {
     if (!post) return null;
 
-    if (typeof post === "string") {
-      return post;
-    }
+    if (typeof post === "string") return post;
 
     return post.id || post.post_id || post.postId || null;
   }
@@ -38,7 +36,7 @@
 
     if (typeof window.editPost !== "function") {
       showMessage("Fungsi edit belum terhubung.");
-      console.error("MEXA: editPost() tidak tersedia di window.");
+      console.error("MEXA: editPost() tidak tersedia.");
       return;
     }
 
@@ -62,16 +60,17 @@
 
     if (typeof window.deletePost !== "function") {
       showMessage("Fungsi hapus belum terhubung.");
-      console.error("MEXA: deletePost() tidak tersedia di window.");
+      console.error("MEXA: deletePost() tidak tersedia.");
       return;
     }
 
     try {
-  await window.editPost(post);
-} catch (error) {
+      await window.deletePost(postId);
+    } catch (error) {
+      console.error("MEXA delete post:", error);
+      showMessage("Gagal menghapus postingan.");
+    }
   });
 
   console.log("MEXA Post Owner Fix siap.");
-
 })();
-```
