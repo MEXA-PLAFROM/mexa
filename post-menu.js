@@ -289,15 +289,24 @@ if (action === "friend") {
   window.location.href = url.href;
   return;
   }
-    if (action === "group") {
-      if (typeof window.openShareToGroup === "function") {
-        window.openShareToGroup(post);
-      } else {
-        showMessage("Fitur berbagi ke grup belum terhubung.");
-      }
-      return;
-    }
+   
+if (action === "group") {
+  closePostMenu();
 
+  if (post && post.id) {
+    const groupUrl = new URL(
+      "Grup.html",
+      window.location.href
+    );
+
+    groupUrl.searchParams.set("post_id", post.id);
+    window.location.href = groupUrl.toString();
+  } else {
+    alert("Postingan tidak ditemukan. Silakan muat ulang MEXA.");
+  }
+
+  return;
+}
     if (action === "copy") {
       const url = new URL(window.location.href);
       url.hash = "post-" + id;
