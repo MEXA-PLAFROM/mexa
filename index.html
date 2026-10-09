@@ -1306,6 +1306,71 @@
         max-height: 92vh;
       }
     }
+/* =====================================
+   MEXA CORE — NAVIGASI PREMIUM
+   Tambahan aman, tidak mengganti menu lama
+===================================== */
+
+.mx-menu-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hover menu sesuai tema MEXA */
+.mx-menu-card .mx-menu-item:hover {
+  background: #211B43;
+  color: #FFFFFF;
+}
+
+/* Menu aktif */
+.mx-menu-card .mx-menu-item.active {
+  background: #211B43;
+  color: #00E5FF;
+}
+
+/* Ikon navigasi */
+.mx-menu-card .mx-menu-icon {
+  flex-shrink: 0;
+  color: #00E5FF;
+}
+
+/* Keluar akun */
+.mx-menu-card .mx-menu-item[onclick="mexaConfirmLogout()"] {
+  color: #FF8B9A;
+  margin-top: 4px;
+}
+
+.mx-menu-card .mx-menu-item[onclick="mexaConfirmLogout()"] .mx-menu-icon {
+  color: #FF8B9A;
+}
+
+/* MEXA Core di bagian paling bawah */
+.mx-menu-card .mx-menu-item[onclick="mexaToggleCore()"] {
+  margin-top: 12px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  background: linear-gradient(
+    135deg,
+    rgba(124, 92, 255, 0.18),
+    rgba(0, 229, 255, 0.08)
+  );
+  color: #FFFFFF;
+}
+
+.mx-menu-card .mx-menu-item[onclick="mexaToggleCore()"]:hover {
+  border-color: #00E5FF;
+  background: linear-gradient(
+    135deg,
+    rgba(124, 92, 255, 0.30),
+    rgba(0, 229, 255, 0.16)
+  );
+}
+
+.mx-menu-card .mx-menu-item[onclick="mexaToggleCore()"] .mx-menu-icon {
+  color: #00E5FF;
+}
+
   </style>
 </head>
 
