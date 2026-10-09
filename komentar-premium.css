@@ -1,0 +1,303 @@
+
+/* =========================================
+   MEXA PREMIUM COMMENTS
+   File: komentar-premium.css
+========================================= */
+
+.mexa-comments-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(3, 7, 18, .76);
+  backdrop-filter: blur(12px);
+}
+
+.mexa-comments-overlay.is-open {
+  display: flex;
+}
+
+.mexa-comments-panel {
+  width: min(100%, 560px);
+  max-height: min(85dvh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #f4f7ff;
+  background: #101522;
+  border: 1px solid rgba(0, 220, 255, .25);
+  border-radius: 22px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, .45);
+  animation: mexaCommentEnter .2s ease-out;
+}
+
+.mexa-comments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  border-bottom: 1px solid rgba(255,255,255,.09);
+}
+
+.mexa-comments-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.mexa-comments-subtitle {
+  margin-top: 4px;
+  color: #9ca9bd;
+  font-size: 12px;
+}
+
+.mexa-comments-close {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: #222b3b;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.mexa-comments-list {
+  flex: 1;
+  min-height: 120px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+}
+
+.mexa-comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.mexa-comment-avatar {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #273349;
+}
+
+.mexa-comment-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mexa-comment-bubble {
+  padding: 11px 13px;
+  background: #1b2434;
+  border: 1px solid rgba(255,255,255,.045);
+  border-radius: 5px 16px 16px 16px;
+  overflow-wrap: anywhere;
+}
+
+.mexa-comment-name {
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #63e5ff;
+}
+
+.mexa-comment-text {
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.mexa-comment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 4px 0;
+}
+
+.mexa-comment-action {
+  padding: 0;
+  border: 0;
+  color: #aab6ca;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.mexa-comment-action:hover {
+  color: #56ddff;
+}
+
+.mexa-comment-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.mexa-comment-reaction {
+  padding: 5px 8px;
+  color: #f5f7ff;
+  background: #202b3e;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.mexa-comment-reaction.is-active {
+  border-color: #19d7ff;
+  background: rgba(25, 215, 255, .15);
+}
+
+.mexa-comments-composer {
+  padding: 13px 16px;
+  border-top: 1px solid rgba(255,255,255,.09);
+  background: #121a29;
+}
+
+.mexa-comment-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.mexa-comment-input {
+  flex: 1;
+  min-width: 0;
+  max-height: 120px;
+  resize: vertical;
+  padding: 12px 14px;
+  color: #fff;
+  background: #202a3b;
+  border: 1px solid #344157;
+  border-radius: 16px;
+  outline: none;
+  font: inherit;
+  font-size: 14px;
+}
+
+.mexa-comment-input:focus {
+  border-color: #20d9ff;
+  box-shadow: 0 0 0 3px rgba(32,217,255,.09);
+}
+
+.mexa-comment-send {
+  min-width: 48px;
+  height: 44px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 14px;
+  color: #04131b;
+  background: linear-gradient(135deg, #49edff, #6c9dff);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mexa-comment-send:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.mexa-comments-status {
+  padding: 22px 8px;
+  color: #9ca9bd;
+  text-align: center;
+  font-size: 13px;
+}
+
+.mexa-comment-menu {
+  position: relative;
+  margin-left: auto;
+}
+
+.mexa-comment-menu-button {
+  border: 0;
+  color: #aab6ca;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.mexa-comment-menu-list {
+  position: absolute;
+  right: 0;
+  top: 25px;
+  z-index: 2;
+  min-width: 130px;
+  padding: 5px;
+  background: #263247;
+  border: 1px solid #3a4961;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px #0006;
+}
+
+.mexa-comment-menu-list button {
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mexa-comment-menu-list button:hover {
+  background: #35445d;
+}
+
+@keyframes mexaCommentEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .mexa-comments-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .mexa-comments-panel {
+    width: 100%;
+    max-height: 90dvh;
+    max-height: 90vh;
+    border-radius: 22px 22px 0 0;
+    border-bottom: 0;
+  }
+
+  .mexa-comments-header {
+    padding: 15px;
+  }
+
+  .mexa-comments-list {
+    padding: 14px;
+  }
+
+  .mexa-comments-composer {
+    padding-bottom: max(13px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mexa-comments-panel {
+    animation: none;
+  }
+}
