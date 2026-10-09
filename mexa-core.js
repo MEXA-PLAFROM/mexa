@@ -18,55 +18,74 @@
   }
   // MENU NAVIGASI LIPAT MEXA
   // Garis tiga hanya membuka/menutup menu.
-  window.mexaToggleQuickMenu = function (force) {
-    const panel = document.getElementById("mexaQuickMenuPanel");
-    const trigger = document.getElementById("mexaMenuToggle");
+}
 
-    if (!panel) {
-      console.warn("MEXA: elemen mexaQuickMenuPanel tidak ditemukan.");
-      return;
-    }
+// Buka/tutup menu navigasi.
+// Fungsi garis tiga hanya mengatur panel menu.
+window.mexaToggleQuickMenu = function (force) {
+  const panel = document.getElementById("mexaQuickMenuPanel");
+  const trigger = document.getElementById("mexaMenuToggle");
 
-    const isOpen =
-      typeof force === "boolean" ? force : panel.hidden;
+  if (!panel) {
+    console.error("MEXA: panel navigasi tidak ditemukan.");
+    return;
+  }
 
-    panel.hidden = !isOpen;
+  const open = typeof force === "boolean"
+    ? force
+    : panel.hidden;
 
-    if (trigger) {
-      trigger.setAttribute("aria-expanded", String(isOpen));
-    }
-  };
+  panel.hidden = !open;
 
-  // Pengaturan adalah aksi terpisah dari tombol garis tiga.
-  window.mexaQuickSettings = function () {
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", String(open));
+  }
+};
+
+// Aksi Pengaturan terpisah.
+window.mexaQuickSettings = function () {
+  window.mexaToggleQuickMenu(false);
+
+  if (typeof window.showToast === "function") {
+    window.showToast("Pengaturan segera hadir.");
+  } else {
+    alert("Pengaturan segera hadir.");
+  }
+};
+
+// Aksi System tetap terpisah dari MEXA Core.
+// Hubungkan ke fungsi System yang sebenarnya jika sudah tersedia.
+window.mexaOpenSystem = function () {
+  window.mexaToggleQuickMenu(false);
+
+  if (typeof window.showToast === "function") {
+    window.showToast("MEXA System belum terhubung.");
+  } else {
+    alert("MEXA System belum terhubung.");
+  }
+};
+
+// Tutup menu dengan Escape atau klik di luar panel.
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
     window.mexaToggleQuickMenu(false);
+  }
+});
 
-    if (typeof window.showToast === "function") {
-      window.showToast("Pengaturan segera hadir.");
-    } else {
-      alert("Pengaturan segera hadir.");
-    }
-  };
+document.addEventListener("click", function (event) {
+  const panel = document.getElementById("mexaQuickMenuPanel");
+  const trigger = document.getElementById("mexaMenuToggle");
 
-  // Tutup menu jika pengguna menekan Escape atau klik di luar menu.
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      window.mexaToggleQuickMenu(false);
-    }
-  });
+  if (!panel || panel.hidden) return;
 
-  document.addEventListener("click", function (event) {
-    const panel = document.getElementById("mexaQuickMenuPanel");
-    const trigger = document.getElementById("mexaMenuToggle");
+  if (
+    !panel.contains(event.target) &&
+    trigger &&
+    !trigger.contains(event.target)
+  ) {
+    window.mexaToggleQuickMenu(false);
+  }
+});
 
-    if (!panel || panel.hidden) return;
-
-    if (
-      !panel.contains(event.target) &&
-      trigger &&
-      !trigger.contains(event.target)
-    ) {
-      window.mexaToggleQuickMenu(false);
-    }
   });
 })();
