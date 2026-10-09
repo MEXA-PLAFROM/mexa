@@ -142,4 +142,30 @@
   };
 
   console.log("MEXA Core siap dimuat.");
+   window.mexaToggleQuickMenu = function (force) {
+const panel = document.getElementById("mexaQuickMenuPanel");
+const trigger = document.querySelector(".mx-quick-menu-trigger");
+
+if (!panel) return;
+
+const shouldOpen =
+typeof force === "boolean" ? force : panel.hidden;
+
+panel.hidden = !shouldOpen;
+
+if (trigger) {
+trigger.setAttribute("aria-expanded", String(shouldOpen));
+}
+};
+
+window.mexaQuickSettings = function () {
+window.mexaToggleQuickMenu(false);
+
+if (typeof window.showToast === "function") {
+window.showToast("Pengaturan segera hadir.");
+} else {
+alert("Pengaturan segera hadir.");
+}
+};
+         
 })();
