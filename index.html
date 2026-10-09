@@ -1402,6 +1402,84 @@ margin-top: 8px;
 color: #FFFFFF;
 }
     }
+
+    /* MEXA QUICK MENU */
+.mx-quick-menu {
+position: relative;
+z-index: 500;
+display: none;
+margin: 10px 12px;
+}
+
+.mx-quick-menu-trigger {
+display: flex;
+align-items: center;
+gap: 9px;
+padding: 10px 14px;
+border: 1px solid rgba(0, 229, 255, .3);
+border-radius: 13px;
+background: #15112D;
+color: #fff;
+font-weight: 750;
+}
+
+.mx-quick-menu-trigger span:first-child {
+color: #00E5FF;
+font-size: 20px;
+}
+
+.mx-quick-menu-panel {
+position: absolute;
+top: calc(100% + 8px);
+left: 0;
+width: min(280px, calc(100vw - 24px));
+padding: 12px;
+border: 1px solid rgba(0, 229, 255, .28);
+border-radius: 17px;
+background: #100D25;
+box-shadow: 0 18px 45px rgba(0, 0, 0, .55);
+}
+
+.mx-quick-menu-panel[hidden] {
+display: none !important;
+}
+
+.mx-quick-menu-close {
+display: block;
+margin-left: auto;
+border: 0;
+background: transparent;
+color: #fff;
+font-size: 24px;
+}
+
+.mx-quick-menu-item {
+display: block;
+width: 100%;
+margin-top: 6px;
+padding: 13px;
+border: 1px solid rgba(255, 255, 255, .07);
+border-radius: 11px;
+background: rgba(255, 255, 255, .04);
+color: #F5F3FF;
+text-align: left;
+font-weight: 650;
+}
+
+.mx-quick-menu-item.logout {
+color: #FF8B9A;
+}
+
+.mx-quick-menu-item.core {
+border-color: rgba(0, 229, 255, .3);
+color: #00E5FF;
+}
+
+@media (max-width: 760px) {
+.mx-quick-menu {
+display: block;
+}
+    }
   
   </style>
 </head>
@@ -1760,7 +1838,49 @@ color: #FFFFFF;
 </button>
 
 </nav>
+<!-- MEXA MOBILE QUICK MENU -->
 
+<div class="mx-quick-menu">
+  <button
+    type="button"
+    class="mx-quick-menu-trigger"
+    onclick="mexaToggleQuickMenu()"
+    aria-expanded="false"
+    aria-controls="mexaQuickMenuPanel"
+  >
+    <span>☰</span>
+    <span>Menu</span>
+  </button>
+
+  <div id="mexaQuickMenuPanel" class="mx-quick-menu-panel" hidden>
+    <button
+      type="button"
+      class="mx-quick-menu-close"
+      onclick="mexaToggleQuickMenu(false)"
+    >×</button>
+
+```
+<button
+  type="button"
+  class="mx-quick-menu-item"
+  onclick="mexaQuickSettings()"
+>⚙ Pengaturan</button>
+
+<button
+  type="button"
+  class="mx-quick-menu-item logout"
+  onclick="mexaToggleQuickMenu(false); mexaConfirmLogout()"
+>⇥ Keluar Akun</button>
+
+<button
+  type="button"
+  class="mx-quick-menu-item core"
+  onclick="mexaToggleQuickMenu(false); mexaToggleCore()"
+>☰ MEXA Core</button>
+```
+
+  </div>
+  </div>
 
   <!-- =========================
        CREATE POST MODAL
