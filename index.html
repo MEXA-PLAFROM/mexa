@@ -1605,9 +1605,79 @@ color: #FF8B9A;
 border-color: rgba(0, 229, 255, .3);
 color: #00E5FF;
 }
+/* MEXA QUICK MENU — posisi dropdown */
+.mx-quick-menu-panel {
+  position: fixed;
+  top: 76px;
+  right: 16px;
+  left: auto;
+  width: min(300px, calc(100vw - 24px));
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  z-index: 10000;
+  padding: 12px;
+  border: 1px solid rgba(0, 229, 255, .28);
+  border-radius: 17px;
+  background: #100D25;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, .55);
+}
 
-  
-  </style>
+.mx-quick-menu-panel[hidden] {
+  display: none !important;
+}
+
+.mx-quick-menu-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 6px 10px;
+  color: #F5F3FF;
+}
+
+.mx-quick-menu-close {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.mx-quick-menu-item {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .04);
+  color: #F5F3FF;
+  text-align: left;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.mx-quick-menu-item:hover {
+  background: rgba(124, 92, 255, .18);
+}
+
+.mx-quick-menu-item.logout {
+  color: #FF8B9A;
+}
+
+.mx-quick-menu-item.core {
+  border-color: rgba(0, 229, 255, .3);
+  color: #00E5FF;
+}
+
+@media (max-width: 760px) {
+  .mx-quick-menu-panel {
+    top: 68px;
+    right: 10px;
+    width: min(300px, calc(100vw - 20px));
+  }
+}
+    </style>
 </head>
 
 <body>
