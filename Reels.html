@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reels — MEXA</title>
+<style>
+:root{color-scheme:dark;--bg:#090a10;--panel:#151722;--line:#292c3d;--violet:#8b5cf6;--cyan:#22d3ee;--text:#f7f7ff;--muted:#a6a9c0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.top{position:fixed;z-index:10;top:0;left:0;right:0;height:62px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#080910f5,#080910b0,transparent)}
+.logo{font-size:25px;font-weight:900;letter-spacing:-1px}.logo .x{color:var(--cyan)}.logo small{display:block;font-size:9px;letter-spacing:4px;color:var(--muted)}
+.top button,.uploadBtn{border:1px solid #ffffff26;background:#181a27;color:white;border-radius:13px;padding:10px 13px}
+.feed{height:100dvh;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior-y:contain}
+.reel{height:100dvh;min-height:480px;position:relative;scroll-snap-align:start;scroll-snap-stop:always;background:#11131d;overflow:hidden}
+.reel video{width:100%;height:100%;object-fit:cover;background:#0c0d13}
+.reel:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#05060bea,transparent 45%,#05060b50)}
+.info{position:absolute;z-index:2;bottom:35px;left:17px;right:84px}
+.creator{font-weight:800;font-size:14px;margin-bottom:9px}.caption{font-size:14px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
+.side{position:absolute;z-index:3;right:13px;bottom:100px;display:flex;flex-direction:column;align-items:center;gap:19px}
+.action{border:0;background:transparent;color:white;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:48px;text-shadow:0 2px 8px #000}
+.action .symbol{font-size:29px;line-height:1.2}.action small{font-size:11px}.action.liked{color:#ff6b9d}
+.playHint{position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);font-size:52px;pointer-events:none;opacity:.85}
+.empty{height:100%;display:grid;place-items:center;text-align:center;padding:35px;color:var(--muted)}
+.empty strong{color:white;font-size:22px}.empty p{line-height:1.6}
+.bottom{position:fixed;z-index:10;bottom:0;left:0;right:0;height:62px;padding-bottom:env(safe-area-inset-bottom);display:flex;justify-content:center;align-items:center;gap:22px;background:#090a10eF;border-top:1px solid #ffffff12}
+.bottom a{color:#d7d9eb;text-decoration:none;font-size:12px}.bottom .active{color:var(--cyan);font-weight:800}
+.modal{position:fixed;z-index:30;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;padding:12px}
+.sheet{width:min(540px,100%);max-height:82dvh;overflow:auto;background:#171925;border:1px solid var(--line);border-radius:23px;padding:20px}
+.sheet h2{margin:0 0 15px}.field{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #383b50;border-radius:12px;background:#0d0f18;color:white}
+.primary{width:100%;padding:13px;border:0;border-radius:12px;color:white;font-weight:800;background:linear-gradient(100deg,var(--violet),#5758ec,var(--cyan))}
+.comment{padding:12px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.muted{color:var(--muted);font-size:12px}
+@media(min-width:700px){.feed{max-width:460px;margin:auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}.top{max-width:460px;margin:auto}.bottom{max-width:460px;margin:auto;left:50%;transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">M<span class="x">X</span>A<small>REELS</small></div>
+  <button id="uploadOpen">＋ Buat Reels</button>
+</header>
+
+<main class="feed" id="feed">
+  <section class="empty"><div><strong>MEXA Reels</strong><p>Memuat video...</p></div></section>
+</main>
+
+<nav class="bottom">
+  <a href="index.html">⌂ Beranda</a>
+  <a class="active" href="Reels.html">▷ Reels</a>
+  <a href="Grup.html">♧ Grup</a>
+  <a href="Profil.html">◉ Profil</a>
+</nav>
+
+<div class="modal" id="uploadModal">
+  <div class="sheet">
+    <h2>Buat Reels</h2>
+    <form id="uploadForm">
+      <label>Video MP4, WebM, atau MOV</label>
+      <input class="field" id="videoFile" type="file" accept="video/mp4,video/webm,video/quicktime" required>
+      <label>Caption</label>
+      <textarea class="field" id="videoCaption" rows="3" maxlength="2000" placeholder="Ceritakan videomu..."></textarea>
+      <p class="muted">Maksimal 100 MB. Unggah hanya video yang kamu punya izin untuk bagikan.</p>
+      <button class="primary" id="uploadSubmit" type="submit">Unggah Reels</button>
+      <p id="uploadStatus" class="muted"></p>
+    </form>
+    <button class="topClose" id="uploadClose" style="margin-top:12px;background:#292b3b;border:0;color:white;padding:12px;border-radius:10px;width:100%">Tutup</button>
+  </div>
+</div>
+
+<div class="modal" id="commentModal">
+  <div class="sheet">
+    <h2>Komentar</h2>
+    <div id="commentList"></div>
+    <form id="commentForm">
+      <textarea class="field" id="commentText" rows="2" maxlength="1000" placeholder="Tulis komentar..." required></textarea>
+      <button class="primary" type="submit">Kirim Komentar</button>
+    </form>
+    <button id="commentClose" style="margin-top:12px;background:#292b3b;border:0;color:white;padding:12px;border-radius:10px;width:100%">Tutup</button>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;z-index:50;left:50%;bottom:80px;transform:translateX(-50%);background:#25283a;color:white;padding:12px 17px;border-radius:12px;display:none;max-width:90%;text-align:center"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+
+const MEXA_URL = "https://yozylignolfvkemuhfse.supabase.co";
+const MEXA_KEY = "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
+const db = window.supabase.createClient(MEXA_URL, MEXA_KEY);
+
+const feed = document.getElementById("feed");
+const uploadModal = document.getElementById("uploadModal");
+const commentModal = document.getElementById("commentModal");
+let session = null;
+let reels = [];
+let activeReelId = null;
+let toastTimer;
+
+function toast(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.style.display = "none", 3000);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function getPublicVideoUrl(path) {
+  return db.storage.from("mexa-reels").getPublicUrl(path).data.publicUrl;
+}
+
+async function getProfileNames(userIds) {
+  const uniqueIds = [...new Set(userIds)];
+  if (!uniqueIds.length) return {};
+
+  const {data, error} = await db.from("profiles")
+    .select("id,username,display_name,avatar_url")
+    .in("id", uniqueIds);
+
+  if (error) {
+    console.warn("Profil kreator belum dapat dimuat:", error.message);
+    return {};
+  }
+
+  return Object.fromEntries((data || []).map(p => [
+    p.id, p.display_name || p.username || "Kreator MEXA"
+  ]));
+}
+
+async function loadReels() {
+  feed.innerHTML = '<section class="empty"><div><strong>MEXA Reels</strong><p>Memuat video...</p></div></section>';
+
+  const {data, error} = await db.from("mexa_reels")
+    .select("id,user_id,video_url,caption,created_at")
+    .order("created_at", {ascending:false})
+    .limit(50);
+
+  if (error) {
+    console.error(error);
+    feed.innerHTML = '<section class="empty"><div><strong>Reels belum dapat dimuat</strong><p id="feedError"></p></div></section>';
+    document.getElementById("feedError").textContent = error.message;
+    return;
+  }
+
+  reels = data || [];
+  if (!reels.length) {
+    feed.innerHTML = '<section class="empty"><div><strong>Mulai dari Reels pertamamu ✦</strong><p>Belum ada video. Tekan <b>＋ Buat Reels</b> untuk mengunggah video pertama.</p></div></section>';
+    return;
+  }
+
+  const names = await getProfileNames(reels.map(r => r.user_id));
+  const ids = reels.map(r => r.id);
+  let likes = {}, comments = {}, myLikes = new Set();
+
+  const {data: likeRows, error: likeError} = await db
+    .from("mexa_reel_likes").select("reel_id,user_id").in("reel_id", ids);
+  if (!likeError) {
+    for (const row of likeRows || []) {
+      likes[row.reel_id] = (likes[row.reel_id] || 0) + 1;
+      if (session && row.user_id === session.user.id) myLikes.add(row.reel_id);
+    }
+  }
+
+  const {data: commentRows, error: commentError} = await db
+    .from("mexa_reel_comments").select("reel_id").in("reel_id", ids);
+  if (!commentError) {
+    for (const row of commentRows || []) comments[row.reel_id] = (comments[row.reel_id] || 0) + 1;
+  }
+
+  feed.innerHTML = reels.map(r => `
+    <section class="reel" data-reel="${escapeHTML(r.id)}">
+      <video src="${escapeHTML(getPublicVideoUrl(r.video_url))}" playsinline loop preload="metadata"></video>
+      <div class="playHint">▶</div>
+      <div class="info">
+        <div class="creator">@${escapeHTML(names[r.user_id] || "kreator_mexa")}</div>
+        <div class="caption">${escapeHTML(r.caption)}</div>
+      </div>
+      <div class="side">
+        <button class="action ${myLikes.has(r.id) ? "liked" : ""}" data-action="like" data-id="${escapeHTML(r.id)}"><span class="symbol">♥</span><small>${likes[r.id] || 0}</small></button>
+        <button class="action" data-action="comment" data-id="${escapeHTML(r.id)}"><span class="symbol">▢</span><small>${comments[r.id] || 0}</small></button>
+        <button class="action" data-action="share" data-id="${escapeHTML(r.id)}"><span class="symbol">↗</span><small>Bagikan</small></button>
+      </div>
+    </section>
+  `).join("");
+
+  observeVideos();
+}
+
+function observeVideos() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const video = entry.target.querySelector("video");
+      const hint = entry.target.querySelector(".playHint");
+      if (!video) return;
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.65) {
+        document.querySelectorAll(".reel video").forEach(other => {
+          if (other !== video) other.pause();
+        });
+        video.play().then(() => {
+          if (hint) hint.style.display = "none";
+        }).catch(() => {
+          if (hint) hint.style.display = "block";
+        });
+      } else {
+        video.pause();
+      }
+    });
+  }, {threshold:[0.25,0.65,0.9]});
+
+  document.querySelectorAll(".reel").forEach(section => {
+    observer.observe(section);
+    const video = section.querySelector("video");
+    const hint = section.querySelector(".playHint");
+
+    video.addEventListener("click", () => {
+      if (video.paused) {
+        video.play().then(() => { hint.style.display = "none"; }).catch(() => {});
+      } else {
+        video.pause();
+        hint.style.display = "block";
+      }
+    });
+
+    video.addEventListener("error", () => {
+      toast("Video gagal diputar. Periksa file video sumber.");
+    });
+  });
+}
+
+feed.addEventListener("click", async event => {
+  const button = event.target.closest("[data-action]");
+  if (!button) return;
+
+  const action = button.dataset.action;
+  const id = button.dataset.id;
+  const reel = reels.find(r => r.id === id);
+  if (!reel) return;
+
+  if (action === "like") {
+    if (!session) {
+      toast("Login MEXA diperlukan untuk memberi like.");
+      return;
+    }
+
+    button.disabled = true;
+    const alreadyLiked = button.classList.contains("liked");
+
+    try {
+      if (alreadyLiked) {
+        const {error} = await db.from("mexa_reel_likes")
+          .delete().eq("reel_id", id).eq("user_id", session.user.id);
+        if (error) throw error;
+        button.classList.remove("liked");
+        button.querySelector("small").textContent =
+          Math.max(0, Number(button.querySelector("small").textContent) - 1);
+      } else {
+        const {error} = await db.from("mexa_reel_likes")
+          .insert({reel_id:id,user_id:session.user.id});
+        if (error) throw error;
+        button.classList.add("liked");
+        button.querySelector("small").textContent =
+          Number(button.querySelector("small").textContent) + 1;
+      }
+    } catch (error) {
+      toast(error.message || "Like gagal disimpan.");
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  if (action === "comment") {
+    activeReelId = id;
+    await loadComments(id);
+    commentModal.style.display = "flex";
+  }
+
+  if (action === "share") {
+    const url = new URL("Reels.html", location.href);
+    url.searchParams.set("reel", id);
+
+    try {
+      if (navigator.share) {
+        await navigator.share({title:"MEXA Reels",text:reel.caption || "Tonton Reels ini di MEXA",url:url.href});
+      } else {
+        await navigator.clipboard.writeText(url.href);
+        toast("Tautan Reels berhasil disalin.");
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        prompt("Salin tautan Reels ini:", url.href);
+      }
+    }
+  }
+});
+
+async function loadComments(reelId) {
+  const list = document.getElementById("commentList");
+  list.textContent = "Memuat komentar...";
+
+  const {data, error} = await db.from("mexa_reel_comments")
+    .select("id,user_id,content,created_at")
+    .eq("reel_id", reelId)
+    .order("created_at", {ascending:true})
+    .limit(100);
+
+  if (error) {
+    list.textContent = "Komentar gagal dimuat: " + error.message;
+    return;
+  }
+
+  if (!data.length) {
+    list.textContent = "Belum ada komentar. Jadilah yang pertama!";
+    return;
+  }
+
+  const names = await getProfileNames(data.map(c => c.user_id));
+  list.innerHTML = data.map(c => `
+    <div class="comment">
+      <strong>${escapeHTML(names[c.user_id] || "Kreator MEXA")}</strong>
+      <p style="margin:6px 0">${escapeHTML(c.content)}</p>
+      <span class="muted">${escapeHTML(new Date(c.created_at).toLocaleString("id-ID"))}</span>
+      ${session && c.user_id === session.user.id ? `<button data-delete-comment="${escapeHTML(c.id)}" style="float:right;background:transparent;color:#ff9ab9;border:0">Hapus</button>` : ""}
+    </div>
+  `).join("");
+}
+
+document.getElementById("commentList").addEventListener("click", async event => {
+  const button = event.target.closest("[data-delete-comment]");
+  if (!button || !session) return;
+
+  const {error} = await db.from("mexa_reel_comments")
+    .delete().eq("id",button.dataset.deleteComment)
+    .eq("user_id",session.user.id);
+
+  if (error) toast(error.message);
+  else await loadComments(activeReelId);
+});
+
+document.getElementById("commentForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!session) {
+    toast("Login MEXA diperlukan untuk berkomentar.");
+    return;
+  }
+
+  const input = document.getElementById("commentText");
+  const content = input.value.trim();
+  if (!content || !activeReelId) return;
+
+  const {error} = await db.from("mexa_reel_comments").insert({
+    reel_id:activeReelId,
+    user_id:session.user.id,
+    content
+  });
+
+  if (error) {
+    toast(error.message || "Komentar gagal dikirim.");
+    return;
+  }
+
+  input.value = "";
+  await loadComments(activeReelId);
+  toast("Komentar terkirim.");
+  await loadReels();
+});
+
+document.getElementById("uploadOpen").onclick = async () => {
+  const {data} = await db.auth.getSession();
+  if (!data.session) {
+    toast("Silakan login di MEXA terlebih dahulu.");
+    return;
+  }
+  uploadModal.style.display = "flex";
+};
+
+document.getElementById("uploadClose").onclick = () => uploadModal.style.display = "none";
+document.getElementById("commentClose").onclick = () => commentModal.style.display = "none";
+
+uploadModal.addEventListener("click", event => {
+  if (event.target === uploadModal) uploadModal.style.display = "none";
+});
+commentModal.addEventListener("click", event => {
+  if (event.target === commentModal) commentModal.style.display = "none";
+});
+
+document.getElementById("uploadForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const status = document.getElementById("uploadStatus");
+  const button = document.getElementById("uploadSubmit");
+  const file = document.getElementById("videoFile").files[0];
+  const caption = document.getElementById("videoCaption").value.trim();
+
+  if (!session) {
+    toast("Silakan login melalui MEXA terlebih dahulu.");
+    return;
+  }
+  if (!file) {
+    status.textContent = "Pilih file video terlebih dahulu.";
+    return;
+  }
+  if (file.size > 100 * 1024 * 1024) {
+    status.textContent = "Ukuran video maksimal 100 MB.";
+    return;
+  }
+  if (!["video/mp4","video/webm","video/quicktime"].includes(file.type)) {
+    status.textContent = "Format yang didukung: MP4, WebM, MOV.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Mengunggah...";
+  status.textContent = "Mengunggah video. Jangan tutup halaman dulu.";
+
+  const path = `${session.user.id}/${crypto.randomUUID()}.${file.type === "video/webm" ? "webm" : file.type === "video/quicktime" ? "mov" : "mp4"}`;
+
+  try {
+    const {error:storageError} = await db.storage
+      .from("mexa-reels")
+      .upload(path,file,{contentType:file.type,upsert:false});
+
+    if (storageError) throw storageError;
+
+    const {error:insertError} = await db.from("mexa_reels").insert({
+      user_id:session.user.id,
+      video_url:path,
+      caption
+    });
+
+    if (insertError) {
+      await db.storage.from("mexa-reels").remove([path]);
+      throw insertError;
+    }
+
+    status.textContent = "Reels berhasil diunggah!";
+    document.getElementById("uploadForm").reset();
+    setTimeout(() => {
+      uploadModal.style.display = "none";
+      loadReels();
+    }, 700);
+  } catch (error) {
+    console.error(error);
+    status.textContent = error.message || "Upload gagal. Coba lagi.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Unggah Reels";
+  }
+});
+
+async function startReels() {
+  const {data,error} = await db.auth.getSession();
+  if (error) console.warn(error);
+  session = data?.session || null;
+  await loadReels();
+}
+
+startReels();
+</script>
+</body>
+</html>
