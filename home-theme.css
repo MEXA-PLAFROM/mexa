@@ -748,3 +748,65 @@ textarea {
   gap: 6px;
 
      }
+/* =========================================
+   MEXA BUTTON CLARITY FIX
+========================================= */
+
+
+/* FOTO VIDEO PERASAAN */
+
+.mx-create-buttons button {
+
+  background: var(--mx-card) !important;
+
+  color: var(--mx-text) !important;
+
+  border: 1px solid var(--mx-border) !important;
+
+  font-weight: 700;
+
+  font-size: 14px;
+
+}
+
+
+
+/* SEGARKAN */
+
+.mx-title button {
+
+  background: var(--mx-card) !important;
+
+  color: var(--mx-text) !important;
+
+  border: 1px solid var(--mx-border) !important;
+
+  font-weight: 700;
+
+}
+
+
+
+/* Hover */
+
+.mx-create-buttons button:hover,
+.mx-title button:hover {
+
+  color: var(--mx-primary) !important;
+
+  border-color: var(--mx-primary) !important;
+
+}
+
+
+
+/* Emoji tetap terlihat */
+
+.mx-create-buttons button,
+.mx-title button {
+
+  opacity: 1 !important;
+
+  text-shadow: none;
+
+}
