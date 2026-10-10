@@ -488,3 +488,115 @@
   cursor: pointer !important;
    }
    
+/* =========================================
+   MEXA FIX — PULIHKAN BAGIAN POSTINGAN
+========================================= */
+
+html body #mexaFeedList .mx-post-card {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Header: foto, nama, username, titik tiga */
+html body #mexaFeedList .mx-post-card > .mx-post-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-bottom: 14px !important;
+}
+
+html body #mexaFeedList .mx-post-profile-link,
+html body #mexaFeedList .mx-post-author-group,
+html body #mexaFeedList .mx-post-header > .mx-post-menu {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+html body #mexaFeedList .mx-post-profile-link {
+  display: flex !important;
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  height: 44px !important;
+}
+
+html body #mexaFeedList .mx-post-author-group {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+html body #mexaFeedList .mx-post-author,
+html body #mexaFeedList .mx-post-username {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  color: inherit !important;
+}
+
+/* Isi postingan */
+html body #mexaFeedList .mx-post-card > .mx-post-content {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  margin: 12px 0 !important;
+}
+
+/* Foto postingan */
+html body #mexaFeedList .mx-post-card > .mx-post-image {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+/* Tombol Suka, Komentar, Bagikan */
+html body #mexaFeedList .mx-post-card > .mx-post-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  margin-top: 14px !important;
+}
+
+html body #mexaFeedList .mx-post-card > .mx-post-actions > button {
+  display: inline-flex !important;
+  flex: 1 1 90px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 40px !important;
+  height: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: inherit !important;
+  cursor: pointer !important;
+   }
+}
