@@ -344,75 +344,132 @@
       }
 
       // TAMPILAN MENU UTAMA
-      function showMenu() {
-        panel.replaceChildren();
+    
+function showMenu() {
+  panel.replaceChildren();
 
-        const title = document.createElement("h3");
+  const title = document.createElement("h3");
+  title.textContent = "Menu Postingan";
 
-        title.textContent = "Menu Postingan";
+  Object.assign(title.style, {
+    margin: "0 0 8px",
+    fontSize: "18px"
+  });
 
-        Object.assign(title.style, {
-          margin: "0 0 8px",
-          fontSize: "18px"
-        });
+  panel.appendChild(title);
 
-        panel.appendChild(title);
+  const description = document.createElement("p");
+  description.textContent = isOwner
+    ? "Kelola postingan milik kamu."
+    : "Bagikan atau laporkan postingan ini.";
 
-        const description = document.createElement("p");
+  Object.assign(description.style, {
+    margin: "0 0 14px",
+    color: "#b9b1d0",
+    fontSize: "13px"
+  });
 
-        description.textContent = isOwner
-          ? "Ini postingan milik akun kamu."
-          : "Ini postingan milik pengguna lain.";
+  panel.appendChild(description);
 
-        Object.assign(description.style, {
-          margin: "0 0 14px",
-          color: "#b9b1d0",
-          fontSize: "13px"
-        });
+  // BAGIKAN KE TEMAN
+  makeButton("👤 Bagikan ke Teman", function () {
+    closeMenu();
 
-        panel.appendChild(description);
+    if (typeof window.openShareToFriend === "function") {
+      window.openShareToFriend(post);
+    } else {
+      alert("Fitur Bagikan ke Teman belum terhubung.");
+    }
+  });
 
-        // BAGIKAN — TERSEDIA UNTUK SEMUA
-        makeButton(
-          "↗  Bagikan postingan",
-          async function () {
-            const url = new URL(window.location.href);
+  // BAGIKAN KE GRUP
+  makeButton("👨‍👩‍👧 Bagikan ke Grup", function () {
+    closeMenu();
 
-            url.hash = "post-" + post.id;
+    if (typeof window.openShareToGroup === "function") {
+      window.openShareToGroup(post);
+    } else {
+      alert("Fitur Bagikan ke Grup belum terhubung.");
+    }
+  });
 
-            try {
-              if (typeof navigator.share === "function") {
-                await navigator.share({
-                  title: "Postingan MEXA",
-                  text:
-                    post.content ||
-                    "Lihat postingan ini di MEXA",
-                  url: url.href
-                });
-              } else if (navigator.clipboard) {
-                await navigator.clipboard.writeText(url.href);
+  // SALIN TAUTAN
+  makeButton("🔗 Salin tautan", async function () {
+    const url = new URL(window.location.href);
+    url.hash = "post-" + post.id;
 
-                alert("Tautan postingan berhasil disalin.");
-              } else {
-                window.prompt(
-                  "Salin tautan postingan:",
-                  url.href
-                );
-              }
-            } catch (error) {
-              if (error.name !== "AbortError") {
-                console.error(
-                  "MEXA gagal membagikan postingan:",
-                  error
-                );
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url.href);
+        closeMenu();
+        alert("Tautan postingan berhasil disalin.");
+      } else {
+        closeMenu();
+        window.prompt("Salin tautan postingan:", url.href);
+      }
+    } catch (error) {
+      console.error("MEXA gagal menyalin tautan:", error);
+      window.prompt("Salin tautan postingan:", url.href);
+    }
+  });
 
-                alert(
-                  "Tautan belum berhasil dibagikan."
-                );
-              }
-            }
-          }
+  // MENU KHUSUS PEMILIK POSTINGAN
+  if (isOwner) {
+    makeButton("✏️ Edit postingan", function () {
+      showEditor();
+    });
+
+    makeButton("🗑️ Hapus postingan", async function () {
+      const confirmed = window.confirm(
+        "Yakin ingin menghapus postingan ini?"
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const deleted = await client
+          .from("posts")
+          .delete()
+          .eq("id", post.id)
+          .eq("user_id", viewerId)
+          .select("id")
+          .maybeSingle();
+
+        if (deleted.error) throw deleted.error;
+
+        if (!deleted.data) {
+          throw new Error(
+            "Penghapusan ditolak. Periksa izin RLS Supabase."
+          );
+        }
+
+        closeMenu();
+        await loadPosts();
+        alert("Postingan berhasil dihapus.");
+      } catch (error) {
+        console.error("MEXA gagal menghapus postingan:", error);
+        alert(
+          "Postingan gagal dihapus. Periksa izin RLS Supabase."
         );
+      }
+    }, true);
+  } else {
+    // LAPORKAN HANYA JIKA PENGUNJUNG MELIHAT POSTINGAN ORANG LAIN
+    makeButton("⚑ Laporkan postingan", function () {
+      closeMenu();
+
+      if (typeof window.openReportPost === "function") {
+        window.openReportPost(post);
+      } else {
+        alert(
+          "Fitur laporan belum terhubung ke sistem moderasi MEXA."
+        );
+      }
+    });
+  }
+
+  makeButton("Tutup", closeMenu);
+}
 
         if (isOwner) {
           // EDIT HANYA UNTUK PEMILIK
