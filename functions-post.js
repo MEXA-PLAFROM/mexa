@@ -99,6 +99,21 @@ avatar.src =
   "./assets/default-avatar.png";
 avatar.alt = "Foto profil";
 
+// =============================
+// HEADER POST PREMIUM
+// =============================
+
+const header = document.createElement("div");
+header.className = "mx-post-header";
+
+
+const avatar = document.createElement("img");
+avatar.className = "mx-post-avatar";
+avatar.src =
+  profile.avatar_url ||
+  "./assets/default-avatar.png";
+avatar.alt = "Foto profil";
+
 
 const author = document.createElement("a");
 author.className = "mx-post-author";
@@ -145,6 +160,7 @@ card.append(
   header,
   content
 );
+         
         if (post.image_url) {
           const image = document.createElement("img");
           image.className = "mx-post-image";
