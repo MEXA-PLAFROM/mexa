@@ -1,601 +1,296 @@
-
 /* ==================================================
-   MEXA — HOME.CSS
-   Tema dark premium, desktop dan mobile
+   MEXA HOME CSS V2
+   Premium App Shell
    ================================================== */
 
 :root {
-  color-scheme: dark;
-  --mx-bg: #0b0818;
-  --mx-panel: #141027;
-  --mx-border: #2a2441;
-  --mx-text: #f6f3ff;
-  --mx-muted: #aaa4c2;
-  --mx-cyan: #00e5ff;
-  --mx-purple: #8b5cf6;
+
+  --mx-bg:#080612;
+  --mx-panel:#121022;
+  --mx-card:#17132b;
+  --mx-border:#30284d;
+
+  --mx-text:#f8f5ff;
+  --mx-muted:#aaa4c2;
+
+  --mx-primary:#00e5ff;
+  --mx-purple:#8b5cf6;
+
 }
+
 
 * {
-  box-sizing: border-box;
+  box-sizing:border-box;
 }
+
 
 html {
-  min-height: 100%;
-  scroll-behavior: smooth;
+  scroll-behavior:smooth;
 }
 
+
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--mx-bg);
-  color: var(--mx-text);
-  font: 15px/1.5 system-ui, sans-serif;
+
+  margin:0;
+
+  min-height:100vh;
+
+  background:
+  radial-gradient(
+    circle at top,
+    #24104d 0,
+    var(--mx-bg) 40%
+  );
+
+  color:var(--mx-text);
+
+  font-family:
+  system-ui,
+  -apple-system,
+  sans-serif;
+
 }
+
+
+/* LINK */
+
+a {
+
+ color:inherit;
+ text-decoration:none;
+
+}
+
 
 button,
 input,
-textarea,
-select {
-  font: inherit;
+textarea {
+
+ font:inherit;
+
 }
 
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
 
 button {
-  cursor: pointer;
+
+ cursor:pointer;
+
 }
 
-button:disabled {
-  cursor: not-allowed;
+
+
+
+
+/* ================= HEADER ================= */
+
+
+.mx-app-header {
+
+ position:sticky;
+
+ top:0;
+
+ z-index:100;
+
+ height:70px;
+
+ display:flex;
+
+ align-items:center;
+
+ gap:18px;
+
+ padding:10px 4%;
+
+
+ background:
+
+ rgba(12,9,30,.85);
+
+
+ backdrop-filter:
+ blur(16px);
+
+
+ border-bottom:
+
+ 1px solid var(--mx-border);
+
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
 
-img,
-video {
-  max-width: 100%;
-}
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--mx-cyan);
-  outline-offset: 3px;
-}
 
-/* HEADER */
 
-.mx-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  min-height: 68px;
-  padding: 10px 3%;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: #0f0b25;
-  border-bottom: 1px solid var(--mx-border);
-}
+/* LOGO */
+
 
 .mx-brand {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  font-size: 27px;
-  font-weight: 950;
-  letter-spacing: -2px;
+
+ display:flex;
+
+ align-items:center;
+
+ font-size:30px;
+
+ font-weight:900;
+
+ letter-spacing:-2px;
+
 }
 
-.mx-logo-m,
-.mx-logo-a {
-  color: var(--mx-cyan);
+
+.mx-m,
+.mx-a {
+
+ color:var(--mx-primary);
+
 }
 
-.mx-logo-x {
-  color: #a78bfa;
+
+.mx-x {
+
+ color:#b18cff;
+
 }
 
-.mx-logo-e {
-  display: grid;
-  gap: 3px;
-  margin: 0 2px;
+
+
+.mx-e {
+
+ display:flex;
+
+ flex-direction:column;
+
+ gap:3px;
+
+ margin:0 3px;
+
 }
 
-.mx-logo-e i {
-  display: block;
-  width: 15px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--mx-cyan);
+
+.mx-e i {
+
+ width:17px;
+
+ height:4px;
+
+ border-radius:5px;
+
+ background:
+ var(--mx-primary);
+
 }
 
-.mx-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: 480px;
-  min-width: 0;
-  flex: 1;
-  padding: 10px 14px;
-  background: var(--mx-panel);
-  border: 1px solid var(--mx-border);
-  border-radius: 14px;
-  color: var(--mx-muted);
+
+
+
+
+
+/* SEARCH */
+
+
+.mx-search-box {
+
+ flex:1;
+
+ max-width:520px;
+
+ display:flex;
+
+ align-items:center;
+
+ gap:10px;
+
+
+ padding:10px 15px;
+
+
+ background:
+
+ var(--mx-panel);
+
+
+ border:
+
+ 1px solid var(--mx-border);
+
+
+ border-radius:18px;
+
+ color:var(--mx-muted);
+
 }
 
-.mx-search input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  color: var(--mx-text);
-  background: transparent;
+
+
+.mx-search-box input {
+
+ width:100%;
+
+ border:0;
+
+ outline:0;
+
+ background:transparent;
+
+ color:white;
+
 }
 
-.mx-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+
+
+
+
+
+/* HEADER BUTTON */
+
+
+.mx-header-buttons {
+
+ display:flex;
+
+ gap:8px;
+
 }
 
-.mx-header-actions button,
-.mx-header-actions a {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  color: var(--mx-text);
-  background: var(--mx-panel);
-  border: 1px solid var(--mx-border);
-  border-radius: 13px;
+
+
+.mx-header-buttons button,
+.mx-header-buttons a {
+
+
+ width:42px;
+
+ height:42px;
+
+
+ display:grid;
+
+ place-items:center;
+
+
+ border-radius:14px;
+
+
+ background:
+ var(--mx-panel);
+
+
+ border:
+ 1px solid var(--mx-border);
+
+
+ color:white;
+
+
 }
 
-.mx-header-actions button:hover,
-.mx-header-actions a:hover {
-  border-color: var(--mx-purple);
-  background: #211a38;
-}
 
-/* DROPDOWN */
+.mx-header-buttons button:hover,
+.mx-header-buttons a:hover {
 
-.mx-dropdown {
-  position: fixed;
-  top: 76px;
-  right: 16px;
-  z-index: 1000;
-  width: min(290px, calc(100vw - 24px));
-  padding: 10px;
-  border: 1px solid var(--mx-border);
-  border-radius: 16px;
-  background: var(--mx-panel);
-  box-shadow: 0 18px 45px #0009;
-}
+ border-color:
+ var(--mx-primary);
 
-.mx-dropdown[hidden] {
-  display: none !important;
-}
-
-.mx-dropdown button {
-  width: 100%;
-  padding: 12px;
-  margin: 3px 0;
-  text-align: left;
-  color: var(--mx-text);
-  background: transparent;
-  border: 0;
-  border-radius: 10px;
-}
-
-.mx-dropdown button:hover {
-  background: #ffffff10;
-}
-
-/* LAYOUT UTAMA */
-
-.mx-layout {
-  width: min(1380px, 96%);
-  margin: 22px auto 100px;
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr) 245px;
-  gap: 20px;
-}
-
-.mx-sidebar,
-.mx-right-sidebar,
-#mexa-main {
-  min-width: 0;
-}
-
-#mexa {
-  display: none;
-}
-
-#mexa-main {
-  position: relative;
-  min-width: 0;
-}
-
-#mexa-main > section,
-.mx-right-sidebar > section {
-  margin-bottom: 16px;
-  padding: 16px;
-  background: var(--mx-panel);
-  border: 1px solid var(--mx-border);
-  border-radius: 18px;
-}
-
-/* JUDUL SECTION */
-
-.mx-section-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.mx-section-heading h2,
-.mx-right-sidebar h2 {
-  margin: 0 0 12px;
-  font-size: 17px;
-}
-
-.mx-section-heading button,
-#mexa-creator-center button {
-  color: var(--mx-cyan);
-  background: transparent;
-  border: 0;
-}
-
-/* AREA CERITA, FEED, PROFIL */
-
-#mexa-stories-list,
-#mexaFeedList,
-#mexa-sidebar-profile,
-#mexa-side-navigation,
-#mexa-composer-profile,
-#mexaTrendingList {
-  min-width: 0;
-  width: 100%;
-}
-
-#mexaFeedList {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-#mexaFeedList > * {
-  min-width: 0;
-  max-width: 100%;
-}
-
-/* TOMBOL BUKA COMPOSER */
-
-#mexaOpenComposer,
-#mexa-mobile-create {
-  width: 100%;
-  padding: 12px 14px;
-  margin: 10px 0;
-  text-align: left;
-  color: var(--mx-muted);
-  background: #ffffff08;
-  border: 1px solid var(--mx-border);
-  border-radius: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-#mexaOpenComposer:hover,
-#mexa-mobile-create:hover {
-  color: var(--mx-text);
-  border-color: var(--mx-purple);
-  background: #8b5cf610;
-}
-
-/* COMPOSER POSTINGAN */
-
-.mx-composer {
-  position: relative;
-  padding: 18px;
-  margin-bottom: 18px;
-  border: 1px solid rgba(150, 130, 220, .2);
-  border-radius: 18px;
-  background: var(--mx-panel);
-  color: var(--mx-text);
-  pointer-events: auto;
-}
-
-.mx-composer-label {
-  display: block;
-  margin: 12px 0 8px;
-  font-weight: 700;
-}
-
-#mexaPostContent {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  min-height: 90px;
-  padding: 14px;
-  resize: vertical;
-  border: 1px solid #38304f;
-  border-radius: 12px;
-  background: #0e0b19;
-  color: #fff;
-  font: inherit;
-  outline: none;
-  pointer-events: auto;
-}
-
-#mexaPostContent:focus {
-  border-color: #9670ff;
-  box-shadow: 0 0 0 2px rgba(150, 112, 255, .15);
-}
-
-.mx-composer-actions,
-.mx-publish-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.mx-composer-actions button {
-  padding: 9px 12px;
-  border: 1px solid #38304f;
-  border-radius: 10px;
-  background: #211a35;
-  color: #fff;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.mx-composer-actions button:hover {
-  border-color: var(--mx-purple);
-}
-
-#mexaPublishStatus {
-  flex: 1;
-  min-width: 0;
-  font-size: 12px;
-  color: #b9b1ce;
-}
-
-#mexaPublishPost {
-  position: relative;
-  z-index: 1;
-  min-width: 100px;
-  padding: 11px 22px;
-  border: 0;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #8757ff, #5732d6);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-#mexaPublishPost:hover {
-  filter: brightness(1.12);
-}
-
-#mexaPublishPost:disabled {
-  opacity: .55;
-  cursor: wait;
-}
-
-/* KARTU FEED — BERLAKU JIKA KELAS INI DIPAKAI */
-
-.mx-feed-card,
-.mx-post-card {
-  min-width: 0;
-  width: 100%;
-  overflow-wrap: anywhere;
-  background: var(--mx-panel);
-  border: 1px solid var(--mx-border);
-  border-radius: 16px;
-}
-
-.mx-feed-content,
-.mx-post-content {
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
-.mx-feed-media,
-.mx-post-media {
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.mx-feed-media img,
-.mx-post-media img,
-.mx-feed-media video,
-.mx-post-media video {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 12px;
-}
-
-/* MENU TITIK TIGA */
-
-.mx-post-menu {
-  position: relative;
-  z-index: 5;
-}
-
-.mx-post-menu button {
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-/* NAVIGASI BAWAH */
-
-#mexa-bottom-nav {
-  display: none;
-}
-
-/* STATUS DAN PESAN */
-
-#mexaPublishStatus,
-[role="status"],
-[aria-live] {
-  overflow-wrap: anywhere;
-}
-
-/* TABLET */
-
-@media (max-width: 1000px) {
-  .mx-layout {
-    grid-template-columns: 190px minmax(0, 1fr);
-  }
-
-  .mx-right-sidebar {
-    display: none;
-  }
-}
-
-/* MOBILE */
-
-@media (max-width: 700px) {
-  .mx-header {
-    min-height: 60px;
-    padding: 8px 12px;
-    gap: 10px;
-  }
-
-  .mx-brand {
-    font-size: 23px;
-  }
-
-  .mx-search {
-    padding: 8px;
-  }
-
-  .mx-search input {
-    width: 80px;
-  }
-
-  .mx-header-actions {
-    gap: 5px;
-  }
-
-  .mx-header-actions button,
-  .mx-header-actions a {
-    width: 36px;
-    height: 36px;
-  }
-
-  .mx-layout {
-    display: block;
-    width: auto;
-    margin: 12px 10px 100px;
-  }
-
-  .mx-sidebar,
-  .mx-right-sidebar {
-    display: none;
-  }
-
-  #mexa-main > section {
-    padding: 13px;
-    border-radius: 15px;
-  }
-
-  .mx-composer {
-    padding: 13px;
-    border-radius: 14px;
-  }
-
-  .mx-publish-row {
-    align-items: stretch;
-  }
-
-  #mexaPublishPost {
-    width: 100%;
-  }
-
-  #mexa-bottom-nav {
-    position: fixed;
-    z-index: 300;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 9px 4px calc(9px + env(safe-area-inset-bottom));
-    background: #100d25;
-    border-top: 1px solid var(--mx-border);
-  }
-
-  #mexa-bottom-nav a,
-  #mexa-bottom-nav button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    min-width: 0;
-    padding: 4px 8px;
-    font-size: 18px;
-    background: transparent;
-    border: 0;
-    color: var(--mx-text);
-    cursor: pointer;
-    pointer-events: auto;
-  }
-
-  #mexa-bottom-nav span {
-    font-size: 11px;
-  }
-}
-
-/* LAYAR SANGAT KECIL */
-
-@media (max-width: 380px) {
-  .mx-header {
-    gap: 6px;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  .mx-brand {
-    font-size: 20px;
-  }
-
-  .mx-search input {
-    width: 55px;
-  }
-
-  .mx-header-actions button,
-  .mx-header-actions a {
-    width: 32px;
-    height: 32px;
-  }
-
-  .mx-layout {
-    margin-left: 7px;
-    margin-right: 7px;
-  }
-
-  #mexa-bottom-nav a,
-  #mexa-bottom-nav button {
-    padding-left: 4px;
-    padding-right: 4px;
-  }
 }
