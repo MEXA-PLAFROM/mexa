@@ -810,3 +810,65 @@ textarea {
   text-shadow: none;
 
 }
+/* =========================================
+   FIX CARD + BUTTON TEMA
+========================================= */
+
+
+/* Semua kartu MEXA */
+
+.mx-card {
+
+  background: var(--mx-card) !important;
+
+  color: var(--mx-text) !important;
+
+  border-color: var(--mx-border) !important;
+
+}
+
+
+
+/* Tombol Foto Video Perasaan */
+
+.mx-create-buttons button {
+
+  background: var(--mx-panel) !important;
+
+  color: var(--mx-text) !important;
+
+}
+
+
+
+/* Tombol Segarkan */
+
+.mx-title button {
+
+  background: var(--mx-panel) !important;
+
+  color: var(--mx-text) !important;
+
+}
+
+
+
+/* Area input posting */
+
+#mexaPostContent {
+
+  background: var(--mx-panel) !important;
+
+  color: var(--mx-text) !important;
+
+}
+
+
+
+/* Semua judul */
+
+.mx-card h2 {
+
+  color: var(--mx-text) !important;
+
+}
