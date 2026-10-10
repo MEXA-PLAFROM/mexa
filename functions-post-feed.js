@@ -302,5 +302,14 @@
       homePosts: [...state.homePosts],
       profilePosts: [...state.profilePosts]
     })
-  });
+     window.MEXARunHomeFeed = async function () {
+if (!window.MEXAPostFeed) {
+console.error("MEXA: Modul post feed belum dimuat.");
+return;
+}
+
+// Ganti selector setelah kita memastikan ID
+// elemen daftar postingan di index.html.
+return window.MEXAPostFeed.loadHome("#homeFeed");
+     });
 })();
