@@ -333,5 +333,44 @@
    font-size:13px;
 
  }
+   
+/* MEXA — posisi tombol titik tiga */
+.mx-post-card .mx-post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  position: relative;
+}
+
+.mx-post-card .mx-post-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mx-post-card .mx-post-menu,
+.mx-post-card .mx-post-menu-button,
+.mx-post-card .mx-post-more,
+.mx-post-card .mx-post-menu-btn {
+  flex-shrink: 0;
+  margin-left: auto;
+  align-self: center;
+}
+
+/* Nama dan username tersusun rapi */
+.mx-post-card .mx-post-author-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.mx-post-card .mx-post-author-info a,
+.mx-post-card .mx-post-author-info strong {
+  overflow-wrap: anywhere;
+}
+   
 
 }
