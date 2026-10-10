@@ -1,10 +1,4 @@
-
-/* ==========================================
-   MEXA CONTROL
-   Cocok dengan home.css,
-   home-themes.css, dan themes.js
-========================================== */
-
+/* MEXA CONTROL */
 (function () {
   "use strict";
 
@@ -16,73 +10,87 @@
     { id: "cyberpunk", name: "Cyberpunk", icon: "⚡" }
   ];
 
-  function getThemeController() {
-    return window.MEXA_THEME || window.MEXATheme || null;
-  }
+  const $ = (selector) => document.querySelector(selector);
 
   function getCurrentTheme() {
-    const controller = getThemeController();
-
-    if (controller && typeof controller.current === "function") {
-      const current = controller.current();
-      if (current) return current;
+    if (window.MEXA_THEME) {
+      return window.MEXA_THEME.current();
     }
 
-    return (
-      document.body.dataset.theme ||
-      document.documentElement.dataset.theme ||
-      localStorage.getItem("mexa-theme") ||
-      "midnight"
-    );
+    return document.body.dataset.theme || "midnight";
+  }
+
+  function closeControlMenu() {
+    const menu = $("#mx-control-panel");
+    const trigger = $("#mx-main-menu");
+
+    if (menu) menu.hidden = true;
+
+    if (trigger) {
+      trigger.setAttribute("aria-expanded", "false");
+    }
+  }
+
+  function closeThemePanel() {
+    const panel = $("#mexa-theme-panel");
+
+    if (panel) {
+      panel.remove();
+    }
+
+    document.removeEventListener("click", handleOutsideClick);
+    document.removeEventListener("keydown", handleEscape);
+  }
+
+  function updateThemeButtons() {
+    const current = getCurrentTheme();
+    const panel = $("#mexa-theme-panel");
+
+    if (!panel) return;
+
+    panel.querySelectorAll("[data-mexa-theme]").forEach((button) => {
+      const active = button.dataset.mexaTheme === current;
+
+      button.setAttribute("aria-pressed", String(active));
+      button.dataset.active = active ? "true" : "false";
+    });
   }
 
   function applyTheme(theme) {
-    const valid = THEME_LIST.some(item => item.id === theme);
-    if (!valid) return;
+    if (!THEME_LIST.some((item) => item.id === theme)) {
+      return;
+    }
 
-    const controller = getThemeController();
-
-    if (controller && typeof controller.set === "function") {
-      controller.set(theme);
+    if (window.MEXA_THEME && typeof window.MEXA_THEME.set === "function") {
+      window.MEXA_THEME.set(theme);
     } else {
-      document.body.dataset.theme = theme;
       document.documentElement.dataset.theme = theme;
-      localStorage.setItem("mexa-theme", theme);
+      document.body.dataset.theme = theme;
+
+      try {
+        localStorage.setItem("mexa-theme", theme);
+      } catch (error) {}
     }
 
     updateThemeButtons();
   }
 
-  function closeThemePanel() {
-    document.getElementById("mexa-theme-panel")?.remove();
+  function handleOutsideClick(event) {
+    const panel = $("#mexa-theme-panel");
+
+    if (panel && !panel.contains(event.target)) {
+      closeThemePanel();
+    }
   }
 
-  function updateThemeButtons() {
-    const panel = document.getElementById("mexa-theme-panel");
-    if (!panel) return;
-
-    const current = getCurrentTheme();
-
-    panel.querySelectorAll("[data-mexa-theme]").forEach(button => {
-      const active = button.dataset.mexaTheme === current;
-
-      button.setAttribute("aria-pressed", String(active));
-
-      if (active) {
-        button.dataset.active = "true";
-      } else {
-        delete button.dataset.active;
-      }
-    });
+  function handleEscape(event) {
+    if (event.key === "Escape") {
+      closeThemePanel();
+    }
   }
 
   function openThemePanel() {
-    const existing = document.getElementById("mexa-theme-panel");
-
-    if (existing) {
-      existing.remove();
-      return;
-    }
+    closeThemePanel();
 
     const panel = document.createElement("section");
     panel.id = "mexa-theme-panel";
@@ -92,16 +100,29 @@
     heading.textContent = "Tema MEXA";
     panel.appendChild(heading);
 
-    THEME_LIST.forEach(theme => {
+    THEME_LIST.forEach((theme) => {
       const button = document.createElement("button");
+
       button.type = "button";
       button.dataset.mexaTheme = theme.id;
-      button.innerHTML =
-        `<span aria-hidden="true">${theme.icon}</span>` +
-        `<span>${theme.name}</span>` +
-        `<span class="mx-theme-check" aria-hidden="true">✓</span>`;
+      button.setAttribute("aria-pressed", "false");
 
-      button.addEventListener("click", () => {
+      const icon = document.createElement("span");
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = theme.icon;
+
+      const name = document.createElement("span");
+      name.textContent = theme.name;
+
+      const check = document.createElement("span");
+      check.className = "mx-theme-check";
+      check.setAttribute("aria-hidden", "true");
+      check.textContent = "✓";
+
+      button.append(icon, name, check);
+
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
         applyTheme(theme.id);
         closeThemePanel();
       });
@@ -112,88 +133,72 @@
     document.body.appendChild(panel);
     updateThemeButtons();
 
-    // Tutup panel ketika klik di luar panel.
     setTimeout(() => {
-      function outsideClick(event) {
-        const currentPanel = document.getElementById("mexa-theme-panel");
-        const themeButton = event.target.closest(
-          '#mx-control-panel button, [data-action="mexa-theme"]'
-        );
-
-        if (
-          currentPanel &&
-          !currentPanel.contains(event.target) &&
-          !themeButton
-        ) {
-          closeThemePanel();
-          document.removeEventListener("click", outsideClick);
-        }
-      }
-
-      document.addEventListener("click", outsideClick);
-      panel._outsideClick = outsideClick;
+      document.addEventListener("click", handleOutsideClick);
+      document.addEventListener("keydown", handleEscape);
     }, 0);
   }
 
-  function closeControlMenu() {
-    const menu = document.getElementById("mx-control-panel");
-    const trigger = document.getElementById("mx-main-menu");
+  function handleMenuClick(event) {
+    const button = event.target.closest("#mx-control-panel button");
 
-    if (menu) menu.hidden = true;
-    if (trigger) trigger.setAttribute("aria-expanded", "false");
+    if (!button) return;
+
+    const label = button.textContent.trim();
+
+    if (label.includes("Tema")) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      closeControlMenu();
+      openThemePanel();
+      return;
+    }
+
+    const destinations = [
+      { match: "Beranda", url: "index.html" },
+      { match: "Reels", url: "Reels.html" },
+      { match: "Grup", url: "Grup.html" },
+      { match: "Profil", url: "Profil.html" },
+      { match: "Pengaturan", url: "Pengaturan.html" }
+    ];
+
+    const destination = destinations.find((item) =>
+      label.includes(item.match)
+    );
+
+    if (destination) {
+      window.location.href = destination.url;
+      return;
+    }
+
+    closeControlMenu();
   }
 
   function initControl() {
-    const menu = document.getElementById("mx-control-panel");
-    const trigger = document.getElementById("mx-main-menu");
+    const menu = $("#mx-control-panel");
+    const trigger = $("#mx-main-menu");
 
-    if (trigger && menu) {
+    if (menu && trigger) {
       trigger.setAttribute("aria-expanded", "false");
 
-      trigger.addEventListener("click", event => {
+      trigger.addEventListener("click", (event) => {
         event.stopPropagation();
 
-        menu.hidden = !menu.hidden;
-        trigger.setAttribute("aria-expanded", String(!menu.hidden));
-      });
+        const willOpen = menu.hidden;
 
-      menu.addEventListener("click", event => {
-        const button = event.target.closest("button");
-        if (!button) return;
+        closeThemePanel();
+        menu.hidden = !willOpen;
 
-        const label = button.textContent.trim();
-
-       if (label.includes("Tema")) {
-  event.stopPropagation();
-  closeControlMenu();
-  openThemePanel();
-  return;
-       }
-        const destinations = [
-          { match: "Beranda", url: "index.html" },
-          { match: "Reels", url: "Reels.html" },
-          { match: "Grup", url: "Grup.html" },
-          { match: "Profil", url: "Profil.html" }
-        ];
-
-        const destination = destinations.find(item =>
-          label.includes(item.match)
+        trigger.setAttribute(
+          "aria-expanded",
+          String(willOpen)
         );
-
-        if (destination) {
-          window.location.href = destination.url;
-          return;
-        }
-
-        if (label.includes("Pengaturan")) {
-          window.location.href = "Pengaturan.html";
-          return;
-        }
-
-        closeControlMenu();
       });
 
-      document.addEventListener("click", event => {
+      menu.addEventListener("click", handleMenuClick);
+
+      document.addEventListener("click", (event) => {
         if (
           !menu.hidden &&
           !menu.contains(event.target) &&
@@ -204,10 +209,9 @@
       });
     }
 
-    // Tombol buat diarahkan ke kolom postingan.
-    const createButton = document.getElementById("mx-create");
-    const composer = document.getElementById("mexa-composer");
-    const textarea = document.getElementById("mexaPostContent");
+    const createButton = $("#mx-create");
+    const composer = $("#mexa-composer");
+    const textarea = $("#mexaPostContent");
 
     if (createButton && composer) {
       createButton.addEventListener("click", () => {
@@ -223,16 +227,18 @@
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initControl);
-  } else {
-    initControl();
-  }
-
   window.MEXAControl = {
     openThemePanel,
     closeThemePanel,
     applyTheme,
     getCurrentTheme
   };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initControl, {
+      once: true
+    });
+  } else {
+    initControl();
+  }
 })();
