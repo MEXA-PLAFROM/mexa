@@ -444,54 +444,225 @@
          EDITOR POSTINGAN
          ================================================= */
 
-      function showEditor() {
-        panel.replaceChildren();
+       
+async function showEditor() {
+  if (!isOwner) {
+    alert("Kamu hanya bisa mengedit postingan milik sendiri.");
+    closeMenu();
+    return;
+  }
 
-        const title = document.createElement("h3");
+  // Verifikasi ulang pemilik dari Supabase.
+  let fresh;
 
-        title.textContent = "Edit postingan";
+  try {
+    fresh = await getPostContext(post.id);
 
-        Object.assign(title.style, {
-          margin: "0 0 14px",
-          fontSize: "18px"
-        });
+    if (
+      !fresh.isOwner ||
+      fresh.viewerId !== viewerId ||
+      fresh.ownerId !== ownerId
+    ) {
+      alert("Hak pemilik postingan tidak terverifikasi.");
+      closeMenu();
+      return;
+    }
+  } catch (error) {
+    console.error("MEXA: gagal memeriksa pemilik:", error);
+    alert("Gagal memeriksa akun. Coba lagi.");
+    return;
+  }
 
-        const textarea = document.createElement("textarea");
+  const card = document.getElementById("post-" + post.id);
 
-        textarea.value = post.content || "";
-        textarea.setAttribute(
-          "aria-label",
-          "Isi postingan"
+  if (!card) {
+    closeMenu();
+    alert("Kartu postingan tidak ditemukan.");
+    return;
+  }
+
+  const contentElement = card.querySelector(".mx-post-content");
+
+  if (!contentElement) {
+    closeMenu();
+    alert("Isi postingan tidak ditemukan.");
+    return;
+  }
+
+  if (card.querySelector(".mx-post-inline-editor")) {
+    closeMenu();
+    return;
+  }
+
+  const originalDisplay = contentElement.style.display;
+
+  // Bungkus editor agar tampil di kartu yang sama.
+  const editor = document.createElement("section");
+  editor.className = "mx-post-inline-editor";
+
+  const heading = document.createElement("div");
+  heading.className = "mx-post-edit-heading";
+
+  const headingText = document.createElement("div");
+  headingText.className = "mx-post-edit-heading-text";
+  headingText.textContent = "✏️ Edit postingan";
+
+  const badge = document.createElement("span");
+  badge.className = "mx-post-edit-badge";
+  badge.textContent = "POSTINGAN KAMU";
+
+  heading.append(headingText, badge);
+
+  const textarea = document.createElement("textarea");
+  textarea.className = "mx-post-inline-textarea";
+  textarea.value = contentElement.textContent || "";
+  textarea.placeholder = "Tulis perubahan postingan...";
+  textarea.setAttribute("aria-label", "Isi postingan");
+  textarea.spellcheck = true;
+
+  const hint = document.createElement("div");
+  hint.className = "mx-post-edit-hint";
+  hint.textContent = "Perubahan akan tampil langsung di kartu ini.";
+
+  const status = document.createElement("div");
+  status.className = "mx-post-edit-status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+
+  const footer = document.createElement("div");
+  footer.className = "mx-post-edit-footer";
+
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.className = "mx-post-edit-cancel";
+  cancelButton.textContent = "Batal";
+
+  const saveButton = document.createElement("button");
+  saveButton.type = "button";
+  saveButton.className = "mx-post-edit-save";
+  saveButton.textContent = "Simpan perubahan";
+
+  footer.append(cancelButton, saveButton);
+  editor.append(heading, textarea, hint, status, footer);
+
+  // Editor berada tepat di bawah isi postingan.
+  contentElement.insertAdjacentElement("afterend", editor);
+  contentElement.style.display = "none";
+
+  closeMenu();
+
+  function cancelEditing() {
+    contentElement.style.display = originalDisplay;
+    editor.remove();
+  }
+
+  cancelButton.addEventListener("click", cancelEditing);
+
+  textarea.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      cancelEditing();
+    }
+
+    if (
+      event.key === "Enter" &&
+      (event.ctrlKey || event.metaKey)
+    ) {
+      event.preventDefault();
+      saveButton.click();
+    }
+  });
+
+  saveButton.addEventListener("click", async function () {
+    const newContent = textarea.value.trim();
+
+    if (!newContent) {
+      status.textContent = "Isi postingan tidak boleh kosong.";
+      status.classList.add("is-error");
+      textarea.focus();
+      return;
+    }
+
+    saveButton.disabled = true;
+    cancelButton.disabled = true;
+    saveButton.textContent = "Menyimpan...";
+    status.classList.remove("is-error");
+    status.textContent = "Memeriksa dan menyimpan...";
+
+    try {
+      // Periksa lagi agar akun lain tidak mengedit postingan ini.
+      const latest = await getPostContext(post.id);
+
+      if (
+        !latest.isOwner ||
+        latest.viewerId !== viewerId ||
+        latest.ownerId !== ownerId
+      ) {
+        throw new Error(
+          "Akun login bukan pemilik postingan ini."
         );
+      }
 
-        Object.assign(textarea.style, {
-          display: "block",
-          width: "100%",
-          minHeight: "140px",
-          padding: "12px",
-          boxSizing: "border-box",
-          borderRadius: "11px",
-          border: "1px solid var(--mx-border, #393052)",
-          background: "var(--mx-bg, #0e0b1b)",
-          color: "var(--mx-text, #f6f3ff)",
-          font: "inherit",
-          lineHeight: "1.5",
-          resize: "vertical"
-        });
+      const result = await latest.client
+        .from("posts")
+        .update({ content: newContent })
+        .eq("id", post.id)
+        .eq("user_id", viewerId)
+        .select("id,content")
+        .maybeSingle();
 
-        panel.append(title, textarea);
+      if (result.error) {
+        throw result.error;
+      }
 
-        makeButton(
-          "Simpan perubahan",
-          async function (event) {
-            const content = textarea.value.trim();
+      if (!result.data) {
+        throw new Error(
+          "Penyimpanan ditolak. Periksa izin RLS Supabase."
+        );
+      }
 
-            if (!content) {
-              alert("Isi postingan tidak boleh kosong.");
-              return;
-            }
+      // Perbarui hanya isi kartu ini.
+      contentElement.textContent = result.data.content;
+      contentElement.style.display = originalDisplay;
+      post.content = result.data.content;
 
-            try {
+      editor.remove();
+
+      const notice = document.createElement("div");
+      notice.className = "mx-post-edit-success";
+      notice.textContent = "✓ Perubahan postingan tersimpan";
+
+      contentElement.insertAdjacentElement("beforebegin", notice);
+
+      window.setTimeout(function () {
+        notice.remove();
+      }, 3000);
+
+    } catch (error) {
+      console.error("MEXA gagal menyimpan edit:", error);
+
+      status.textContent =
+        error.message || "Gagal menyimpan perubahan.";
+
+      status.classList.add("is-error");
+      saveButton.disabled = false;
+      cancelButton.disabled = false;
+      saveButton.textContent = "Coba simpan lagi";
+    }
+  });
+
+  editor.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest"
+  });
+
+  textarea.focus();
+  textarea.setSelectionRange(
+    textarea.value.length,
+    textarea.value.length
+  );
+       }
+       
+
               // PERIKSA ULANG IDENTITAS PEMILIK.
               const fresh = await getPostContext(post.id);
 
