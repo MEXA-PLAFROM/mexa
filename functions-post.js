@@ -1,199 +1,180 @@
+
 /* =====================================================
-MEXA PLATFORM — POST CREATE
-File: post-create.js
-===================================================== */
+   MEXA PLATFORM — FUNCTIONS POST
+   Penyimpanan dan pemuatan postingan melalui Supabase utama
+   ===================================================== */
 
 (function () {
-"use strict";
+  "use strict";
 
-if (window.MEXAPostCreateLoaded) return;
-window.MEXAPostCreateLoaded = true;
+  if (window.MEXA_FUNCTIONS_POST_LOADED) return;
+  window.MEXA_FUNCTIONS_POST_LOADED = true;
 
-const API_URL =
-"https://yozylignolfvkemuhfse.supabase.co/functions/v1/mexa-api";
+  const feed = document.getElementById("mexaFeedList");
+  const status = document.getElementById("mexaFeedStatus");
 
-let isSubmitting = false;
-
-async function getCurrentUser() {
-const client = window.mexaSupabase;
-if (!client?.auth) return null;
-
-const { data, error } = await client.auth.getSession();
-
-if (error || !data?.session?.user) return null;
-
-window.currentUser = data.session.user;
-window.mexaCurrentUser = data.session.user;
-
-return data.session.user;
-
-}
-
-function getComposer() {
-return document.querySelector(
-"#mexaPostContent, #postContent, #postText, " +
-"#mexaComposerInput, textarea[name='content'], " +
-"[contenteditable='true'][data-post-content]"
-);
-}
-
-function getContent(input) {
-if (!input) return "";
-
-return String(
-  input.isContentEditable
-    ? input.innerText
-    : input.value || ""
-).trim();
-
-}
-
-function setStatus(message, isError) {
-let status = document.getElementById("mexaPostCreateStatus");
-
-if (!status) {
-  status = document.createElement("div");
-  status.id = "mexaPostCreateStatus";
-  status.setAttribute("role", "status");
-  status.style.cssText =
-    "margin:8px 0;padding:10px;border-radius:10px;font-size:14px;";
-
-  const composer = document.getElementById("mexa-composer");
-  (composer || document.body).appendChild(status);
-}
-
-status.textContent = message;
-status.style.color = isError ? "#ff667a" : ""
-
-}
-
-async function createPost() {
-if (isSubmitting) return;
-
-const input = getComposer();
-const content = getContent(input);
-
-if (!content) {
-  setStatus("Tulis sesuatu sebelum memposting.", true);
-  input?.focus();
-  return;
-}
-
-isSubmitting = true;
-
-const buttons = Array.from(document.querySelectorAll(
-  "#mexaPublishPost, #mexaSubmitPost, " +
-  "[data-create-post]"
-));
-
-buttons.forEach(button => {
-  button.dataset.wasDisabled = String(button.disabled);
-  button.disabled = true;
-});
-
-try {
-  setStatus("Memeriksa sesi login...", false);
-
-  const user = await getCurrentUser();
-
-  if (!user) {
-    throw new Error("Sesi login tidak ditemukan. Silakan login kembali.");
+  function showStatus(message, isError) {
+    if (!status) return;
+    status.textContent = message;
+    status.style.color = isError ? "#ff667a" : "";
   }
 
-  setStatus("Menyimpan postingan...", false);
-
-  const sessionResult =
-    await window.mexaSupabase.auth.getSession();
-
-  const accessToken = sessionResult.data?.session?.access_token;
-
-  if (!accessToken) {
-    throw new Error("Token login tidak tersedia. Silakan login kembali.");
+  function getClient() {
+    if (!window.mexaSupabase) {
+      throw new Error("Koneksi Supabase belum tersedia.");
+    }
+    return window.mexaSupabase;
   }
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + accessToken,
-      "apikey": "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo"
-    },
-    body: JSON.stringify({
-      action: "create_post",
-      user_id: user.id,
-      content: content
-    })
-  });
+  async function getSessionUser() {
+    const { data, error } = await getClient().auth.getSession();
 
-  const result = await response.json().catch(() => ({}));
+    if (error) throw error;
 
-  if (!response.ok || result.success === false || result.error) {
-    throw new Error(
-      result.error ||
-      result.message ||
-      "Server gagal menyimpan postingan (HTTP " +
-      response.status + ")."
-    );
+    const user = data?.session?.user;
+    if (!user) throw new Error("Silakan login kembali.");
+
+    return user;
   }
 
-  if (input.isContentEditable) {
-    input.innerText = "";
+  async function loadPosts() {
+    if (!feed) return [];
+
+    try {
+      const client = getClient();
+
+      const { data: posts, error } = await client
+        .from("posts")
+        .select("id,user_id,content,image_url,created_at")
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (error) throw error;
+
+      const userIds = [...new Set(
+        (posts || []).map(post => post.user_id).filter(Boolean)
+      )];
+
+      let profiles = [];
+
+      if (userIds.length) {
+        const result = await client
+          .from("profiles")
+          .select("id,username,display_name,avatar_url")
+          .in("id", userIds);
+
+        if (result.error) {
+          console.warn("MEXA: profil penulis belum termuat:", result.error);
+        } else {
+          profiles = result.data || [];
+        }
+      }
+
+      const profileMap = new Map(
+        profiles.map(profile => [profile.id, profile])
+      );
+
+      const fragment = document.createDocumentFragment();
+
+      (posts || []).forEach(post => {
+        const profile = profileMap.get(post.user_id) || {};
+        const card = document.createElement("article");
+
+        card.className = "mx-post-card";
+        card.id = "post-" + post.id;
+        card.dataset.postId = String(post.id);
+
+        const author = document.createElement("div");
+        author.className = "mx-post-author";
+        author.textContent =
+          profile.display_name ||
+          profile.username ||
+          "Pengguna MEXA";
+
+        const content = document.createElement("div");
+        content.className = "mx-post-content";
+        content.textContent = post.content || "";
+
+        card.append(author, content);
+
+        if (post.image_url) {
+          const image = document.createElement("img");
+          image.className = "mx-post-image";
+          image.src = post.image_url;
+          image.alt = "Foto postingan";
+          image.loading = "lazy";
+          image.onerror = () => image.remove();
+          card.appendChild(image);
+        }
+
+        if (post.created_at) {
+          const date = document.createElement("time");
+          date.className = "mx-post-date";
+          date.dateTime = post.created_at;
+          date.textContent = new Date(post.created_at)
+            .toLocaleString("id-ID");
+          card.appendChild(date);
+        }
+
+        // Data ini juga dipakai untuk pemeriksaan pemilik postingan.
+        card.dataset.userId = post.user_id || "";
+
+        fragment.appendChild(card);
+      });
+
+      feed.replaceChildren(fragment);
+      showStatus(
+        posts?.length ? "" : "Belum ada postingan.",
+        false
+      );
+
+      window.MEXA_POSTS = posts || [];
+      return posts || [];
+    } catch (error) {
+      console.error("MEXA memuat postingan:", error);
+      showStatus("Gagal memuat postingan: " + error.message, true);
+      return [];
+    }
+  }
+
+  async function createPost(content) {
+    const cleanContent = String(content || "").trim();
+
+    if (!cleanContent) {
+      throw new Error("Tulis sesuatu sebelum memposting.");
+    }
+
+    const client = getClient();
+    const user = await getSessionUser();
+
+    const { data, error } = await client
+      .from("posts")
+      .insert({
+        user_id: user.id,
+        content: cleanContent
+      })
+      .select("id,user_id,content,image_url,created_at")
+      .single();
+
+    if (error) throw error;
+
+    await loadPosts();
+    return data;
+  }
+
+  window.MEXAPosts = {
+    load: loadPosts,
+    create: createPost
+  };
+
+  window.MEXA_LOAD_FEED = loadPosts;
+  window.loadPosts = loadPosts;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadPosts, { once: true });
   } else {
-    input.value = "";
+    loadPosts();
   }
 
-  setStatus("Postingan berhasil disimpan!", false);
-
-  if (typeof window.MEXA_LOAD_FEED === "function") {
-    await window.MEXA_LOAD_FEED();
-  } else {
-    document.dispatchEvent(new CustomEvent("mexa:refresh-feed"));
-  }
-} catch (error) {
-  console.error("MEXA gagal membuat postingan:", error);
-  setStatus(
-    "Postingan gagal: " + (error.message || "Kesalahan server."),
-    true
-  );
-} finally {
-  isSubmitting = false;
-
-  buttons.forEach(button => {
-    button.disabled = button.dataset.wasDisabled === "true";
-    delete button.dataset.wasDisabled;
-  });
-}
-
-}
-
-window.MEXACreatePost = createPost;
-
-document.addEventListener("click", function (event) {
-if (!(event.target instanceof Element)) return;
-
-const button = event.target.closest(
-  "#mexaPublishPost, #mexaSubmitPost, [data-create-post]"
-);
-
-if (!button) return;
-
-event.preventDefault();
-createPost();
-
-});
-
-document.addEventListener("submit", function (event) {
-const form = event.target;
-
-if (
-  form instanceof HTMLFormElement &&
-  form.matches("#mexaPostForm, #mexaPostFormHome")
-) {
-  event.preventDefault();
-  createPost();
-}
-
-});
-
-console.log("MEXA PLATFORM: post-create siap.");
+  console.log("MEXA PLATFORM: fungsi posting siap.");
 })();
