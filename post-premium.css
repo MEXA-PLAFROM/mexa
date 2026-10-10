@@ -1,0 +1,142 @@
+/* =========================================
+   MEXA PREMIUM POST CARD
+========================================= */
+
+
+.mx-post-card {
+
+  position: relative;
+
+  background: var(--mx-panel);
+
+  color: var(--mx-text);
+
+  border: 1px solid var(--mx-border);
+
+  border-radius: 18px;
+
+  padding: 16px;
+
+  margin-bottom: 16px;
+
+  box-shadow: 0 8px 25px rgba(0,0,0,.25);
+
+  overflow: hidden;
+
+  transition: .25s ease;
+
+}
+
+
+
+.mx-post-card:hover {
+
+  transform: translateY(-2px);
+
+}
+
+
+
+
+
+/* NAMA PENULIS */
+
+.mx-post-author {
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  color: var(--mx-text);
+
+  margin-bottom: 10px;
+
+  display:flex;
+
+  align-items:center;
+
+}
+
+
+
+
+
+/* ISI POST */
+
+.mx-post-content {
+
+  font-size: 15px;
+
+  line-height: 1.6;
+
+  color: var(--mx-text);
+
+  margin: 12px 0;
+
+  white-space: pre-wrap;
+
+}
+
+
+
+
+
+/* FOTO */
+
+.mx-post-image {
+
+  width:100%;
+
+  border-radius:14px;
+
+  margin-top:12px;
+
+  object-fit:cover;
+
+}
+
+
+
+
+
+/* TANGGAL */
+
+.mx-post-date {
+
+  display:block;
+
+  margin-top:12px;
+
+  font-size:12px;
+
+  color:var(--mx-muted);
+
+}
+
+
+
+
+
+/* TOMBOL / AKSI NANTI */
+
+.mx-post-card button {
+
+  color:var(--mx-text);
+
+}
+
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+ .mx-post-card{
+
+   border-radius:15px;
+
+   padding:14px;
+
+ }
+
+}
