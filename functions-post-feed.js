@@ -98,17 +98,26 @@
       : "";
 
     return `
-      <article class="mx-feed-card"
-        data-post-id="${escapeHTML(post.id)}">
-        <header class="mx-feed-header">
-          ${avatar}
-          <div class="mx-feed-user">
-            <div class="mx-feed-name">${name}</div>
-            <time class="mx-feed-date">
-              ${escapeHTML(formatDate(post.created_at))}
-            </time>
-          </div>
-        </header>
+      <header class="mx-feed-header">
+
+  ${avatar}
+
+  <div class="mx-feed-user">
+    <div class="mx-feed-name">${name}</div>
+    <time class="mx-feed-date">
+      ${escapeHTML(formatDate(post.created_at))}
+    </time>
+  </div>
+
+  <button
+    type="button"
+    class="mx-post-menu"
+    data-post-id="${escapeHTML(post.id)}"
+    aria-label="Menu postingan">
+    ⋯
+  </button>
+
+</header>
         ${content}
         ${image}
       </article>
@@ -291,6 +300,21 @@
 
     document.head.appendChild(style);
   }
+   .mx-feed-header {
+  position: relative;
+}
+
+.mx-post-menu {
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: var(--mx-text, #fff);
+  font-size: 24px;
+  cursor: pointer;
+   }
 
   installStyles();
 
