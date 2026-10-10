@@ -1,93 +1,143 @@
 
-/* =========================================
+/* =====================================================
    MEXA PREMIUM POST SYSTEM
-   Header, profil, isi, gambar, dan aksi
-========================================= */
+   Cocok dengan functions-post.js
+   dan mexa-post-system-control.js
+   ===================================================== */
 
-.mx-post-card {
+/* WARNA MENGIKUTI TEMA MEXA */
+
+:root {
+  --mx-post-bg: var(--mx-card, #151025);
+  --mx-post-panel: var(--mx-panel, #211a35);
+  --mx-post-text: var(--mx-text, #ffffff);
+  --mx-post-muted: var(--mx-muted, #aaa4c2);
+  --mx-post-border: var(--mx-border, #33294b);
+  --mx-post-primary: var(--mx-primary, #00e5ff);
+  --mx-post-secondary: var(--mx-secondary, #8b5cf6);
+}
+
+/* =====================================================
+   KARTU POSTINGAN
+   ===================================================== */
+
+#mexaFeedList .mx-post-card {
   position: relative;
   display: block;
   width: 100%;
+  min-width: 0;
+  height: auto;
+  max-height: none;
   box-sizing: border-box;
-  background: var(--mx-panel);
-  color: var(--mx-text);
-  border: 1px solid var(--mx-border);
-  border-radius: 18px;
+  margin: 0 0 16px;
   padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, .25);
   overflow: visible;
-  transition: box-shadow .25s ease;
+
+  background: var(--mx-post-bg);
+  color: var(--mx-post-text);
+  border: 1px solid var(--mx-post-border);
+  border-radius: 18px;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+  transition: border-color 0.2s ease,
+              box-shadow 0.2s ease;
 }
 
-.mx-post-card:hover {
-  box-shadow: 0 10px 28px rgba(0, 0, 0, .3);
+#mexaFeedList .mx-post-card:hover {
+  border-color: var(--mx-post-secondary);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
 }
 
-/* =========================================
+/* =====================================================
    HEADER POSTINGAN
-========================================= */
+   Foto profil + nama + titik tiga
+   ===================================================== */
 
-.mx-post-card > .mx-post-header {
+#mexaFeedList .mx-post-card > .mx-post-header {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 11px;
+
   position: relative;
   width: 100%;
+  min-width: 0;
   min-height: 44px;
+  height: auto;
+  max-height: none;
   box-sizing: border-box;
-  margin-bottom: 12px;
+  overflow: visible;
+  margin: 0 0 14px;
 }
 
-/* Foto profil dan tautan profil */
+/* =====================================================
+   FOTO PROFIL
+   ===================================================== */
 
-.mx-post-card .mx-post-profile-link {
+#mexaFeedList .mx-post-profile-link {
   display: flex;
   flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
   align-items: center;
   justify-content: center;
+
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  box-sizing: border-box;
   overflow: hidden;
+
+  border: 1px solid var(--mx-post-border);
   border-radius: 50%;
+  background: var(--mx-post-panel);
   text-decoration: none;
 }
 
-.mx-post-card .mx-post-avatar {
+#mexaFeedList .mx-post-avatar {
   display: block;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid var(--mx-border);
+  border: 2px solid var(--mx-post-border);
 }
 
-.mx-post-card .mx-post-avatar[hidden] {
+#mexaFeedList .mx-post-avatar[hidden] {
   display: none !important;
 }
 
-/* Kelompok nama penulis dan username */
+/* =====================================================
+   NAMA PENULIS DAN USERNAME
+   ===================================================== */
 
-.mx-post-card .mx-post-author-group {
+#mexaFeedList .mx-post-author-group {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
   gap: 3px;
+
   min-width: 0;
+  width: 0;
+  height: auto;
   margin: 0;
+  padding: 0;
+  overflow: visible;
 }
 
-.mx-post-card .mx-post-author {
+#mexaFeedList .mx-post-author {
   display: block;
   max-width: 100%;
-  color: var(--mx-text);
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
+
+  color: var(--mx-post-text);
   font-size: 15px;
   font-weight: 700;
   line-height: 1.4;
@@ -95,145 +145,229 @@
   overflow-wrap: anywhere;
 }
 
-.mx-post-card .mx-post-author:hover {
-  color: var(--mx-primary);
+#mexaFeedList .mx-post-author:hover {
+  color: var(--mx-post-primary);
+  text-decoration: none;
 }
 
-.mx-post-card .mx-post-username {
+#mexaFeedList .mx-post-username {
   display: block;
-  color: var(--mx-muted);
+  max-width: 100%;
+  min-width: 0;
+
+  color: var(--mx-post-muted);
   font-size: 12px;
+  font-weight: 400;
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
 
-/* Tombol titik tiga */
+/* =====================================================
+   TOMBOL TITIK TIGA
+   ===================================================== */
 
-.mx-post-card > .mx-post-header > .mx-post-menu {
+#mexaFeedList .mx-post-card > .mx-post-header > .mx-post-menu {
   display: inline-flex;
   flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+
   width: 40px;
   min-width: 40px;
   height: 40px;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
+  box-sizing: border-box;
+
   margin: 0 0 0 auto;
   padding: 0;
+
   position: relative;
   z-index: 2;
-  box-sizing: border-box;
-  border: 1px solid var(--mx-border);
+
+  color: var(--mx-post-text);
+  background: var(--mx-post-panel);
+  border: 1px solid var(--mx-post-border);
   border-radius: 50%;
-  background: var(--mx-card);
-  color: var(--mx-text);
-  font-size: 27px;
+
+  font-family: inherit;
+  font-size: 26px;
   font-weight: 700;
   line-height: 1;
+
+  text-align: center;
   cursor: pointer;
+
   visibility: visible;
   opacity: 1;
+  transform: none;
+
+  transition: background 0.2s ease,
+              border-color 0.2s ease,
+              color 0.2s ease;
 }
 
-.mx-post-card > .mx-post-header > .mx-post-menu:hover {
-  background: var(--mx-panel);
-  border-color: var(--mx-primary);
-  color: var(--mx-primary);
+#mexaFeedList .mx-post-card > .mx-post-header > .mx-post-menu:hover {
+  color: var(--mx-post-primary);
+  background: var(--mx-post-bg);
+  border-color: var(--mx-post-primary);
 }
 
-/* =========================================
+#mexaFeedList .mx-post-card > .mx-post-header > .mx-post-menu:focus-visible {
+  outline: 2px solid var(--mx-post-primary);
+  outline-offset: 3px;
+}
+
+/* =====================================================
    ISI POSTINGAN
-========================================= */
+   ===================================================== */
 
-.mx-post-card > .mx-post-content {
+#mexaFeedList .mx-post-card > .mx-post-content {
   display: block;
   width: 100%;
+  min-width: 0;
+  height: auto;
+  max-height: none;
   box-sizing: border-box;
+
   margin: 12px 0;
-  color: var(--mx-text);
+  padding: 0;
+
+  color: var(--mx-post-text);
   font-size: 15px;
-  line-height: 1.6;
+  font-weight: 400;
+  line-height: 1.7;
+
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  word-break: normal;
+  overflow: visible;
 }
 
-/* Foto atau gambar postingan */
+/* =====================================================
+   FOTO POSTINGAN
+   ===================================================== */
 
-.mx-post-card > .mx-post-image {
+#mexaFeedList .mx-post-card > .mx-post-image {
   display: block;
   width: 100%;
   max-width: 100%;
   height: auto;
   max-height: 650px;
   box-sizing: border-box;
+
+  margin: 12px 0 0;
+  padding: 0;
+
   object-fit: contain;
+  object-position: center;
+
+  background: var(--mx-post-panel);
+  border: 1px solid var(--mx-post-border);
   border-radius: 14px;
-  margin-top: 12px;
 }
 
-/* =========================================
+/* =====================================================
    WAKTU POSTINGAN
-========================================= */
+   ===================================================== */
 
-.mx-post-card > .mx-post-date {
+#mexaFeedList .mx-post-card > .mx-post-date {
   display: block;
-  margin-top: 12px;
-  color: var(--mx-muted);
+  width: 100%;
+  box-sizing: border-box;
+
+  margin: 12px 0 0;
+  padding: 0;
+
+  color: var(--mx-post-muted);
   font-size: 12px;
+  font-weight: 400;
   line-height: 1.5;
 }
 
-/* =========================================
-   SUKA, KOMENTAR, DAN BAGIKAN
-========================================= */
+/* =====================================================
+   SUKA, KOMENTAR, BAGIKAN
+   ===================================================== */
 
-.mx-post-card > .mx-post-actions {
+#mexaFeedList .mx-post-card > .mx-post-actions {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 7px;
+
   width: 100%;
+  min-width: 0;
+  height: auto;
+  max-height: none;
   box-sizing: border-box;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--mx-border);
+  overflow: visible;
+
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+
+  border-top: 1px solid var(--mx-post-border);
+
+  visibility: visible;
+  opacity: 1;
 }
 
-.mx-post-card > .mx-post-actions > button {
+#mexaFeedList .mx-post-card > .mx-post-actions > button {
   display: inline-flex;
   flex: 1 1 90px;
-  min-width: 0;
-  min-height: 40px;
   align-items: center;
   justify-content: center;
+  gap: 5px;
+
+  min-width: 0;
+  min-height: 40px;
+  height: auto;
   box-sizing: border-box;
-  padding: 9px 6px;
-  border: 1px solid transparent;
-  border-radius: 12px;
+
+  margin: 0;
+  padding: 9px 7px;
+
   background: transparent;
-  color: var(--mx-text);
-  font-size: 14px;
+  color: var(--mx-post-text);
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
+  text-align: center;
   overflow-wrap: anywhere;
+
   cursor: pointer;
+  visibility: visible;
+  opacity: 1;
+
+  transition: background 0.2s ease,
+              border-color 0.2s ease,
+              color 0.2s ease;
 }
 
-.mx-post-card > .mx-post-actions > button:hover {
-  background: var(--mx-card);
-  border-color: var(--mx-border);
-  color: var(--mx-primary);
+#mexaFeedList .mx-post-card > .mx-post-actions > button:hover {
+  background: var(--mx-post-panel);
+  border-color: var(--mx-post-border);
+  color: var(--mx-post-primary);
 }
 
-/* =========================================
+#mexaFeedList .mx-post-card > .mx-post-actions > button:focus-visible {
+  outline: 2px solid var(--mx-post-primary);
+  outline-offset: 2px;
+}
+
+/* =====================================================
    AREA KOMENTAR
-========================================= */
+   Untuk modul komentar MEXA
+   ===================================================== */
 
 .mx-comment-box {
+  display: block;
   margin-top: 15px;
   padding-top: 12px;
-  border-top: 1px solid var(--mx-border);
+  border-top: 1px solid var(--mx-post-border);
 }
 
 .mx-comment-item {
@@ -244,35 +378,41 @@
 }
 
 .mx-comment-avatar {
+  display: block;
+  flex: 0 0 36px;
   width: 36px;
   height: 36px;
-  flex: 0 0 36px;
   object-fit: cover;
   border-radius: 50%;
 }
 
 .mx-comment-content {
+  flex: 1;
   min-width: 0;
   padding: 10px 12px;
+  background: var(--mx-bg, #0b0818);
+  border: 1px solid var(--mx-post-border);
   border-radius: 14px;
-  background: var(--mx-bg);
+  overflow-wrap: anywhere;
 }
 
 .mx-comment-name {
-  color: var(--mx-text);
+  color: var(--mx-post-text);
   font-size: 14px;
   font-weight: 700;
 }
 
 .mx-comment-text {
   margin-top: 4px;
-  color: var(--mx-text);
+  color: var(--mx-post-text);
   font-size: 14px;
+  line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
 .mx-comment-input {
   display: flex;
+  align-items: center;
   gap: 8px;
   margin-top: 12px;
 }
@@ -280,64 +420,116 @@
 .mx-comment-input input {
   flex: 1;
   min-width: 0;
+  box-sizing: border-box;
+
   padding: 10px 14px;
-  border: 1px solid var(--mx-border);
+  border: 1px solid var(--mx-post-border);
   border-radius: 20px;
-  background: var(--mx-bg);
-  color: var(--mx-text);
+
+  background: var(--mx-post-panel);
+  color: var(--mx-post-text);
 }
 
 .mx-comment-input button {
+  flex: 0 0 auto;
   padding: 10px 15px;
-  border: none;
+  border: 0;
   border-radius: 20px;
-  background: var(--mx-primary);
-  color: #fff;
+
+  background: var(--mx-post-primary);
+  color: #ffffff;
+  font-weight: 700;
   cursor: pointer;
 }
 
-/* =========================================
-   RESPONSIVE — LAYAR KECIL
-   Aturan mobile hanya berada di blok ini
-========================================= */
+/* =====================================================
+   MENU TITIK TIGA
+   Mengikuti ID overlay dari system control
+   ===================================================== */
+
+#mexa-post-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+}
+
+#mexa-post-menu-overlay button {
+  font-family: inherit;
+}
+
+#mexa-post-menu-overlay button:focus-visible {
+  outline: 2px solid var(--mx-post-primary);
+  outline-offset: 2px;
+}
+
+/* =====================================================
+   RESPONSIVE — TABLET DAN PONSEL
+   ===================================================== */
 
 @media (max-width: 600px) {
-  .mx-post-card {
-    padding: 14px;
+  #mexaFeedList .mx-post-card {
+    padding: 13px;
+    margin-bottom: 13px;
     border-radius: 15px;
   }
 
-  .mx-post-card > .mx-post-header {
+  #mexaFeedList .mx-post-card > .mx-post-header {
     gap: 8px;
+    margin-bottom: 12px;
   }
 
-  .mx-post-card .mx-post-profile-link,
-  .mx-post-card .mx-post-avatar {
+  #mexaFeedList .mx-post-profile-link {
+    flex-basis: 40px;
     width: 40px;
+    min-width: 40px;
     height: 40px;
   }
 
-  .mx-post-card .mx-post-profile-link {
-    flex-basis: 40px;
-  }
-
-  .mx-post-card .mx-post-avatar {
-    flex-basis: 40px;
-  }
-
-  .mx-post-card > .mx-post-header > .mx-post-menu {
+  #mexaFeedList .mx-post-card > .mx-post-header > .mx-post-menu {
     flex-basis: 38px;
     width: 38px;
     min-width: 38px;
     height: 38px;
+    font-size: 24px;
   }
 
-  .mx-post-card > .mx-post-actions > button {
-    flex-basis: 80px;
-    font-size: 13px;
+  #mexaFeedList .mx-post-author {
+    font-size: 14px;
   }
 
-  .mx-post-card > .mx-post-image {
+  #mexaFeedList .mx-post-username {
+    font-size: 11px;
+  }
+
+  #mexaFeedList .mx-post-card > .mx-post-content {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  #mexaFeedList .mx-post-card > .mx-post-image {
     max-height: 500px;
+    border-radius: 11px;
+  }
+
+  #mexaFeedList .mx-post-card > .mx-post-actions {
+    gap: 4px;
+  }
+
+  #mexaFeedList .mx-post-card > .mx-post-actions > button {
+    flex-basis: 80px;
+    padding: 9px 4px;
+    font-size: 12px;
+  }
+}
+
+/* =====================================================
+   AKSESIBILITAS: KURANGI ANIMASI
+   ===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  #mexaFeedList .mx-post-card,
+  #mexaFeedList .mx-post-menu,
+  #mexaFeedList .mx-post-actions > button {
+    transition: none;
   }
 }
