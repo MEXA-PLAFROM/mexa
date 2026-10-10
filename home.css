@@ -1,701 +1,524 @@
+/* =========================================
+   MEXA HOME CSS
+   LAYOUT / POSITION ONLY
+========================================= */
 
-/* =====================================================
-   MEXA HOME — LAYOUT SAJA
-   Tidak mengatur warna tema.
-   ===================================================== */
-
-/* 1. DASAR LAYOUT */
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
 }
 
-html {
-  width: 100%;
-  min-height: 100%;
-  scroll-padding-top: 90px;
-  scroll-padding-bottom: 100px;
-}
 
+html,
 body {
   margin: 0;
-  width: 100%;
-  min-width: 0;
-  min-height: 100vh;
-  overflow-x: clip;
+  min-height: 100%;
+  font-family: system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
-button,
-input,
-textarea,
-select {
-  max-width: 100%;
-  font: inherit;
-}
-
-button,
-a {
-  touch-action: manipulation;
-}
-
-button {
-  cursor: pointer;
-}
-
-img,
-video,
-iframe,
-svg {
-  max-width: 100%;
-}
-
-img,
-video {
-  height: auto;
-}
 
 #mexa-app {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-width: 0;
   min-height: 100vh;
-  margin: 0 auto;
-  padding-bottom: 84px;
+  width: 100%;
 }
 
-/* 2. HEADER ATAS */
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+
 .mx-app-header {
+
   position: sticky;
   top: 0;
-  z-index: 100;
+
+  z-index: 500;
+
+  height: 68px;
+
   display: flex;
   align-items: center;
-  gap: 16px;
-  width: 100%;
-  min-width: 0;
-  min-height: 68px;
-  padding: 10px 20px;
+
+  gap: 18px;
+
+  padding: 10px 4%;
+
 }
+
+
 
 .mx-brand {
-  display: inline-flex;
-  flex: 0 0 auto;
+
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
-  min-width: max-content;
-  white-space: nowrap;
+
+  flex-shrink: 0;
+
+  font-size: 30px;
+  font-weight: 900;
+
+  letter-spacing: -2px;
+
 }
 
-.mx-brand .mx-m,
-.mx-brand .mx-x,
-.mx-brand .mx-a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
 
-.mx-brand .mx-e {
-  display: inline-flex;
+
+.mx-e {
+
+  display: flex;
+
   flex-direction: column;
-  justify-content: center;
+
   gap: 3px;
-  width: 17px;
-  flex: 0 0 17px;
+
+  margin: 0 4px;
+
 }
 
-.mx-brand .mx-e i {
+
+.mx-e i {
+
+  width: 16px;
+  height: 4px;
+
   display: block;
-  width: 100%;
-  height: 3px;
-  border-radius: 2px;
+
+  border-radius: 3px;
+
 }
+
+
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
 
 .mx-search-box {
+
+  flex: 1;
+
+  max-width: 520px;
+
+  height: 42px;
+
   display: flex;
+
   align-items: center;
-  flex: 1 1 auto;
+
   gap: 8px;
-  width: 100%;
-  min-width: 0;
-  max-width: 560px;
-  min-height: 40px;
-  padding: 0 12px;
+
+  padding: 0 14px;
+
+  border-radius: 14px;
+
 }
 
-.mx-search-box > span {
-  flex: 0 0 auto;
-}
 
 .mx-search-box input {
-  display: block;
-  flex: 1 1 auto;
+
   width: 100%;
-  min-width: 0;
-  height: 38px;
-  padding: 0;
+
   border: 0;
-  outline-offset: 3px;
+
+  outline: none;
+
 }
+
+
+
+
+
+/* =========================================
+   HEADER BUTTON
+========================================= */
+
 
 .mx-header-buttons {
+
   display: flex;
-  flex: 0 0 auto;
+
   align-items: center;
-  justify-content: flex-end;
+
   gap: 8px;
+
   margin-left: auto;
+
 }
 
-.mx-header-buttons > a,
-.mx-header-buttons > button {
-  display: inline-flex;
-  flex: 0 0 40px;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
-  padding: 0;
+
+
+.mx-header-buttons button,
+.mx-header-buttons a {
+
+  width: 42px;
+
+  height: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 12px;
+
+  border: 0;
+
   text-decoration: none;
+
 }
 
-/* 3. MENU KONTROL */
-#mx-control-panel[hidden] {
-  display: none !important;
-}
+
+
+
+
+/* =========================================
+   MENU KONTROL
+========================================= */
+
 
 #mx-control-panel {
+
   position: fixed;
-  top: 76px;
-  right: 16px;
-  z-index: 300;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: min(280px, calc(100vw - 24px));
-  max-height: calc(100dvh - 100px);
-  padding: 10px;
-  overflow-x: hidden;
-  overflow-y: auto;
+
+  top: 78px;
+
+  right: 18px;
+
+  z-index: 2000;
+
+
+  width: 260px;
+
+  padding: 12px;
+
+  border-radius: 18px;
+
 }
 
-#mx-control-panel > button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+
+#mx-control-panel[hidden] {
+
+  display: none;
+
+}
+
+
+
+#mx-control-panel button {
+
   width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
+
+  padding: 12px;
+
+  margin: 3px 0;
+
+  border: 0;
+
+  border-radius: 10px;
+
   text-align: left;
+
 }
 
-/* 4. KONTEN UTAMA */
+
+
+
+
+/* =========================================
+   KONTEN
+========================================= */
+
+
 .mx-container {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 16px;
-  width: min(100%, 900px);
-  min-width: 0;
-  margin: 0 auto;
-  padding: 20px 16px 24px;
+
+  width: min(720px,94%);
+
+  margin: 22px auto 100px;
+
 }
+
+
+
 
 .mx-card {
-  position: relative;
-  display: block;
+
   width: 100%;
-  min-width: 0;
-  margin: 0;
+
   padding: 16px;
-  overflow: visible;
-  scroll-margin-top: 90px;
+
+  margin-bottom: 16px;
+
+  border-radius: 18px;
+
 }
 
-.mx-card h2 {
-  min-width: 0;
-  margin: 0;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
+
+
 
 .mx-title {
+
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  min-width: 0;
-  margin-bottom: 12px;
+
+  gap: 10px;
+
 }
+
+
 
 .mx-title h2 {
-  flex: 1 1 auto;
+
+  margin: 0;
+
+  font-size: 18px;
+
 }
 
-.mx-title button {
-  flex: 0 0 auto;
-  max-width: 45%;
-}
 
-/* 5. CERITA */
-#mexa-stories {
-  min-height: 80px;
-}
 
-#mexa-story-list {
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
-  width: 100%;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 4px 0 8px;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-}
 
-#mexa-story-list > * {
-  flex: 0 0 auto;
-  min-width: 0;
-}
+/* =========================================
+   POSTING
+========================================= */
 
-/* 6. BUAT POSTINGAN */
-#mexa-composer > h2 {
-  margin-bottom: 12px;
-}
 
 #mexaPostContent {
-  display: block;
+
   width: 100%;
-  min-width: 0;
+
   min-height: 100px;
-  padding: 12px;
+
+  padding: 14px;
+
   resize: vertical;
-  overflow-wrap: anywhere;
+
+  border-radius: 14px;
+
 }
+
+
 
 .mx-create-buttons {
+
   display: flex;
+
   flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  min-width: 0;
-  margin: 12px 0;
+
+  gap: 10px;
+
+  margin-top: 12px;
+
 }
 
-.mx-create-buttons button {
-  flex: 1 1 100px;
-  min-width: 0;
-  min-height: 40px;
-  padding: 8px 10px;
-}
 
+
+.mx-create-buttons button,
 #mexaPostButton {
-  display: block;
-  width: 100%;
-  min-height: 42px;
+
   padding: 10px 16px;
+
+  border-radius: 12px;
+
+  border: 0;
+
 }
 
-/* 7. FEED POSTINGAN */
-#mexa-home-posts {
-  min-width: 0;
-}
+
+
+
+
+/* =========================================
+   FEED
+========================================= */
+
 
 #mexaFeedList {
+
   display: flex;
+
   flex-direction: column;
-  align-items: stretch;
-  gap: 16px;
-  width: 100%;
-  min-width: 0;
-  overflow: visible;
+
+  gap: 14px;
+
 }
 
-#mexaFeedList > * {
-  position: relative;
-  flex: 0 0 auto;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-}
 
-/* Renderer feed MEXA yang menggunakan kelas ini */
-#mexaFeedList .mx-feed-card,
-#mexaFeedList .mx-post-card {
-  position: relative;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  overflow: visible;
-  overflow-wrap: anywhere;
-}
 
-/* Konten postingan tidak boleh melebar keluar kartu */
-#mexaFeedList p,
-#mexaFeedList h1,
-#mexaFeedList h2,
-#mexaFeedList h3,
-#mexaFeedList div,
-#mexaFeedList span {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
 
-#mexaFeedList img,
-#mexaFeedList video {
-  display: block;
-  max-width: 100%;
-}
 
-#mexaFeedList img {
-  object-fit: contain;
-}
+/* =========================================
+   NAVIGASI BAWAH APP
+========================================= */
 
-#mexaFeedList video {
-  width: 100%;
-}
 
-/* 8. MENU TITIK TIGA POSTINGAN */
-#mexaFeedList .mx-post-menu {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 50;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
-  margin: 0;
-  padding: 0;
-}
-
-/* Jika renderer memiliki area header postingan */
-#mexaFeedList .mx-post-header {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  width: 100%;
-  min-width: 0;
-  padding-right: 44px;
-}
-
-#mexaFeedList .mx-post-header > :first-child {
-  flex: 0 1 auto;
-  min-width: 0;
-}
-
-#mexaFeedList .mx-post-header .mx-post-menu {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-/* Dropdown menu postingan berada di atas konten lain */
-#mexaFeedList .mx-post-menu-dropdown,
-#mexaFeedList .mx-post-menu-list {
-  position: absolute;
-  top: 44px;
-  right: 0;
-  z-index: 200;
-  width: min(260px, calc(100vw - 40px));
-  max-width: calc(100vw - 40px);
-  max-height: min(70dvh, 480px);
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/* 9. NAVIGASI BAWAH */
 .mx-bottom-nav {
+
   position: fixed;
-  right: 0;
-  bottom: 0;
+
   left: 0;
-  z-index: 150;
+
+  right: 0;
+
+  bottom: 0;
+
+  z-index: 800;
+
+
+  height: 70px;
+
+
   display: flex;
-  align-items: center;
+
   justify-content: space-around;
-  gap: 4px;
-  width: 100%;
-  min-width: 0;
-  min-height: 68px;
-  padding: 8px max(8px, env(safe-area-inset-left))
-    calc(8px + env(safe-area-inset-bottom))
-    max(8px, env(safe-area-inset-right));
+
+  align-items: center;
+
+
 }
 
-.mx-bottom-nav > a,
-.mx-bottom-nav > button {
+
+
+.mx-bottom-nav a,
+.mx-bottom-nav button {
+
   display: flex;
-  flex: 1 1 0;
+
   flex-direction: column;
+
   align-items: center;
+
   justify-content: center;
-  gap: 4px;
-  min-width: 0;
-  min-height: 48px;
-  padding: 4px 2px;
-  text-align: center;
-  text-decoration: none;
+
+
+  gap: 3px;
+
+
+  border: 0;
+
+  background: transparent;
+
 }
 
-.mx-bottom-nav > a > span,
-.mx-bottom-nav > button > span {
-  display: block;
-  max-width: 100%;
-  overflow-wrap: anywhere;
+
+
+.mx-bottom-nav span:last-child {
+
+  font-size: 11px;
+
 }
 
-/* 10. TABLET DAN DESKTOP */
-@media (min-width: 1000px) {
-  .mx-app-header {
-    padding-right: 28px;
-    padding-left: 28px;
-  }
 
-  .mx-container {
-    padding-right: 24px;
-    padding-left: 24px;
-  }
 
-  .mx-bottom-nav {
-    min-height: 64px;
-  }
 
-  #mexa-app {
-    padding-bottom: 80px;
-  }
+/* =========================================
+   MOBILE
+========================================= */
+
+
+@media(max-width:700px){
+
+
+.mx-app-header {
+
+  height:60px;
+
+  padding:8px 12px;
+
+  gap:10px;
+
 }
 
-/* 11. HP */
-@media (max-width: 640px) {
-  html {
-    scroll-padding-top: 64px;
-    scroll-padding-bottom: 82px;
-  }
 
-  #mexa-app {
-    padding-bottom: 78px;
-  }
 
-  .mx-app-header {
-    gap: 8px;
-    min-height: 58px;
-    padding: 8px 10px;
-  }
+.mx-brand {
 
-  .mx-brand {
-    gap: 2px;
-  }
+  font-size:23px;
 
-  .mx-brand .mx-e {
-    width: 13px;
-    flex-basis: 13px;
-    gap: 2px;
-  }
-
-  .mx-brand .mx-e i {
-    height: 2px;
-  }
-
-  .mx-search-box {
-    gap: 5px;
-    min-height: 36px;
-    padding: 0 8px;
-  }
-
-  .mx-search-box input {
-    height: 34px;
-  }
-
-  .mx-header-buttons {
-    gap: 2px;
-  }
-
-  .mx-header-buttons > a,
-  .mx-header-buttons > button {
-    flex-basis: 32px;
-    width: 32px;
-    min-width: 32px;
-    height: 36px;
-  }
-
-  #mx-control-panel {
-    top: 64px;
-    right: 8px;
-    width: min(280px, calc(100vw - 16px));
-    max-height: calc(100dvh - 80px);
-  }
-
-  .mx-container {
-    gap: 12px;
-    padding: 12px 10px 18px;
-  }
-
-  .mx-card {
-    padding: 12px;
-  }
-
-  .mx-title {
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  .mx-create-buttons {
-    gap: 6px;
-  }
-
-  .mx-create-buttons button {
-    flex-basis: calc(50% - 6px);
-  }
-
-  #mexaFeedList {
-    gap: 12px;
-  }
-
-  #mexaFeedList .mx-post-menu {
-    top: 6px;
-    right: 6px;
-    width: 36px;
-    min-width: 36px;
-    height: 36px;
-  }
-
-  #mexaFeedList .mx-post-header {
-    padding-right: 40px;
-  }
-
-  #mexaFeedList .mx-post-menu-dropdown,
-  #mexaFeedList .mx-post-menu-list {
-    top: 40px;
-  }
-
-  .mx-bottom-nav {
-    min-height: 60px;
-    gap: 2px;
-    padding-top: 6px;
-  }
-
-  .mx-bottom-nav > a,
-  .mx-bottom-nav > button {
-    gap: 2px;
-    min-height: 44px;
-  }
 }
 
-/* 12. HP SANGAT KECIL */
-@media (max-width: 360px) {
-  .mx-app-header {
-    gap: 5px;
-    padding-right: 6px;
-    padding-left: 6px;
-  }
 
-  .mx-header-buttons {
-    gap: 0;
-  }
 
-  .mx-header-buttons > a,
-  .mx-header-buttons > button {
-    flex-basis: 29px;
-    width: 29px;
-    min-width: 29px;
-  }
+.mx-search-box {
 
-  .mx-container {
-    padding-right: 7px;
-    padding-left: 7px;
-  }
+  height:38px;
 
-  .mx-card {
-    padding: 10px;
-  }
-
-  .mx-create-buttons button {
-    flex-basis: 100%;
-  }
 }
 
-/* 13. AKSESIBILITAS GERAK */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+
+
+.mx-header-buttons {
+
+  gap:5px;
+
 }
 
-/* PANEL PILIHAN TEMA */
-#mexa-theme-panel {
-  position: fixed;
-  top: 76px;
-  right: 16px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: min(290px, calc(100vw - 24px));
-  max-height: calc(100dvh - 100px);
-  overflow-y: auto;
-  padding: 14px;
-  color: var(--mx-text);
-  background: var(--mx-card);
-  border: 1px solid var(--mx-border);
-  border-radius: 16px;
-  box-shadow: var(--mx-shadow);
+
+
+.mx-header-buttons button,
+.mx-header-buttons a {
+
+  width:36px;
+
+  height:36px;
+
 }
 
-#mexa-theme-panel h3 {
-  margin: 0 0 8px;
-  color: var(--mx-text);
+
+
+.mx-container {
+
+  width:auto;
+
+  margin:12px 10px 90px;
+
 }
 
-#mexa-theme-panel button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px;
-  color: var(--mx-text);
-  background: var(--mx-panel);
-  border: 1px solid var(--mx-border);
-  border-radius: 10px;
-  text-align: left;
+
+
+.mx-card {
+
+  padding:13px;
+
 }
 
-#mexa-theme-panel button > span:nth-child(2) {
-  flex: 1;
+
+
+#mx-control-panel {
+
+  right:10px;
+
+  width:230px;
+
 }
 
-#mexa-theme-panel button .mx-theme-check {
-  visibility: hidden;
-  color: var(--mx-primary);
+
+
 }
 
-#mexa-theme-panel button[data-active="true"] {
-  border-color: var(--mx-primary);
+
+
+
+@media(max-width:380px){
+
+
+.mx-search-box {
+
+  display:none;
+
 }
 
-#mexa-theme-panel button[data-active="true"] .mx-theme-check {
-  visibility: visible;
+
+.mx-brand {
+
+  font-size:20px;
+
 }
 
-#mexa-theme-panel button:hover {
-  border-color: var(--mx-primary);
-     }
+
 }
