@@ -47,4 +47,7 @@ async function logout() {
     console.error("MEXA logout error:", error);
     alert("Logout gagal: " + error.message);
   }
+  window.MEXALogoutFix = logout;
+window.MEXALogout = logout;
+}
 }
