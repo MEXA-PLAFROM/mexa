@@ -1,24 +1,19 @@
-
-/* =========================================
+/* =====================================================
    MEXA HOME JS
-   Fungsi halaman utama
-   Terhubung ke functions-post.js
-========================================= */
+   Tugas: Tombol Home dan form postingan
+   ===================================================== */
 
-(function () {
+(function (window, document) {
   "use strict";
 
-  if (window.MEXA_HOME_JS_LOADED) return;
-  window.MEXA_HOME_JS_LOADED = true;
+  if (window.MEXA_HOME_LOADED) return;
+  window.MEXA_HOME_LOADED = true;
 
   function $(id) {
     return document.getElementById(id);
   }
 
-  // ==============================
-  // TOMBOL BUAT POSTINGAN
-  // ==============================
-
+  // BUKA AREA BUAT POSTINGAN
   function initCreateButton() {
     const button = $("mx-create");
     const composer = $("mexa-composer");
@@ -32,50 +27,43 @@
         block: "center"
       });
 
-      if (textarea) {
-        textarea.focus({ preventScroll: true });
-      }
+      if (textarea) textarea.focus();
     });
   }
 
-  // ==============================
-  // TOMBOL MEDIA
-  // ==============================
-
+  // TOMBOL FOTO, VIDEO, DAN PERASAAN
   function initMediaButtons() {
     const buttons = document.querySelectorAll(
       ".mx-create-buttons button"
     );
 
     buttons.forEach(function (button) {
-      if (button.id === "mexaPostButton") return;
-
       button.addEventListener("click", function () {
-        const text = button.textContent.trim();
+        const label = button.textContent.trim();
 
-        if (text.includes("Foto")) {
-          alert("MEXA: fitur foto akan kita hubungkan berikutnya.");
-        } else if (text.includes("Video")) {
-          alert("MEXA: fitur video akan kita hubungkan berikutnya.");
-        } else if (text.includes("Perasaan")) {
-          alert("MEXA: fitur perasaan akan kita hubungkan berikutnya.");
+        if (label.includes("Foto")) {
+          alert("Fitur foto belum dihubungkan.");
+        } else if (label.includes("Video")) {
+          alert("Fitur video belum dihubungkan.");
+        } else if (label.includes("Perasaan")) {
+          alert("Fitur perasaan belum dihubungkan.");
         }
       });
     });
   }
 
-  // ==============================
-  // SEGARKAN CERITA
-  // ==============================
-
+  // TOMBOL SEGARKAN CERITA
   function initRefreshStory() {
-    const buttons = document.querySelectorAll(".mx-title button");
+    const buttons = document.querySelectorAll(
+      ".mx-title button"
+    );
 
     buttons.forEach(function (button) {
       if (!button.textContent.includes("Segarkan")) return;
 
       button.addEventListener("click", function () {
         const list = $("mexa-story-list");
+
         if (!list) return;
 
         list.textContent = "Memuat cerita MEXA...";
@@ -87,10 +75,7 @@
     });
   }
 
-  // ==============================
-  // KIRIM POSTING KE SUPABASE
-  // ==============================
-
+  // KIRIM POSTINGAN KE FUNCTIONS-POST.JS
   function initPostButton() {
     const button = $("mexaPostButton");
     const textarea = $("mexaPostContent");
@@ -106,51 +91,42 @@
         return;
       }
 
-      if (button.disabled) return;
-
-      // Pastikan mesin posting sudah dimuat.
       if (
         !window.MEXAPosts ||
         typeof window.MEXAPosts.create !== "function"
       ) {
-        console.error("MEXA: window.MEXAPosts.create belum tersedia.");
+        console.error("MEXA POSTS API belum aktif.");
 
         alert(
-          "Mesin posting belum siap. Periksa urutan script functions-post.js di halaman MEXA."
+          "Sistem postingan belum aktif. Periksa urutan file JavaScript."
         );
+
         return;
       }
 
-      const originalText = button.textContent;
-
       button.disabled = true;
+
+      const originalText = button.textContent;
       button.textContent = "Mengirim...";
 
       try {
-        // Simpan melalui fungsi Supabase yang sudah tersedia.
         await window.MEXAPosts.create(content);
 
         textarea.value = "";
 
-        // Muat ulang feed bila fungsi tersedia.
-        if (typeof window.MEXA_LOAD_FEED === "function") {
-          await window.MEXA_LOAD_FEED();
-        } else if (
-          window.MEXAPosts &&
-          typeof window.MEXAPosts.load === "function"
-        ) {
-          await window.MEXAPosts.load();
-        }
+        const status = $("mexaFeedStatus");
 
-        alert("Postingan berhasil disimpan ke MEXA!");
+        if (status) {
+          status.textContent = "Postingan berhasil diterbitkan.";
+          status.style.color = "#34d399";
+        } else {
+          alert("Postingan berhasil diterbitkan.");
+        }
       } catch (error) {
-        console.error("MEXA: posting gagal.", error);
+        console.error("MEXA gagal membuat postingan:", error);
 
         alert(
-          "Posting gagal: " +
-          (error && error.message
-            ? error.message
-            : "Terjadi kesalahan.")
+          "Postingan gagal dikirim: " + error.message
         );
       } finally {
         button.disabled = false;
@@ -159,24 +135,23 @@
     });
   }
 
-  // ==============================
-  // JALANKAN FUNGSI HOME
-  // ==============================
-
   function init() {
     initCreateButton();
     initMediaButtons();
     initRefreshStory();
     initPostButton();
 
-    console.log("MEXA HOME JS berhasil dimuat.");
+    console.log("MEXA HOME siap.");
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, {
-      once: true
-    });
+    document.addEventListener(
+      "DOMContentLoaded",
+      init,
+      { once: true }
+    );
   } else {
     init();
   }
-})();
+
+})(window, document);
