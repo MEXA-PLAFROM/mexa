@@ -234,23 +234,65 @@
 
 
 
-        console.log(
-          "Draft posting MEXA:",
-          content
-        );
+     console.log(
+  "Kirim posting MEXA:",
+  content
+);
 
 
+if (typeof mexaAPI === "function") {
 
-        alert(
-          "Posting siap dikirim ke MEXA."
-        );
+  mexaAPI("create_post", {
+    content: content
+  })
+  .then(function(result){
 
-
-      }
+    console.log(
+      "Hasil posting:",
+      result
     );
 
 
-  }
+    textarea.value = "";
+
+
+    alert(
+      "Posting berhasil dikirim ke MEXA."
+    );
+
+
+    if (
+      typeof loadMEXAFeed === "function"
+    ) {
+
+      loadMEXAFeed();
+
+    }
+
+
+  })
+  .catch(function(error){
+
+    console.error(
+      "Posting gagal:",
+      error
+    );
+
+
+    alert(
+      "Posting gagal dikirim."
+    );
+
+  });
+
+
+} else {
+
+  alert(
+    "API MEXA belum aktif."
+  );
+
+    }
 
 
 
