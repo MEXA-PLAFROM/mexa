@@ -430,10 +430,39 @@ Profil
 
 <!-- ================= SCRIPT ================= -->
 
-
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- KONEKSI SUPABASE MEXA -->
 <script src="./auth-client.js"></script>
-
 <script src="./js/mexa-api-client.js"></script>
+<script src="./js/mexa-post-owner-actions.js">
+</script>
+  <!-- PENJAGA HALAMAN HOME -->
+<script>
+(async function () {
+  const app = document.getElementById("mexa-app");
+  if (app) {
+    app.style.visibility = "hidden";
+  }
+  try {
+    if (!window.mexaSupabase?.auth) {
+      throw new Error("Klien autentikasi MEXA belum tersedia.");
+    }
+    const { data, error } =
+      await window.mexaSupabase.auth.getSession();
+    if (error || !data?.session?.user) {
+      window.location.replace("./Login.html");
+      return;
+    }
+    if (app) {
+      app.style.visibility = "visible";
+    }
+  } catch (error) {
+    console.error("MEXA penjaga login:", error);
+    window.location.replace("./Login.html");
+  }
+})();
+  
 
 
 <!-- MESIN TEMA -->
@@ -457,9 +486,12 @@ Profil
 <!-- POST CONTROL -->
 
 <script src="./post-menu.js"></script>
-
+<script src="./post-share.js"></script>
+<script src="./functions-feed.js"></script>
+<script src="./post-create.js"></script>
 <script src="./post-owner-fix.js"></script>
 <script src="./mexa-system-control.js"></script>
+<script src="./logout.js"></script>
 
 
 
