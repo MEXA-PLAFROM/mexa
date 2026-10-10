@@ -163,12 +163,12 @@
 
         const label = button.textContent.trim();
 
-        if (label.includes("Tema")) {
-          event.stopPropagation();
-          openThemePanel();
-          return;
-        }
-
+       if (label.includes("Tema")) {
+  event.stopPropagation();
+  closeControlMenu();
+  openThemePanel();
+  return;
+       }
         const destinations = [
           { match: "Beranda", url: "index.html" },
           { match: "Reels", url: "Reels.html" },
