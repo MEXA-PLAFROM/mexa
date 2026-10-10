@@ -688,3 +688,63 @@ textarea {
   color:var(--mx-text);
 
 }
+/* =========================================
+   MEXA ACTION BUTTON TEXT
+========================================= */
+
+
+/* Tombol aksi posting */
+
+.mx-create-buttons button,
+.mx-title button {
+
+  color: var(--mx-text);
+
+  background: var(--mx-panel);
+
+  border: 1px solid var(--mx-border);
+
+  font-weight: 600;
+
+}
+
+
+
+/* Saat disentuh */
+
+.mx-create-buttons button:hover,
+.mx-title button:hover {
+
+  color: var(--mx-primary);
+
+  border-color: var(--mx-primary);
+
+}
+
+
+
+/* Tombol posting utama */
+
+#mexaPostButton {
+
+  color: #ffffff;
+
+  font-weight: 700;
+
+}
+
+
+
+/* Pastikan icon emoji tetap terlihat */
+
+.mx-create-buttons button {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+     }
