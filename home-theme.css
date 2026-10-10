@@ -379,3 +379,12 @@ a:hover {
 
 
 }
+body {
+  background:#0b0818;
+  color:white;
+}
+
+.mx-card {
+  background:#151025;
+  color:white;
+}
