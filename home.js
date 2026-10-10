@@ -54,13 +54,22 @@
       }
     }
 
-    if (action === "logout") {
-      if (typeof window.mexaConfirmLogout === "function") {
-        window.mexaConfirmLogout();
-      } else {
-        notify("Fitur keluar akun belum terhubung.");
-      }
-    }
+if (action === "logout") {
+  setMenu(false);
+
+  if (typeof window.MEXALogoutFix === "function") {
+    window.MEXALogoutFix();
+  } else if (typeof window.MEXALogout === "function") {
+    window.MEXALogout();
+  } else if (typeof window.mexaConfirmLogout === "function") {
+    window.mexaConfirmLogout();
+  } else {
+    notify("Script logout belum dimuat. Periksa file logout.js.");
+  }
+
+  return;
+}
+                            
   });
 
   document.getElementById("mexaOpenComposer")
