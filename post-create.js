@@ -20,32 +20,34 @@
 
   let isSubmitting = false;
 
-  function getCurrentUser() {
-    if (window.currentUser) return window.currentUser;
-    if (window.mexaCurrentUser) return window.mexaCurrentUser;
+async function getCurrentUser() {
+  // Baca sesi autentikasi Supabase yang sebenarnya.
+  const client = window.mexaSupabase;
 
+  if (client?.auth?.getSession) {
     try {
-      const keys = [
-        "mexa_user",
-        "currentUser",
-        "mexaCurrentUser"
-      ];
+      const { data, error } = await client.auth.getSession();
 
-      for (const key of keys) {
-        const value = localStorage.getItem(key);
-        if (!value) continue;
-
-        const user = JSON.parse(value);
-        if (user && (user.id || user.user_id)) return user;
+      if (!error && data?.session?.user) {
+        window.currentUser = data.session.user;
+        window.mexaCurrentUser = data.session.user;
+        return data.session.user;
       }
     } catch (error) {
-      console.warn("MEXA: sesi pengguna tidak terbaca.", error);
+      console.error("MEXA: gagal membaca sesi.", error);
     }
-
-    return null;
   }
 
-  function getUserId(user) {
+  // Fallback untuk kode lama.
+  if (window.currentUser?.id) return window.currentUser;
+  if (window.mexaCurrentUser?.id) {
+    return window.mexaCurrentUser;
+  }
+
+  return null;
+}
+
+   function getUserId(user) {
     return user && (
       user.id ||
       user.user_id ||
@@ -129,7 +131,7 @@
   async function createPost() {
     if (isSubmitting) return;
 
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     const userId = getUserId(user);
 
     if (!userId) {
