@@ -522,3 +522,70 @@ body {
 
 
 }
+#mexa-theme-panel {
+
+  position: fixed;
+
+  top: 80px;
+
+  right: 20px;
+
+  z-index: 5000;
+
+  width: 280px;
+
+  padding: 16px;
+
+  border-radius: 18px;
+
+}
+
+
+.mx-theme-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+}
+
+
+.mx-theme-list {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+.mx-theme-option {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  width: 100%;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+}
+
+
+.mx-theme-dot {
+
+  width: 18px;
+
+  height: 18px;
+
+  border-radius: 50%;
+
+   }
