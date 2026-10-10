@@ -1,25 +1,32 @@
-
-/* MEXA THEMES — FIX */
+/* MEXA THEMES */
 (function () {
   "use strict";
 
-  const KEY = "mexa-theme";
-  const THEMES = ["midnight", "arctic", "emerald", "sunset", "cyberpunk"];
+  const STORAGE_KEY = "mexa-theme";
+
+  const THEMES = [
+    "midnight",
+    "arctic",
+    "emerald",
+    "sunset",
+    "cyberpunk"
+  ];
 
   function setTheme(theme) {
     if (!THEMES.includes(theme)) return false;
-    if (!document.body) return false;
 
-    document.body.dataset.theme = theme;
     document.documentElement.dataset.theme = theme;
+    document.body.dataset.theme = theme;
 
     try {
-      localStorage.setItem(KEY, theme);
-    } catch (_) {}
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch (error) {
+      console.warn("Tema tidak dapat disimpan:", error);
+    }
 
     window.dispatchEvent(
       new CustomEvent("mexa:themechange", {
-        detail: { theme }
+        detail: { theme: theme }
       })
     );
 
@@ -38,30 +45,41 @@
   }
 
   function loadTheme() {
-    let saved = null;
+    let savedTheme = null;
 
     try {
-      saved = localStorage.getItem(KEY);
-    } catch (_) {}
+      savedTheme = localStorage.getItem(STORAGE_KEY);
+    } catch (error) {}
 
-    setTheme(THEMES.includes(saved) ? saved : getAutoTheme());
+    setTheme(
+      THEMES.includes(savedTheme)
+        ? savedTheme
+        : getAutoTheme()
+    );
   }
 
   window.MEXA_THEME = {
     set: setTheme,
+
     auto: function () {
       return setTheme(getAutoTheme());
     },
+
     current: function () {
-      return document.body?.dataset.theme || "midnight";
+      return document.body.dataset.theme || "midnight";
     },
+
     available: function () {
       return THEMES.slice();
     }
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadTheme, { once: true });
+    document.addEventListener(
+      "DOMContentLoaded",
+      loadTheme,
+      { once: true }
+    );
   } else {
     loadTheme();
   }
