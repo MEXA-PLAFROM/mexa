@@ -1,292 +1,119 @@
+/* ==================================================
+MEXA PREMIUM THEMES
+5 pilihan tema + siap untuk tema otomatis
+================================================== */
 
-/* =========================================================
-   MEXA — 5 DAILY THEMES
-   Mengatur warna seluruh cangkang Home dan komponen sosial
-   Aktif melalui #mexa-app[data-theme="theme-1" ... "theme-5"]
-   ========================================================= */
-
-/* TEMA 1 — MIDNIGHT PURPLE */
-#mexa-app[data-theme="theme-1"] {
-  --mx-bg: #0b0818;
-  --mx-surface: #151126;
-  --mx-surface-2: #201936;
-  --mx-surface-3: #2b2045;
-  --mx-text: #f8f5ff;
-  --mx-muted: #b2a8cb;
-  --mx-border: #39304f;
-  --mx-accent: #a17aff;
-  --mx-accent-2: #6339e8;
-  --mx-hover: #2b2044;
-  --mx-input: #100d1d;
-  --mx-like: #ff668f;
-  --mx-success: #53e3a0;
-  --mx-danger: #ff6677;
-  --mx-shadow: rgba(0, 0, 0, .25);
+:root {
+--mx-bg: #0b0818;
+--mx-panel: #141027;
+--mx-card: #17132b;
+--mx-border: #30284d;
+--mx-text: #f6f3ff;
+--mx-muted: #aaa4c2;
+--mx-cyan: #00e5ff;
+--mx-purple: #8b5cf6;
 }
 
-/* TEMA 2 — OCEAN BLUE */
-#mexa-app[data-theme="theme-2"] {
-  --mx-bg: #06131e;
-  --mx-surface: #0d2232;
-  --mx-surface-2: #153247;
-  --mx-surface-3: #1d4058;
-  --mx-text: #effaff;
-  --mx-muted: #a8c8d8;
-  --mx-border: #28516a;
-  --mx-accent: #27c5ee;
-  --mx-accent-2: #2869e8;
-  --mx-hover: #194057;
-  --mx-input: #081a27;
-  --mx-like: #ff789d;
-  --mx-success: #55e7c1;
-  --mx-danger: #ff7481;
-  --mx-shadow: rgba(0, 0, 0, .25);
+/* 1. MIDNIGHT NEON */
+html[data-mexa-theme="midnight"] {
+color-scheme: dark;
+--mx-bg: #0b0818;
+--mx-panel: #141027;
+--mx-card: #17132b;
+--mx-border: #30284d;
+--mx-text: #f6f3ff;
+--mx-muted: #aaa4c2;
+--mx-cyan: #00e5ff;
+--mx-purple: #8b5cf6;
 }
 
-/* TEMA 3 — EMERALD NEON */
-#mexa-app[data-theme="theme-3"] {
-  --mx-bg: #07130e;
-  --mx-surface: #10241a;
-  --mx-surface-2: #183527;
-  --mx-surface-3: #234834;
-  --mx-text: #f0fff5;
-  --mx-muted: #acd3b7;
-  --mx-border: #2a5940;
-  --mx-accent: #37e68c;
-  --mx-accent-2: #08a98a;
-  --mx-hover: #1c3c2a;
-  --mx-input: #0b1b12;
-  --mx-like: #ff83ac;
-  --mx-success: #65f5a8;
-  --mx-danger: #ff7777;
-  --mx-shadow: rgba(0, 0, 0, .25);
+/* 2. ARCTIC LIGHT */
+html[data-mexa-theme="arctic"] {
+color-scheme: light;
+--mx-bg: #f1f6ff;
+--mx-panel: #ffffff;
+--mx-card: #ffffff;
+--mx-border: #d7e3f5;
+--mx-text: #17243b;
+--mx-muted: #65748b;
+--mx-cyan: #087ff5;
+--mx-purple: #6554d9;
 }
 
-/* TEMA 4 — CRIMSON NIGHT */
-#mexa-app[data-theme="theme-4"] {
-  --mx-bg: #180910;
-  --mx-surface: #29111d;
-  --mx-surface-2: #3b1928;
-  --mx-surface-3: #4c2235;
-  --mx-text: #fff3f7;
-  --mx-muted: #d4a8b8;
-  --mx-border: #593044;
-  --mx-accent: #ff6599;
-  --mx-accent-2: #a63be0;
-  --mx-hover: #4b2033;
-  --mx-input: #200d16;
-  --mx-like: #ff8db2;
-  --mx-success: #65e6b2;
-  --mx-danger: #ff6677;
-  --mx-shadow: rgba(0, 0, 0, .3);
+/* 3. OCEAN PULSE */
+html[data-mexa-theme="ocean"] {
+color-scheme: dark;
+--mx-bg: #06141d;
+--mx-panel: #0c202b;
+--mx-card: #102b37;
+--mx-border: #204957;
+--mx-text: #e8fbff;
+--mx-muted: #9bbac4;
+--mx-cyan: #38f0d0;
+--mx-purple: #438cff;
 }
 
-/* TEMA 5 — GRAPHITE SILVER */
-#mexa-app[data-theme="theme-5"] {
-  --mx-bg: #101114;
-  --mx-surface: #1b1d22;
-  --mx-surface-2: #292c33;
-  --mx-surface-3: #363a44;
-  --mx-text: #f7f7fa;
-  --mx-muted: #b4b7c2;
-  --mx-border: #414550;
-  --mx-accent: #c0a9ff;
-  --mx-accent-2: #777ee8;
-  --mx-hover: #30333c;
-  --mx-input: #15171c;
-  --mx-like: #ff789d;
-  --mx-success: #70e3ad;
-  --mx-danger: #ff7585;
-  --mx-shadow: rgba(0, 0, 0, .3);
+/* 4. CYBER VIOLET */
+html[data-mexa-theme="violet"] {
+color-scheme: dark;
+--mx-bg: #150a22;
+--mx-panel: #21112f;
+--mx-card: #2a163b;
+--mx-border: #56316b;
+--mx-text: #fff2ff;
+--mx-muted: #c7a9d2;
+--mx-cyan: #f06cff;
+--mx-purple: #a78bfa;
 }
 
+/* 5. SUNSET EMBER */
+html[data-mexa-theme="sunset"] {
+color-scheme: dark;
+--mx-bg: #211016;
+--mx-panel: #32151d;
+--mx-card: #401c24;
+--mx-border: #69333a;
+--mx-text: #fff4e9;
+--mx-muted: #d9b5a8;
+--mx-cyan: #ffb45e;
+--mx-purple: #ff704d;
+}
 
-/* =========================================================
-   PENERAPAN WARNA GLOBAL
-   ========================================================= */
-
+/* TERAPKAN WARNA KE KOMPONEN */
+body,
 #mexa-app {
-  color: var(--mx-text);
-  background: var(--mx-bg);
-  transition: background-color .8s ease, color .8s ease;
+background-color: var(--mx-bg);
+color: var(--mx-text);
 }
 
-/* Header, sidebar, dropdown, navigasi */
-#mexa-app #mexa-header,
-#mexa-app .mx-header,
-#mexa-app #mexa-sidebar,
-#mexa-app .mx-sidebar,
-#mexa-app #mexa-right-sidebar,
-#mexa-app .mx-right-sidebar,
-#mexa-app #mexaQuickMenuPanel,
-#mexa-app .mx-dropdown,
-#mexa-app #mexa-bottom-nav {
-  color: var(--mx-text);
-  background: var(--mx-surface);
-  border-color: var(--mx-border);
+.mx-header,
+.mx-app-header,
+.mx-composer,
+.mx-feed-card,
+.mx-post-card,
+.mx-feed-empty {
+color: var(--mx-text);
+border-color: var(--mx-border);
 }
 
-/* Semua area utama */
-#mexa-app #mexa-main,
-#mexa-app #mexa-feed,
-#mexa-app #mexa-stories,
-#mexa-app #mexa-composer,
-#mexa-app #mexa-trending,
-#mexa-app #mexa-creator-center {
-  color: var(--mx-text);
+.mx-composer,
+.mx-feed-card,
+.mx-post-card {
+background-color: var(--mx-panel);
 }
 
-/* Kartu postingan, komentar, cerita, riwayat */
-#mexa-app #mexaFeedList > *,
-#mexa-app #mexa-stories-list > *,
-#mexa-app #mexa-sidebar-profile,
-#mexa-app #mexa-composer-profile,
-#mexa-app .mx-card,
-#mexa-app .mx-post,
-#mexa-app .mx-post-card,
-#mexa-app .mx-comment,
-#mexa-app .mx-history-item,
-#mexa-app .mx-story,
-#mexa-app .mx-menu,
-#mexa-app [data-post-card],
-#mexa-app [data-comment-item],
-#mexa-app [data-history-item] {
-  color: var(--mx-text);
-  background-color: var(--mx-surface);
-  border-color: var(--mx-border);
+input,
+textarea,
+select {
+color: var(--mx-text);
 }
 
-/* Area status dan pengetikan */
-#mexa-app input,
-#mexa-app textarea,
-#mexa-app select,
-#mexa-app [contenteditable="true"] {
-  color: var(--mx-text);
-  background-color: var(--mx-input);
-  border-color: var(--mx-border);
-  caret-color: var(--mx-accent);
+input::placeholder,
+textarea::placeholder {
+color: var(--mx-muted);
 }
 
-#mexa-app input::placeholder,
-#mexa-app textarea::placeholder,
-#mexa-app [contenteditable="true"]:empty::before {
-  color: var(--mx-muted);
-}
-
-/* Tombol umum */
-#mexa-app button,
-#mexa-app .mx-button,
-#mexa-app [role="button"] {
-  border-color: var(--mx-border);
-}
-
-/* Hover pada tombol dan tautan navigasi */
-#mexa-app button:hover,
-#mexa-app .mx-button:hover,
-#mexa-app #mexa-bottom-nav a:hover,
-#mexa-app #mexa-side-navigation a:hover,
-#mexa-app .mx-dropdown button:hover {
-  background-color: var(--mx-hover);
-}
-
-/* Tombol utama dan tombol Posting */
-#mexa-app #mexaPublishPost,
-#mexa-app #mexaOpenComposer,
-#mexa-app #mexaMobileCreate,
-#mexa-app [data-action="creator"],
-#mexa-app .mx-primary-button {
-  color: #fff;
-  background: linear-gradient(
-    135deg,
-    var(--mx-accent),
-    var(--mx-accent-2)
-  );
-  border-color: transparent;
-}
-
-/* Ikon, logo, tautan, tab aktif */
-#mexa-app a,
-#mexa-app .mx-active,
-#mexa-app [aria-current="page"] {
-  color: var(--mx-accent);
-}
-
-#mexa-app svg,
-#mexa-app .mx-icon {
-  color: var(--mx-accent);
-  fill: currentColor;
-}
-
-/* Menu titik tiga */
-#mexa-app [data-action="post-menu"],
-#mexa-app [data-action="more"],
-#mexa-app .mx-post-menu,
-#mexa-app .mx-menu-trigger {
-  color: var(--mx-muted);
-  background-color: transparent;
-}
-
-#mexa-app .mx-post-menu button,
-#mexa-app .mx-menu button,
-#mexa-app [role="menu"] {
-  color: var(--mx-text);
-  background-color: var(--mx-surface);
-  border-color: var(--mx-border);
-}
-
-/* Like, komentar, bagikan */
-#mexa-app [data-action="like"],
-#mexa-app .mx-like,
-#mexa-app .mx-like-count {
-  color: var(--mx-like);
-}
-
-#mexa-app [data-action="comment"],
-#mexa-app .mx-comment-action,
-#mexa-app [data-action="share"],
-#mexa-app .mx-share-action {
-  color: var(--mx-accent);
-}
-
-/* Statistik, waktu, keterangan tambahan */
-#mexa-app .mx-muted,
-#mexa-app .mx-post-time,
-#mexa-app .mx-meta,
-#mexa-app .mx-subtitle,
-#mexa-app small,
-#mexa-app time {
-  color: var(--mx-muted);
-}
-
-/* Garis pemisah dan indikator */
-#mexa-app hr,
-#mexa-app .mx-divider {
-  border-color: var(--mx-border);
-}
-
-#mexa-app progress {
-  accent-color: var(--mx-accent);
-}
-
-/* Efek pergantian tema */
-#mexa-app .mx-header,
-#mexa-app .mx-sidebar,
-#mexa-app .mx-right-sidebar,
-#mexa-app #mexaFeedList > *,
-#mexa-app #mexa-stories-list > *,
-#mexa-app #mexa-composer {
-  transition:
-    background-color .8s ease,
-    color .8s ease,
-    border-color .8s ease,
-    box-shadow .8s ease;
-}
-
-/* Hormati pengaturan aksesibilitas pengguna */
-@media (prefers-reduced-motion: reduce) {
-  #mexa-app,
-  #mexa-app * {
-    transition: none !important;
-    animation: none !important;
-  }
+.mx-post-menu {
+color: var(--mx-text);
+border-color: var(--mx-border);
 }
