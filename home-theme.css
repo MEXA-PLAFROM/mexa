@@ -307,13 +307,8 @@ a:hover {
 
 
 .mx-x {
-
-
- color:var(--secondary);
-
-
-}
-
+  color: var(--mx-secondary);
+   }
 
 
 .mx-e i {
