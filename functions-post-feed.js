@@ -8,7 +8,6 @@
 (function () {
   "use strict";
 
-  // Jangan daftarkan modul dua kali.
   if (window.MEXAPostFeed) return;
 
   const API_URL =
@@ -43,8 +42,6 @@
     return result;
   }
 
-  // Menghindari HTML dari konten pengguna
-  // agar konten postingan ditampilkan sebagai teks.
   function escapeHTML(value) {
     return String(value ?? "").replace(
       /[&<>"']/g,
@@ -82,12 +79,12 @@
 
     const avatar = post.avatar_url
       ? `<img class="mx-feed-avatar"
-               src="${escapeHTML(post.avatar_url)}"
-               alt=""
-               loading="lazy">`
+          src="${escapeHTML(post.avatar_url)}"
+          alt=""
+          loading="lazy">`
       : `<div class="mx-feed-avatar mx-feed-avatar-fallback">
-           ${escapeHTML(name.charAt(0).toUpperCase())}
-         </div>`;
+          ${escapeHTML(name.charAt(0).toUpperCase())}
+        </div>`;
 
     const content = post.content
       ? `<div class="mx-feed-content">${escapeHTML(post.content)}</div>`
@@ -95,14 +92,14 @@
 
     const image = post.image_url
       ? `<img class="mx-feed-image"
-               src="${escapeHTML(post.image_url)}"
-               alt="Foto postingan"
-               loading="lazy">`
+          src="${escapeHTML(post.image_url)}"
+          alt="Foto postingan"
+          loading="lazy">`
       : "";
 
     return `
       <article class="mx-feed-card"
-               data-post-id="${escapeHTML(post.id)}">
+        data-post-id="${escapeHTML(post.id)}">
         <header class="mx-feed-header">
           ${avatar}
           <div class="mx-feed-user">
@@ -120,9 +117,7 @@
 
   function renderInto(container, posts, emptyMessage) {
     if (!container) {
-      throw new Error(
-        "Elemen feed tidak ditemukan. Periksa selector halaman."
-      );
+      throw new Error("Elemen feed tidak ditemukan.");
     }
 
     if (!posts.length) {
@@ -137,13 +132,11 @@
     container.innerHTML = posts.map(renderPost).join("");
   }
 
-  // Ambil daftar postingan terbaru.
   async function getPosts() {
     const result = await api("get_posts");
     return Array.isArray(result.posts) ? result.posts : [];
   }
 
-  // Tampilkan semua postingan di Beranda.
   async function loadHome(selector) {
     const container = document.querySelector(selector);
 
@@ -153,6 +146,9 @@
       );
     }
 
+    if (state.loading) return state.homePosts;
+
+    state.loading = true;
     container.setAttribute("aria-busy", "true");
 
     try {
@@ -162,17 +158,27 @@
 
       renderInto(
         container,
-        state.homePosts,
+        posts,
         "Belum ada postingan. Jadilah yang pertama!"
       );
 
-      return state.homePosts;
+      return posts;
+    } catch (error) {
+      console.error("MEXA Feed:", error);
+
+      container.innerHTML = `
+        <div class="mx-feed-empty">
+          Gagal memuat postingan. Silakan segarkan halaman.
+        </div>
+      `;
+
+      throw error;
     } finally {
+      state.loading = false;
       container.setAttribute("aria-busy", "false");
     }
   }
 
-  // Tampilkan postingan milik profil yang sedang dibuka.
   async function loadProfile(selector, userId) {
     if (!userId) {
       throw new Error("ID pemilik profil belum tersedia.");
@@ -181,9 +187,7 @@
     const container = document.querySelector(selector);
 
     if (!container) {
-      throw new Error(
-        "Container Profil tidak ditemukan: " + selector
-      );
+      throw new Error("Container Profil tidak ditemukan.");
     }
 
     container.setAttribute("aria-busy", "true");
@@ -207,11 +211,8 @@
     }
   }
 
-  // CSS minimal untuk feed.
   function installStyles() {
-    if (document.getElementById("mexa-post-feed-styles")) {
-      return;
-    }
+    if (document.getElementById("mexa-post-feed-styles")) return;
 
     const style = document.createElement("style");
     style.id = "mexa-post-feed-styles";
@@ -298,18 +299,14 @@
     loadProfile,
     refreshHome: loadHome,
     getPosts,
-    getState: () => ({
-      homePosts: [...state.homePosts],
-      profilePosts: [...state.profilePosts]
-    })
-     window.MEXARunHomeFeed = async function () {
-if (!window.MEXAPostFeed) {
-console.error("MEXA: Modul post feed belum dimuat.");
-return;
-}
+    getState: function () {
+      return {
+        homePosts: [...state.homePosts],
+        profilePosts: [...state.profilePosts]
+      };
+    }
+  });
 
-// Ganti selector setelah kita memastikan ID
-// elemen daftar postingan di index.html.
-return window.MEXAPostFeed.loadHome("#homeFeed");
-     });
+  console.log("MEXA Post Feed berhasil dimuat.");
 })();
+
