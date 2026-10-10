@@ -454,3 +454,37 @@
   background: rgba(140, 100, 255, 0.15);
    }
 
+/* MEXA FIX — tombol titik tiga postingan */
+.mx-post-card .mx-post-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+.mx-post-card .mx-post-header > .mx-post-menu {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex: 0 0 40px !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  margin-left: auto !important;
+  padding: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  z-index: 20 !important;
+  color: #ffffff !important;
+  background: #211b37 !important;
+  border: 1px solid #393052 !important;
+  border-radius: 50% !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+   }
+   
