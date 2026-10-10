@@ -1,257 +1,68 @@
-/* ==========================================
-   MEXA THEMES CONTROLLER
-========================================== */
 
+/* MEXA THEMES — FIX */
+(function () {
+  "use strict";
 
-(function(){
+  const KEY = "mexa-theme";
+  const THEMES = ["midnight", "arctic", "emerald", "sunset", "cyberpunk"];
 
-const THEMES = [
+  function setTheme(theme) {
+    if (!THEMES.includes(theme)) return false;
+    if (!document.body) return false;
 
-  "midnight",
-  "arctic",
-  "emerald",
-  "sunset",
-  "cyberpunk"
+    document.body.dataset.theme = theme;
+    document.documentElement.dataset.theme = theme;
 
-];
+    try {
+      localStorage.setItem(KEY, theme);
+    } catch (_) {}
 
-
-function setTheme(theme){
-
-  if(!THEMES.includes(theme)){
-    theme="midnight";
-  }
-
-
-  document.body.dataset.theme = theme;
-
-
-  localStorage.setItem(
-    "mexa-theme",
-    theme
-  );
-
-
-  console.log(
-    "MEXA Theme:",
-    theme
-  );
-
-}
-
-
-
-
-function getAutoTheme(){
-
-  const hour = new Date().getHours();
-
-
-  /*
-    05-10 pagi
-    10-16 siang
-    16-19 sore
-    19-05 malam
-  */
-
-
-  if(hour >= 5 && hour < 10){
-
-    return "arctic";
-
-  }
-
-
-  if(hour >= 10 && hour < 16){
-
-    return "emerald";
-
-  }
-
-
-  if(hour >= 16 && hour < 19){
-
-    return "sunset";
-
-  }
-
-
-  if(hour >= 19 || hour < 5){
-
-    return "midnight";
-
-  }
-
-
-  return "cyberpunk";
-
-}
-
-
-
-
-function loadTheme(){
-
-  const saved =
-    localStorage.getItem(
-      "mexa-theme"
+    window.dispatchEvent(
+      new CustomEvent("mexa:themechange", {
+        detail: { theme }
+      })
     );
 
-
-  if(saved){
-
-    setTheme(saved);
-
-  }else{
-
-    setTheme(
-      getAutoTheme()
-    );
-
+    return true;
   }
 
-}
+  function getAutoTheme() {
+    const hour = new Date().getHours();
 
+    if (hour >= 5 && hour < 10) return "arctic";
+    if (hour >= 10 && hour < 16) return "emerald";
+    if (hour >= 16 && hour < 19) return "sunset";
+    if (hour >= 19 || hour < 5) return "midnight";
 
-
-
-
-/* ==========================
-   PANEL TEMA
-========================== */
-
-
-function openThemePanel(){
-
-
-  let panel =
-  document.getElementById(
-    "mexa-theme-panel"
-  );
-
-
-  if(panel){
-    panel.remove();
-    return;
+    return "cyberpunk";
   }
 
+  function loadTheme() {
+    let saved = null;
 
+    try {
+      saved = localStorage.getItem(KEY);
+    } catch (_) {}
 
-  panel =
-  document.createElement("div");
+    setTheme(THEMES.includes(saved) ? saved : getAutoTheme());
+  }
 
+  window.MEXA_THEME = {
+    set: setTheme,
+    auto: function () {
+      return setTheme(getAutoTheme());
+    },
+    current: function () {
+      return document.body?.dataset.theme || "midnight";
+    },
+    available: function () {
+      return THEMES.slice();
+    }
+  };
 
-  panel.id =
-  "mexa-theme-panel";
-
-
-  panel.innerHTML = `
-
-    <button data-theme="midnight">
-    🌙 Midnight
-    </button>
-
-    <button data-theme="arctic">
-    ❄️ Arctic
-    </button>
-
-    <button data-theme="emerald">
-    🌿 Emerald
-    </button>
-
-    <button data-theme="sunset">
-    🌅 Sunset
-    </button>
-
-    <button data-theme="cyberpunk">
-    ⚡ Cyberpunk
-    </button>
-
-  `;
-
-
-  document.body.appendChild(panel);
-
-
-
-  panel.querySelectorAll(
-    "button"
-  ).forEach(btn=>{
-
-
-    btn.onclick=function(){
-
-      setTheme(
-        this.dataset.theme
-      );
-
-      panel.remove();
-
-    };
-
-
-  });
-
-
-}
-
-
-
-
-
-
-/* ==========================
-   HUBUNGKAN TOMBOL TEMA
-========================== */
-
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
-
-
- loadTheme();
-
-
-
- const buttons =
- document.querySelectorAll(
- "#mx-control-panel button"
- );
-
-
-
- buttons.forEach(btn=>{
-
-
-   if(
-    btn.textContent.includes("Tema")
-   ){
-
-    btn.addEventListener(
-      "click",
-      openThemePanel
-    );
-
-   }
-
-
- });
-
-
-});
-
-
-
-
-
-window.MEXA_THEME = {
-
- set:setTheme,
-
- auto:getAutoTheme
-
-};
-
-
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadTheme, { once: true });
+  } else {
+    loadTheme();
+  }
 })();
