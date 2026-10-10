@@ -1,4 +1,3 @@
-
 /* =====================================================
    MEXA PLATFORM — FUNCTIONS POST
    Supabase + Premium Post Renderer
@@ -36,7 +35,10 @@
     if (error) throw error;
 
     const user = data?.session?.user;
-    if (!user) throw new Error("Silakan login kembali.");
+
+    if (!user) {
+      throw new Error("Silakan login kembali.");
+    }
 
     return user;
   }
@@ -45,7 +47,9 @@
     const link = document.createElement("a");
 
     link.className = "mx-post-author";
-    link.href = "./Profil.html?id=" + encodeURIComponent(userId || "");
+    link.href =
+      "./Profil.html?id=" + encodeURIComponent(userId || "");
+
     link.textContent =
       profile.display_name ||
       profile.username ||
@@ -53,6 +57,10 @@
 
     return link;
   }
+
+  /* =====================================================
+     RENDER POSTINGAN
+     ===================================================== */
 
   function renderPost(post, profile) {
     const card = document.createElement("article");
@@ -62,17 +70,24 @@
     card.dataset.postId = String(post.id);
     card.dataset.userId = post.user_id || "";
 
-    // HEADER
+    // HEADER POSTINGAN
     const header = document.createElement("div");
     header.className = "mx-post-header";
 
+    // FOTO PROFIL
     const profileLink = document.createElement("a");
+
     profileLink.className = "mx-post-profile-link";
     profileLink.href =
       "./Profil.html?id=" + encodeURIComponent(post.user_id || "");
-    profileLink.setAttribute("aria-label", "Buka profil penulis");
+
+    profileLink.setAttribute(
+      "aria-label",
+      "Buka profil penulis"
+    );
 
     const avatar = document.createElement("img");
+
     avatar.className = "mx-post-avatar";
     avatar.alt = "Foto profil";
     avatar.loading = "lazy";
@@ -89,6 +104,7 @@
 
     profileLink.appendChild(avatar);
 
+    // NAMA PENULIS DAN USERNAME
     const author = makeProfileLink(post.user_id, profile);
 
     const authorGroup = document.createElement("div");
@@ -98,55 +114,63 @@
 
     if (profile.username) {
       const username = document.createElement("div");
+
       username.className = "mx-post-username";
       username.textContent = "@" + profile.username;
+
       authorGroup.appendChild(username);
     }
 
+    // TOMBOL TITIK TIGA
     const menu = document.createElement("button");
+
     menu.type = "button";
     menu.className = "mx-post-menu";
     menu.textContent = "⋮";
-    menu.setAttribute("aria-label", "Menu postingan");
 
-    // Tidak menghapus atau mengubah postingan.
-    // Menu akan dihubungkan ke sistem menu MEXA berikutnya.
-    
-menu.addEventListener("click", async function () {
-  try {
-    const client = getClient();
+    menu.setAttribute(
+      "aria-label",
+      "Menu postingan"
+    );
 
-    // Periksa akun yang sedang login
-    const { data, error } = await client.auth.getUser();
+    menu.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
 
-    if (error) throw error;
+      if (typeof window.openPostMenu === "function") {
+        window.openPostMenu(post.id);
+      } else {
+        alert("Menu postingan MEXA belum tersedia.");
+      }
+    });
 
-    const viewerId = data.user ? data.user.id : null;
-    const ownerId = post.user_id || "";
+    // PASANG HEADER LENGKAP
+    header.append(profileLink, authorGroup, menu);
+    card.appendChild(header);
 
-    // Apakah postingan ini milik akun yang sedang login?
-    const isOwner =
-      Boolean(viewerId) &&
-      String(viewerId) === String(ownerId);
+    // ISI POSTINGAN
+    const content = document.createElement("div");
 
-    // Kirim identitas pemilik dan pengunjung ke sistem menu
-    if (typeof window.openPostMenu === "function") {
-      window.openPostMenu(post.id, {
-        post: post,
-        viewerId: viewerId,
-        ownerId: ownerId,
-        isOwner: isOwner
-      });
-    } else {
-      console.error("MEXA: fungsi openPostMenu belum tersedia.");
-      alert("Menu postingan belum aktif.");
+    content.className = "mx-post-content";
+    content.textContent = post.content || "";
+
+    card.appendChild(content);
+
+    // FOTO POSTINGAN
+    if (post.image_url) {
+      const image = document.createElement("img");
+
+      image.className = "mx-post-image";
+      image.src = post.image_url;
+      image.alt = "Foto postingan";
+      image.loading = "lazy";
+
+      image.onerror = function () {
+        image.remove();
+      };
+
+      card.appendChild(image);
     }
-  } catch (error) {
-    console.error("MEXA: gagal memeriksa pemilik postingan:", error);
-    alert("Gagal memeriksa akun. Silakan coba lagi.");
-  }
-});
-         
 
     // WAKTU POSTINGAN
     if (post.created_at) {
@@ -164,8 +188,9 @@ menu.addEventListener("click", async function () {
       card.appendChild(date);
     }
 
-    // AKSI POSTINGAN — TAMPILAN DULU
+    // TOMBOL AKSI POSTINGAN
     const actions = document.createElement("div");
+
     actions.className = "mx-post-actions";
 
     [
@@ -187,304 +212,396 @@ menu.addEventListener("click", async function () {
     return card;
   }
 
-/* =========================================
-   MEXA POST MENU
-   Membedakan pemilik dan pengunjung
-========================================= */
+  /* =====================================================
+     MENU TITIK TIGA
+     MEMBEDAKAN PEMILIK DAN PENGUNJUNG
+     ===================================================== */
 
-async function openPostMenu(postId) {
-  try {
-    const client = getClient();
+  async function openPostMenu(postId) {
+    try {
+      const client = getClient();
 
-    // Baca akun yang benar-benar sedang login.
-    const userResult = await client.auth.getUser();
+      // PERIKSA AKUN YANG SEDANG LOGIN
+      const userResult = await client.auth.getUser();
 
-    const viewer = userResult.error
-      ? null
-      : userResult.data.user;
-
-    // Ambil data postingan langsung dari Supabase.
-    const result = await client
-      .from("posts")
-      .select("id,user_id,content,image_url")
-      .eq("id", postId)
-      .maybeSingle();
-
-    if (result.error) throw result.error;
-
-    const post = result.data;
-
-    if (!post) {
-      alert("Postingan tidak ditemukan atau tidak bisa diakses.");
-      return;
-    }
-
-    // Jangan percaya ID pemilik yang dikirim dari tampilan.
-    const viewerId = viewer ? String(viewer.id) : "";
-    const ownerId = post.user_id ? String(post.user_id) : "";
-
-    const isOwner = Boolean(
-      viewerId && ownerId && viewerId === ownerId
-    );
-
-    // Tutup menu lama jika masih terbuka.
-    const oldMenu = document.getElementById(
-      "mexa-post-menu-overlay"
-    );
-
-    if (oldMenu) oldMenu.remove();
-
-    const overlay = document.createElement("div");
-    overlay.id = "mexa-post-menu-overlay";
-
-    Object.assign(overlay.style, {
-      position: "fixed",
-      inset: "0",
-      zIndex: "99999",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "18px",
-      background: "rgba(5,3,15,.75)"
-    });
-
-    const panel = document.createElement("div");
-
-    Object.assign(panel.style, {
-      width: "100%",
-      maxWidth: "360px",
-      padding: "20px",
-      borderRadius: "18px",
-      background: "#171329",
-      color: "#f6f3ff",
-      border: "1px solid #393052",
-      boxShadow: "0 20px 60px rgba(0,0,0,.4)",
-      fontFamily: "inherit"
-    });
-
-    overlay.appendChild(panel);
-    document.body.appendChild(overlay);
-
-    function closeMenu() {
-      overlay.remove();
-    }
-
-    function makeButton(label, callback, danger) {
-      const button = document.createElement("button");
-
-      button.type = "button";
-      button.textContent = label;
-
-      Object.assign(button.style, {
-        display: "block",
-        width: "100%",
-        padding: "13px 14px",
-        marginTop: "8px",
-        borderRadius: "11px",
-        border: "1px solid " +
-          (danger ? "#743649" : "#393052"),
-        background: danger ? "#391b2b" : "#211b37",
-        color: danger ? "#ffb5c5" : "#f6f3ff",
-        textAlign: "left",
-        fontSize: "14px",
-        cursor: "pointer"
-      });
-
-      button.addEventListener("click", callback);
-      panel.appendChild(button);
-
-      return button;
-    }
-
-    function showMenu() {
-      panel.replaceChildren();
-
-      const title = document.createElement("h3");
-      title.textContent = "Menu Postingan";
-
-      Object.assign(title.style, {
-        margin: "0 0 8px",
-        fontSize: "18px"
-      });
-
-      panel.appendChild(title);
-
-      const description = document.createElement("p");
-      description.textContent = isOwner
-        ? "Ini postingan milik akun kamu."
-        : "Ini postingan milik pengguna lain.";
-
-      Object.assign(description.style, {
-        margin: "0 0 14px",
-        color: "#b9b1d0",
-        fontSize: "13px"
-      });
-
-      panel.appendChild(description);
-
-      // Bagikan tersedia untuk pemilik maupun pengunjung.
-      makeButton("↗  Bagikan postingan", async function () {
-        const url = new URL(window.location.href);
-        url.hash = "post-" + post.id;
-
-        try {
-          if (typeof navigator.share === "function") {
-            await navigator.share({
-              title: "Postingan MEXA",
-              text: post.content || "Lihat postingan ini di MEXA",
-              url: url.href
-            });
-          } else if (navigator.clipboard) {
-            await navigator.clipboard.writeText(url.href);
-            alert("Tautan postingan berhasil disalin.");
-          } else {
-            window.prompt("Salin tautan postingan:", url.href);
-          }
-        } catch (error) {
-          if (error.name !== "AbortError") {
-            console.error("MEXA gagal membagikan postingan:", error);
-            alert("Tautan belum berhasil dibagikan.");
-          }
-        }
-      });
-
-      if (isOwner) {
-        // EDIT hanya ditampilkan kepada pemilik.
-        makeButton("✎  Edit postingan", function () {
-          showEditor();
-        });
-
-        // HAPUS hanya ditampilkan kepada pemilik.
-        makeButton("⌫  Hapus postingan", async function () {
-          const confirmed = window.confirm(
-            "Hapus postingan ini secara permanen?"
-          );
-
-          if (!confirmed) return;
-
-          try {
-            const deleted = await client
-              .from("posts")
-              .delete()
-              .eq("id", post.id)
-              .eq("user_id", viewerId)
-              .select("id")
-              .maybeSingle();
-
-            if (deleted.error) throw deleted.error;
-
-            if (!deleted.data) {
-              throw new Error(
-                "Penghapusan ditolak. Periksa izin RLS Supabase."
-              );
-            }
-
-            closeMenu();
-            await loadPosts();
-            alert("Postingan berhasil dihapus.");
-          } catch (error) {
-            console.error("MEXA gagal menghapus postingan:", error);
-            alert(
-              "Postingan belum terhapus. Periksa izin RLS Supabase."
-            );
-          }
-        }, true);
-      } else {
-        // Pengunjung tidak mendapatkan tombol Edit atau Hapus.
-        makeButton("⚑  Laporkan postingan", function () {
-          alert(
-            "Fitur laporan belum terhubung ke sistem moderasi MEXA."
-          );
-        });
+      if (userResult.error) {
+        throw userResult.error;
       }
 
-      makeButton("Tutup", closeMenu);
-    }
+      const viewer = userResult.data.user;
 
-    function showEditor() {
-      panel.replaceChildren();
+      const viewerId = viewer
+        ? String(viewer.id)
+        : "";
 
-      const title = document.createElement("h3");
-      title.textContent = "Edit postingan";
+      // AMBIL DATA POSTINGAN DARI SUPABASE
+      const result = await client
+        .from("posts")
+        .select("id,user_id,content,image_url")
+        .eq("id", postId)
+        .maybeSingle();
 
-      Object.assign(title.style, {
-        margin: "0 0 14px",
-        fontSize: "18px"
+      if (result.error) {
+        throw result.error;
+      }
+
+      const post = result.data;
+
+      if (!post) {
+        alert(
+          "Postingan tidak ditemukan atau tidak bisa diakses."
+        );
+        return;
+      }
+
+      // IDENTITAS PEMILIK POSTINGAN
+      const ownerId = post.user_id
+        ? String(post.user_id)
+        : "";
+
+      const isOwner = Boolean(
+        viewerId &&
+        ownerId &&
+        viewerId === ownerId
+      );
+
+      // TUTUP MENU LAMA
+      const oldMenu = document.getElementById(
+        "mexa-post-menu-overlay"
+      );
+
+      if (oldMenu) {
+        oldMenu.remove();
+      }
+
+      // LAPISAN MENU
+      const overlay = document.createElement("div");
+
+      overlay.id = "mexa-post-menu-overlay";
+
+      Object.assign(overlay.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "99999",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "18px",
+        background: "rgba(5,3,15,.75)"
       });
 
-      const textarea = document.createElement("textarea");
-      textarea.value = post.content || "";
-      textarea.setAttribute("aria-label", "Isi postingan");
+      // PANEL MENU PREMIUM
+      const panel = document.createElement("div");
 
-      Object.assign(textarea.style, {
+      Object.assign(panel.style, {
         width: "100%",
-        minHeight: "130px",
-        boxSizing: "border-box",
-        padding: "12px",
-        borderRadius: "10px",
-        border: "1px solid #393052",
-        background: "#0e0b1b",
+        maxWidth: "360px",
+        padding: "20px",
+        borderRadius: "18px",
+        background: "#171329",
         color: "#f6f3ff",
-        font: "inherit",
-        resize: "vertical"
+        border: "1px solid #393052",
+        boxShadow: "0 20px 60px rgba(0,0,0,.4)",
+        fontFamily: "inherit",
+        boxSizing: "border-box"
       });
 
-      panel.append(title, textarea);
+      overlay.appendChild(panel);
+      document.body.appendChild(overlay);
 
-      makeButton("Simpan perubahan", async function () {
-        const content = textarea.value.trim();
+      function closeMenu() {
+        overlay.remove();
+      }
 
-        if (!content) {
-          alert("Isi postingan tidak boleh kosong.");
-          return;
-        }
+      // PEMBUAT TOMBOL MENU
+      function makeButton(label, callback, danger) {
+        const button = document.createElement("button");
 
-        try {
-          const saved = await client
-            .from("posts")
-            .update({ content: content })
-            .eq("id", post.id)
-            .eq("user_id", viewerId)
-            .select("id")
-            .maybeSingle();
+        button.type = "button";
+        button.textContent = label;
 
-          if (saved.error) throw saved.error;
+        Object.assign(button.style, {
+          display: "block",
+          width: "100%",
+          padding: "13px 14px",
+          marginTop: "8px",
+          borderRadius: "11px",
+          border: "1px solid " +
+            (danger ? "#743649" : "#393052"),
+          background: danger ? "#391b2b" : "#211b37",
+          color: danger ? "#ffb5c5" : "#f6f3ff",
+          textAlign: "left",
+          fontSize: "14px",
+          cursor: "pointer",
+          boxSizing: "border-box"
+        });
 
-          if (!saved.data) {
-            throw new Error(
-              "Perubahan ditolak. Periksa izin RLS Supabase."
-            );
+        button.addEventListener("click", callback);
+
+        panel.appendChild(button);
+
+        return button;
+      }
+
+      // TAMPILAN MENU UTAMA
+      function showMenu() {
+        panel.replaceChildren();
+
+        const title = document.createElement("h3");
+
+        title.textContent = "Menu Postingan";
+
+        Object.assign(title.style, {
+          margin: "0 0 8px",
+          fontSize: "18px"
+        });
+
+        panel.appendChild(title);
+
+        const description = document.createElement("p");
+
+        description.textContent = isOwner
+          ? "Ini postingan milik akun kamu."
+          : "Ini postingan milik pengguna lain.";
+
+        Object.assign(description.style, {
+          margin: "0 0 14px",
+          color: "#b9b1d0",
+          fontSize: "13px"
+        });
+
+        panel.appendChild(description);
+
+        // BAGIKAN — TERSEDIA UNTUK SEMUA
+        makeButton(
+          "↗  Bagikan postingan",
+          async function () {
+            const url = new URL(window.location.href);
+
+            url.hash = "post-" + post.id;
+
+            try {
+              if (typeof navigator.share === "function") {
+                await navigator.share({
+                  title: "Postingan MEXA",
+                  text:
+                    post.content ||
+                    "Lihat postingan ini di MEXA",
+                  url: url.href
+                });
+              } else if (navigator.clipboard) {
+                await navigator.clipboard.writeText(url.href);
+
+                alert("Tautan postingan berhasil disalin.");
+              } else {
+                window.prompt(
+                  "Salin tautan postingan:",
+                  url.href
+                );
+              }
+            } catch (error) {
+              if (error.name !== "AbortError") {
+                console.error(
+                  "MEXA gagal membagikan postingan:",
+                  error
+                );
+
+                alert(
+                  "Tautan belum berhasil dibagikan."
+                );
+              }
+            }
           }
+        );
 
-          closeMenu();
-          await loadPosts();
-          alert("Postingan berhasil diperbarui.");
-        } catch (error) {
-          console.error("MEXA gagal mengedit postingan:", error);
-          alert(
-            "Postingan belum berhasil diedit. Periksa izin RLS Supabase."
+        if (isOwner) {
+          // EDIT HANYA UNTUK PEMILIK
+          makeButton(
+            "✎  Edit postingan",
+            function () {
+              showEditor();
+            }
+          );
+
+          // HAPUS HANYA UNTUK PEMILIK
+          makeButton(
+            "⌫  Hapus postingan",
+            async function () {
+              const confirmed = window.confirm(
+                "Hapus postingan ini secara permanen?"
+              );
+
+              if (!confirmed) return;
+
+              try {
+                const deleted = await client
+                  .from("posts")
+                  .delete()
+                  .eq("id", post.id)
+                  .eq("user_id", viewerId)
+                  .select("id")
+                  .maybeSingle();
+
+                if (deleted.error) {
+                  throw deleted.error;
+                }
+
+                if (!deleted.data) {
+                  throw new Error(
+                    "Penghapusan ditolak. Periksa izin RLS Supabase."
+                  );
+                }
+
+                closeMenu();
+
+                await loadPosts();
+
+                alert("Postingan berhasil dihapus.");
+              } catch (error) {
+                console.error(
+                  "MEXA gagal menghapus postingan:",
+                  error
+                );
+
+                alert(
+                  "Postingan belum terhapus. Periksa izin RLS Supabase."
+                );
+              }
+            },
+            true
+          );
+        } else {
+          // PENGUNJUNG TIDAK BOLEH EDIT ATAU HAPUS
+          makeButton(
+            "⚑  Laporkan postingan",
+            function () {
+              alert(
+                "Fitur laporan belum terhubung ke sistem moderasi MEXA."
+              );
+            }
           );
         }
-      });
 
-      makeButton("Batal", showMenu);
+        makeButton("Tutup", closeMenu);
+      }
+
+      // EDITOR POSTINGAN
+      function showEditor() {
+        panel.replaceChildren();
+
+        const title = document.createElement("h3");
+
+        title.textContent = "Edit postingan";
+
+        Object.assign(title.style, {
+          margin: "0 0 14px",
+          fontSize: "18px"
+        });
+
+        const textarea = document.createElement("textarea");
+
+        textarea.value = post.content || "";
+
+        textarea.setAttribute(
+          "aria-label",
+          "Isi postingan"
+        );
+
+        Object.assign(textarea.style, {
+          width: "100%",
+          minHeight: "130px",
+          boxSizing: "border-box",
+          padding: "12px",
+          borderRadius: "10px",
+          border: "1px solid #393052",
+          background: "#0e0b1b",
+          color: "#f6f3ff",
+          font: "inherit",
+          resize: "vertical"
+        });
+
+        panel.append(title, textarea);
+
+        makeButton(
+          "Simpan perubahan",
+          async function () {
+            const content = textarea.value.trim();
+
+            if (!content) {
+              alert("Isi postingan tidak boleh kosong.");
+              return;
+            }
+
+            try {
+              const saved = await client
+                .from("posts")
+                .update({
+                  content: content
+                })
+                .eq("id", post.id)
+                .eq("user_id", viewerId)
+                .select("id")
+                .maybeSingle();
+
+              if (saved.error) {
+                throw saved.error;
+              }
+
+              if (!saved.data) {
+                throw new Error(
+                  "Perubahan ditolak. Periksa izin RLS Supabase."
+                );
+              }
+
+              closeMenu();
+
+              await loadPosts();
+
+              alert("Postingan berhasil diperbarui.");
+            } catch (error) {
+              console.error(
+                "MEXA gagal mengedit postingan:",
+                error
+              );
+
+              alert(
+                "Postingan belum berhasil diedit. Periksa izin RLS Supabase."
+              );
+            }
+          }
+        );
+
+        makeButton("Batal", showMenu);
+      }
+
+      showMenu();
+    } catch (error) {
+      console.error(
+        "MEXA gagal membuka menu postingan:",
+        error
+      );
+
+      alert(
+        "Menu gagal dibuka. Periksa koneksi dan sesi login."
+      );
     }
-
-    showMenu();
-  } catch (error) {
-    console.error("MEXA gagal membuka menu postingan:", error);
-    alert("Menu gagal dibuka. Periksa koneksi dan sesi login.");
   }
-}
 
-// Hubungkan fungsi menu dengan tombol titik tiga.
-window.openPostMenu = openPostMenu;
-       
+  // HUBUNGKAN MENU TITIK TIGA KE GLOBAL
+  window.openPostMenu = openPostMenu;
+
+  /* =====================================================
+     MEMUAT FEED DARI SUPABASE
+     ===================================================== */
+
   async function loadPosts() {
     const feed = getFeed();
 
     if (!feed) {
-      console.error("MEXA: elemen #mexaFeedList tidak ditemukan.");
+      console.error(
+        "MEXA: elemen #mexaFeedList tidak ditemukan."
+      );
+
       return [];
     }
 
@@ -495,76 +612,114 @@ window.openPostMenu = openPostMenu;
 
       const { data: posts, error } = await client
         .from("posts")
-        .select("id,user_id,content,image_url,created_at")
-        .order("created_at", { ascending: false })
+        .select(
+          "id,user_id,content,image_url,created_at"
+        )
+        .order("created_at", {
+          ascending: false
+        })
         .limit(50);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
+      // AMBIL ID PENGGUNA UNIK
       const userIds = [
-        ...new Set((posts || [])
-          .map(function (post) {
-            return post.user_id;
-          })
-          .filter(Boolean))
+        ...new Set(
+          (posts || [])
+            .map(function (post) {
+              return post.user_id;
+            })
+            .filter(Boolean)
+        )
       ];
 
+      // AMBIL DATA PROFIL
       let profiles = [];
 
       if (userIds.length) {
         const result = await client
           .from("profiles")
-          .select("id,username,display_name,avatar_url")
+          .select(
+            "id,username,display_name,avatar_url"
+          )
           .in("id", userIds);
 
         if (result.error) {
-          console.warn("MEXA: profil belum termuat:", result.error);
+          console.warn(
+            "MEXA: profil belum termuat:",
+            result.error
+          );
         } else {
           profiles = result.data || [];
         }
       }
 
+      // PETAKAN PROFIL BERDASARKAN ID
       const profileMap = new Map(
         profiles.map(function (profile) {
           return [profile.id, profile];
         })
       );
 
+      // SIAPKAN KARTU POSTINGAN
       const fragment = document.createDocumentFragment();
 
       (posts || []).forEach(function (post) {
-        const profile = profileMap.get(post.user_id) || {};
-        fragment.appendChild(renderPost(post, profile));
+        const profile =
+          profileMap.get(post.user_id) || {};
+
+        fragment.appendChild(
+          renderPost(post, profile)
+        );
       });
 
-      // Feed baru dipasang setelah data berhasil diambil.
+      // GANTI FEED HANYA SETELAH DATA BERHASIL DIDAPAT
       feed.replaceChildren(fragment);
 
       showStatus(
-        posts && posts.length ? "" : "Belum ada postingan.",
+        posts && posts.length
+          ? ""
+          : "Belum ada postingan.",
         false
       );
 
       window.MEXA_POSTS = posts || [];
 
-      console.log("MEXA: postingan berhasil dimuat:", (posts || []).length);
+      console.log(
+        "MEXA: postingan berhasil dimuat:",
+        (posts || []).length
+      );
 
       return posts || [];
     } catch (error) {
-      console.error("MEXA memuat postingan:", error);
+      console.error(
+        "MEXA memuat postingan:",
+        error
+      );
 
-      // Jangan menghapus isi feed jika permintaan gagal.
-      showStatus("Gagal memuat postingan: " + error.message, true);
+      // Tidak menghapus feed yang sudah tampil jika permintaan gagal.
+      showStatus(
+        "Gagal memuat postingan: " + error.message,
+        true
+      );
 
       return [];
     }
   }
 
+  /* =====================================================
+     MEMBUAT POSTINGAN
+     ===================================================== */
+
   async function createPost(content) {
     const cleanContent = String(content || "").trim();
 
     if (!cleanContent) {
-      throw new Error("Tulis sesuatu sebelum memposting.");
+      throw new Error(
+        "Tulis sesuatu sebelum memposting."
+      );
     }
 
     const client = getClient();
@@ -576,15 +731,23 @@ window.openPostMenu = openPostMenu;
         user_id: user.id,
         content: cleanContent
       })
-      .select("id,user_id,content,image_url,created_at")
+      .select(
+        "id,user_id,content,image_url,created_at"
+      )
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     await loadPosts();
 
     return data;
   }
+
+  /* =====================================================
+     API GLOBAL MEXA POSTS
+     ===================================================== */
 
   window.MEXAPosts = {
     load: loadPosts,
@@ -594,15 +757,25 @@ window.openPostMenu = openPostMenu;
   window.MEXA_LOAD_FEED = loadPosts;
   window.loadPosts = loadPosts;
 
+  /* =====================================================
+     INISIALISASI
+     ===================================================== */
+
   function start() {
     loadPosts();
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start, { once: true });
+    document.addEventListener(
+      "DOMContentLoaded",
+      start,
+      { once: true }
+    );
   } else {
     start();
   }
 
-  console.log("MEXA PLATFORM: fungsi posting siap.");
+  console.log(
+    "MEXA PLATFORM: fungsi posting siap."
+  );
 })();
