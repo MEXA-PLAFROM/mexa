@@ -1,5 +1,5 @@
 /* =========================================
-   MEXA PREMIUM POST CARD
+   MEXA PREMIUM POST SYSTEM
 ========================================= */
 
 
@@ -21,67 +21,82 @@
 
   box-shadow: 0 8px 25px rgba(0,0,0,.25);
 
-  overflow: hidden;
+  overflow:hidden;
 
-  transition: .25s ease;
+  transition:.25s ease;
 
 }
-
 
 
 .mx-post-card:hover {
 
-  transform: translateY(-2px);
+  transform:translateY(-2px);
 
 }
 
 
 
+/* =========================
+   HEADER POST
+========================= */
 
-
-/* NAMA PENULIS */
 
 .mx-post-author {
-
-  font-size: 16px;
-
-  font-weight: 700;
-
-  color: var(--mx-text);
-
-  margin-bottom: 10px;
 
   display:flex;
 
   align-items:center;
 
+  gap:10px;
+
+  font-size:16px;
+
+  font-weight:700;
+
+  color:var(--mx-text);
+
+}
+
+
+
+.mx-post-avatar {
+
+  width:42px;
+
+  height:42px;
+
+  border-radius:50%;
+
+  object-fit:cover;
+
+  border:2px solid var(--mx-border);
+
 }
 
 
 
 
 
-/* ISI POST */
+/* =========================
+   ISI POST
+========================= */
+
 
 .mx-post-content {
 
-  font-size: 15px;
+  margin:14px 0;
 
-  line-height: 1.6;
+  font-size:15px;
 
-  color: var(--mx-text);
+  line-height:1.6;
 
-  margin: 12px 0;
+  color:var(--mx-text);
 
-  white-space: pre-wrap;
+  white-space:pre-wrap;
 
 }
 
 
-
-
-
-/* FOTO */
 
 .mx-post-image {
 
@@ -99,8 +114,6 @@
 
 
 
-/* TANGGAL */
-
 .mx-post-date {
 
   display:block;
@@ -117,13 +130,188 @@
 
 
 
-/* TOMBOL / AKSI NANTI */
+/* =========================
+   LIKE COMMENT SHARE
+========================= */
 
-.mx-post-card button {
+
+.mx-post-actions {
+
+  display:flex;
+
+  gap:8px;
+
+  margin-top:14px;
+
+  padding-top:12px;
+
+  border-top:1px solid var(--mx-border);
+
+}
+
+
+
+.mx-post-actions button {
+
+  flex:1;
+
+  background:transparent;
+
+  border:none;
+
+  border-radius:12px;
+
+  padding:9px;
+
+  color:var(--mx-text);
+
+  font-weight:600;
+
+  cursor:pointer;
+
+}
+
+
+
+.mx-post-actions button:hover {
+
+  background:rgba(255,255,255,.08);
+
+}
+
+
+
+
+
+/* =========================
+   KOMENTAR BOX
+========================= */
+
+
+.mx-comment-box {
+
+  margin-top:15px;
+
+  padding-top:12px;
+
+  border-top:1px solid var(--mx-border);
+
+}
+
+
+
+.mx-comment-item {
+
+  display:flex;
+
+  gap:10px;
+
+  margin-bottom:12px;
+
+}
+
+
+
+.mx-comment-avatar {
+
+  width:36px;
+
+  height:36px;
+
+  border-radius:50%;
+
+  object-fit:cover;
+
+}
+
+
+
+.mx-comment-content {
+
+  background:var(--mx-bg);
+
+  padding:10px 12px;
+
+  border-radius:14px;
+
+}
+
+
+
+.mx-comment-name {
+
+  font-weight:700;
+
+  color:var(--mx-text);
+
+  font-size:14px;
+
+}
+
+
+
+.mx-comment-text {
+
+  color:var(--mx-text);
+
+  font-size:14px;
+
+  margin-top:4px;
+
+}
+
+
+
+
+
+/* INPUT KOMENTAR */
+
+
+.mx-comment-input {
+
+  display:flex;
+
+  gap:8px;
+
+  margin-top:12px;
+
+}
+
+
+
+.mx-comment-input input {
+
+  flex:1;
+
+  border-radius:20px;
+
+  padding:10px 14px;
+
+  border:1px solid var(--mx-border);
+
+  background:var(--mx-bg);
 
   color:var(--mx-text);
 
 }
+
+
+
+.mx-comment-input button {
+
+  border-radius:20px;
+
+  padding:10px 15px;
+
+  background:var(--mx-primary);
+
+  color:white;
+
+  border:none;
+
+}
+
+
 
 
 
@@ -133,9 +321,16 @@
 
  .mx-post-card{
 
+   padding:14px;
+
    border-radius:15px;
 
-   padding:14px;
+ }
+
+
+ .mx-post-actions button{
+
+   font-size:13px;
 
  }
 
