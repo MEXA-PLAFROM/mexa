@@ -1,102 +1,304 @@
+/* =========================================
+   MEXA HOME JS
+   Fungsi halaman utama
+========================================= */
 
 (function () {
   "use strict";
 
-  const panel = document.getElementById("mexaQuickMenuPanel");
-  const toggle = document.getElementById("mexaMenuToggle");
 
-  function setMenu(open) {
-    if (!panel || !toggle) return;
-    panel.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
+  function $(id) {
+    return document.getElementById(id);
   }
 
-  toggle?.addEventListener("click", function () {
-    setMenu(panel.hidden);
-  });
 
-  document.addEventListener("click", function (event) {
-    if (!panel || panel.hidden) return;
-    if (panel.contains(event.target) || toggle?.contains(event.target)) return;
-    setMenu(false);
-  });
 
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") setMenu(false);
-  });
+  function initCreateButton() {
 
-  panel?.addEventListener("click", function (event) {
-    const button = event.target.closest("button");
-    if (!button) return;
+    const button = $("mx-create");
+    const composer = $("mexa-composer");
+    const textarea = $("mexaPostContent");
 
-    const page = button.dataset.page;
-    const action = button.dataset.action;
 
-    setMenu(false);
+    if (!button || !composer) return;
 
-    if (page === "home") location.href = "./index.html";
-    if (page === "profile") location.href = "./Profil.html";
-    if (page === "reels") location.href = "./Reels.html";
 
-    if (action === "settings") {
-      if (typeof window.mexaQuickSettings === "function") {
-        window.mexaQuickSettings();
-      } else {
-        notify("Pengaturan belum terhubung.");
+    button.addEventListener("click", function () {
+
+
+      composer.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+
+      if (textarea) {
+
+        setTimeout(function () {
+
+          textarea.focus();
+
+        }, 300);
+
       }
-    }
 
-    if (action === "core") {
-      if (typeof window.mexaToggleCore === "function") {
-        window.mexaToggleCore();
-      } else {
-        notify("MEXA Core belum terhubung.");
-      }
-    }
 
-if (action === "logout") {
-  setMenu(false);
-
-  if (typeof window.MEXALogoutFix === "function") {
-    window.MEXALogoutFix();
-  } else if (typeof window.MEXALogout === "function") {
-    window.MEXALogout();
-  } else if (typeof window.mexaConfirmLogout === "function") {
-    window.mexaConfirmLogout();
-  } else {
-    notify("Script logout belum dimuat. Periksa file logout.js.");
-  }
-
-  return;
-}
-                            
-  });
-
-  document.getElementById("mexaOpenComposer")
-    ?.addEventListener("click", function () {
-      if (typeof window.openCreateModal === "function") {
-        window.openCreateModal();
-      } else {
-        notify("Form postingan belum terhubung.");
-      }
     });
 
-  document.getElementById("mexaMobileCreate")
-    ?.addEventListener("click", function () {
-      if (typeof window.openCreateModal === "function") {
-        window.openCreateModal();
-      } else {
-        notify("Form postingan belum terhubung.");
-      }
-    });
 
-  function notify(message) {
-    if (typeof window.showToast === "function") {
-      window.showToast(message);
-    } else {
-      alert(message);
-    }
   }
 
-  console.log("MEXA Home shell siap.");
+
+
+
+
+
+  function initMediaButtons() {
+
+
+    const buttons =
+      document.querySelectorAll(
+        ".mx-create-buttons button"
+      );
+
+
+    if (!buttons.length) return;
+
+
+
+    buttons.forEach(function(button){
+
+
+      button.addEventListener(
+        "click",
+        function(){
+
+
+          const text =
+            button.textContent.trim();
+
+
+
+          if (text.includes("Foto")) {
+
+
+            alert(
+              "MEXA: fitur foto siap dihubungkan."
+            );
+
+
+          }
+
+
+          else if (text.includes("Video")) {
+
+
+            alert(
+              "MEXA: fitur video siap dihubungkan."
+            );
+
+
+          }
+
+
+          else if (text.includes("Perasaan")) {
+
+
+            alert(
+              "MEXA: fitur perasaan siap dihubungkan."
+            );
+
+
+          }
+
+
+        }
+      );
+
+
+    });
+
+
+  }
+
+
+
+
+
+
+
+
+  function initRefreshStory(){
+
+
+    const buttons =
+      document.querySelectorAll(
+        ".mx-title button"
+      );
+
+
+    buttons.forEach(function(button){
+
+
+      if (
+        button.textContent.includes("Segarkan")
+      ){
+
+
+        button.addEventListener(
+          "click",
+          function(){
+
+
+            const list =
+              $("mexa-story-list");
+
+
+            if(list){
+
+
+              list.innerHTML =
+              "Memuat cerita MEXA...";
+
+
+              setTimeout(function(){
+
+
+                list.innerHTML =
+                "Belum ada cerita terbaru.";
+
+
+              },800);
+
+
+            }
+
+
+          }
+        );
+
+
+      }
+
+
+    });
+
+
+  }
+
+
+
+
+
+
+
+
+  function initPostButton(){
+
+
+    const button =
+      $("mexaPostButton");
+
+
+    const textarea =
+      $("mexaPostContent");
+
+
+
+    if(!button || !textarea) return;
+
+
+
+    button.addEventListener(
+      "click",
+      function(){
+
+
+        const content =
+          textarea.value.trim();
+
+
+
+        if(!content){
+
+
+          alert(
+            "Tulis sesuatu sebelum posting."
+          );
+
+
+          return;
+
+
+        }
+
+
+
+        console.log(
+          "Draft posting MEXA:",
+          content
+        );
+
+
+
+        alert(
+          "Posting siap dikirim ke MEXA."
+        );
+
+
+      }
+    );
+
+
+  }
+
+
+
+
+
+
+
+
+  function init(){
+
+
+    initCreateButton();
+
+    initMediaButtons();
+
+    initRefreshStory();
+
+    initPostButton();
+
+
+  }
+
+
+
+
+
+
+
+  if(
+    document.readyState === "loading"
+  ){
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      init,
+      {
+        once:true
+      }
+    );
+
+
+  }else{
+
+
+    init();
+
+
+  }
+
+
 })();
