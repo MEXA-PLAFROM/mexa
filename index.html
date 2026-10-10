@@ -1,119 +1,453 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b0818">
+
   <title>MEXA</title>
 
-  <!-- CSS MEXA AKTIF -->
-<link rel="stylesheet" href="./home.css">
-<link rel="stylesheet" href="./home-themes.css">
+  <!-- LAYOUT -->
+  <link rel="stylesheet" href="./home.css">
+
+  <!-- WARNA TEMA -->
+  <link rel="stylesheet" href="./home-themes.css">
 </head>
 
+
 <body>
+
 <div id="mexa-app">
 
-  <!-- HEADER MEXA -->
-  <header class="mx-app-header">
-    <div class="mx-brand" aria-label="MEXA">
-      <span class="mx-m">M</span>
-      <span class="mx-e"><i></i><i></i><i></i></span>
-      <span class="mx-x">X</span>
-      <span class="mx-a">A</span>
-    </div>
 
-    <div class="mx-search-box">
-      <span aria-hidden="true">⌕</span>
-      <input type="search" placeholder="Cari di MEXA" aria-label="Cari di MEXA">
-    </div>
+<!-- ================= HEADER MEXA ================= -->
 
-    <div class="mx-header-buttons">
-      <button type="button" id="mx-notification" aria-label="Notifikasi">♢</button>
-      <a href="Messenger.html" aria-label="Messenger">💬</a>
-      <a href="Profil.html" aria-label="Profil">♙</a>
-      <button type="button" id="mx-main-menu" aria-label="Buka menu" aria-controls="mx-control-panel">☰</button>
-    </div>
-  </header>
+<header class="mx-app-header">
 
-  <!-- MENU KONTROL -->
-  <div id="mx-control-panel" hidden>
-    <button type="button">⌂ Beranda</button>
-    <button type="button">▶ Reels</button>
-    <button type="button">♧ Grup</button>
-    <button type="button">◯ Profil</button>
-    <button type="button">⚙ Pengaturan</button>
-    <button type="button">🎨 Tema</button>
+  <div class="mx-brand" aria-label="MEXA">
+
+    <span class="mx-m">M</span>
+
+    <span class="mx-e">
+      <i></i>
+      <i></i>
+      <i></i>
+    </span>
+
+    <span class="mx-x">X</span>
+
+    <span class="mx-a">A</span>
+
   </div>
 
-  <!-- KONTEN UTAMA -->
-  <main class="mx-container">
 
-    <!-- CERITA -->
-    <section class="mx-card" id="mexa-stories">
-      <div class="mx-title">
-        <h2>Cerita</h2>
-        <button type="button">Segarkan</button>
-      </div>
-      <div id="mexa-story-list"></div>
-    </section>
 
-    <!-- BUAT POSTINGAN -->
-    <section class="mx-card" id="mexa-composer">
-      <h2>Buat postingan</h2>
+  <div class="mx-search-box">
 
-      <textarea
-        id="mexaPostContent"
-        placeholder="Apa yang ingin kamu bagikan?"
-        rows="4"
-        aria-label="Isi postingan"
-      ></textarea>
+    <span aria-hidden="true">
+      ⌕
+    </span>
 
-      <div class="mx-create-buttons">
-        <button type="button">📷 Foto</button>
-        <button type="button">🎬 Video</button>
-        <button type="button">😊 Perasaan</button>
-      </div>
+    <input
+      type="search"
+      placeholder="Cari di MEXA"
+      aria-label="Cari di MEXA"
+    >
 
-      <button type="button" id="mexaPostButton">Posting</button>
-    </section>
+  </div>
 
-    <!-- FEED -->
-    <section class="mx-card" id="mexa-home-posts">
-      <div class="mx-title">
-        <h2>Beranda MEXA</h2>
-      </div>
-      <div id="mexaFeedList">
-        <!-- Postingan dimuat oleh JavaScript -->
-      </div>
-    </section>
 
-  </main>
 
-  <!-- NAVIGASI BAWAH -->
-  <nav class="mx-bottom-nav" aria-label="Navigasi utama">
-    <a href="index.html"><span aria-hidden="true">⌂</span><span>Home</span></a>
-    <a href="Reels.html"><span aria-hidden="true">▶</span><span>Reels</span></a>
-    <button type="button" id="mx-create"><span aria-hidden="true">＋</span><span>Buat</span></button>
-    <a href="Grup.html"><span aria-hidden="true">♧</span><span>Grup</span></a>
-    <a href="Profil.html"><span aria-hidden="true">◯</span><span>Profil</span></a>
-  </nav>
+  <div class="mx-header-buttons">
+
+    <button
+      type="button"
+      id="mx-notification"
+      aria-label="Notifikasi">
+      ♢
+    </button>
+
+
+    <a href="Messenger.html"
+       aria-label="Messenger">
+       💬
+    </a>
+
+
+    <a href="Profil.html"
+       aria-label="Profil">
+       ♙
+    </a>
+
+
+    <button
+      type="button"
+      id="mx-main-menu"
+      aria-label="Buka menu"
+      aria-controls="mx-control-panel">
+
+      ☰
+
+    </button>
+
+
+  </div>
+
+</header>
+
+
+
+
+
+<!-- ================= MENU KONTROL ================= -->
+
+
+<div id="mx-control-panel" hidden>
+
+
+<button type="button">
+⌂ Beranda
+</button>
+
+
+<button type="button">
+▶ Reels
+</button>
+
+
+<button type="button">
+♧ Grup
+</button>
+
+
+<button type="button">
+◯ Profil
+</button>
+
+
+<button type="button">
+⚙ Pengaturan
+</button>
+
+
+<button
+type="button"
+id="mx-theme-button">
+
+🎨 Tema
+
+</button>
+
 
 </div>
 
-<!-- SCRIPT TEMA AKTIF -->
-<script src="./themes.js"></script>
-<script src="./mexa-control.js"></script>
-  
-<!-- SCRIPT LAIN DIMATIKAN SEMENTARA -->
-<!--
+
+
+
+
+<!-- ================= KONTEN UTAMA ================= -->
+
+
+<main class="mx-container">
+
+
+
+<!-- CERITA -->
+
+<section
+class="mx-card"
+id="mexa-stories">
+
+
+<div class="mx-title">
+
+
+<h2>
+Cerita
+</h2>
+
+
+<button type="button">
+Segarkan
+</button>
+
+
+</div>
+
+
+<div id="mexa-story-list">
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+<!-- BUAT POSTINGAN -->
+
+
+<section
+class="mx-card"
+id="mexa-composer">
+
+
+<h2>
+Buat postingan
+</h2>
+
+
+
+<textarea
+id="mexaPostContent"
+rows="4"
+placeholder="Apa yang ingin kamu bagikan?"
+aria-label="Isi postingan">
+</textarea>
+
+
+
+
+
+<div class="mx-create-buttons">
+
+
+<button type="button">
+📷 Foto
+</button>
+
+
+<button type="button">
+🎬 Video
+</button>
+
+
+<button type="button">
+😊 Perasaan
+</button>
+
+
+
+</div>
+
+
+
+
+<button
+type="button"
+id="mexaPostButton">
+
+Posting
+
+</button>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+<!-- FEED -->
+
+
+<section
+class="mx-card"
+id="mexa-home-posts">
+
+
+<div class="mx-title">
+
+
+<h2>
+Beranda MEXA
+</h2>
+
+
+</div>
+
+
+
+<div id="mexaFeedList">
+
+<!-- DATA POST MASUK DI SINI -->
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+
+
+<!-- ================= NAVIGASI APP ================= -->
+
+
+<nav
+class="mx-bottom-nav"
+aria-label="Navigasi utama">
+
+
+<a href="index.html">
+
+<span>
+⌂
+</span>
+
+<span>
+Home
+</span>
+
+</a>
+
+
+
+
+<a href="Reels.html">
+
+<span>
+▶
+</span>
+
+<span>
+Reels
+</span>
+
+</a>
+
+
+
+
+<button
+type="button"
+id="mx-create">
+
+
+<span>
+＋
+</span>
+
+<span>
+Buat
+</span>
+
+
+</button>
+
+
+
+
+
+<a href="Grup.html">
+
+
+<span>
+♧
+</span>
+
+
+<span>
+Grup
+</span>
+
+
+</a>
+
+
+
+
+
+<a href="Profil.html">
+
+
+<span>
+◯
+</span>
+
+
+<span>
+Profil
+</span>
+
+
+</a>
+
+
+
+</nav>
+
+
+
+
+
+
+<!-- TEMPAT PANEL TEMA -->
+
+<div id="mexa-theme-container"></div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- ================= SCRIPT ================= -->
+
+
 <script src="./auth-client.js"></script>
+
 <script src="./js/mexa-api-client.js"></script>
+
+
+<!-- MESIN TEMA -->
+
+<script src="./themes.js"></script>
+
+
+<!-- KONTROL MENU -->
+
+<script src="./mexa-control.js"></script>
+
+
+
+<!-- FEED -->
+
 <script src="./js/functions-post-feed.js"></script>
+
+
+
+<!-- POST CONTROL -->
+
 <script src="./post-menu.js"></script>
+
 <script src="./post-owner-fix.js"></script>
--->
+
+
 
 </body>
 </html>
