@@ -84,19 +84,67 @@
         card.id = "post-" + post.id;
         card.dataset.postId = String(post.id);
 
-        const author = document.createElement("div");
-        author.className = "mx-post-author";
-        author.textContent =
-          profile.display_name ||
-          profile.username ||
-          "Pengguna MEXA";
+     // =============================
+// HEADER POST PREMIUM
+// =============================
 
-        const content = document.createElement("div");
-        content.className = "mx-post-content";
-        content.textContent = post.content || "";
+const header = document.createElement("div");
+header.className = "mx-post-header";
 
-        card.append(author, content);
 
+const avatar = document.createElement("img");
+avatar.className = "mx-post-avatar";
+avatar.src =
+  profile.avatar_url ||
+  "./assets/default-avatar.png";
+avatar.alt = "Foto profil";
+
+
+const author = document.createElement("a");
+author.className = "mx-post-author";
+author.href =
+  "./Profil.html?id=" + post.user_id;
+
+
+author.textContent =
+  profile.display_name ||
+  profile.username ||
+  "Pengguna MEXA";
+
+
+
+const menu = document.createElement("button");
+menu.className = "mx-post-menu";
+menu.textContent = "⋮";
+
+
+
+header.append(
+  avatar,
+  author,
+  menu
+);
+
+
+
+// =============================
+// ISI POST
+// =============================
+
+const content = document.createElement("div");
+
+content.className =
+  "mx-post-content";
+
+content.textContent =
+  post.content || "";
+
+
+
+card.append(
+  header,
+  content
+);
         if (post.image_url) {
           const image = document.createElement("img");
           image.className = "mx-post-image";
