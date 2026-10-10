@@ -265,6 +265,14 @@
         viewerId === ownerId
       );
 
+       console.log("[MEXA PEMERIKSAAN PEMILIK]", {
+  sesiLoginTerbaca: Boolean(viewerId),
+  pemilikPostinganTerbaca: Boolean(ownerId),
+  idCocok: Boolean(
+    viewerId && ownerId && viewerId === ownerId
+  ),
+  isOwner: isOwner
+});
       // TUTUP MENU LAMA
       const oldMenu = document.getElementById(
         "mexa-post-menu-overlay"
