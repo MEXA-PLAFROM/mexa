@@ -294,3 +294,232 @@ button {
  var(--mx-primary);
 
 }
+/* ==================================================
+   MEXA PREMIUM SHELL UI
+   POST CARD + CONTROL READY
+   ================================================== */
+
+
+/* HEADER PREMIUM */
+
+.mx-header {
+  backdrop-filter: blur(18px);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15,11,37,.95),
+      rgba(20,16,39,.90)
+    );
+}
+
+
+/* POST FEED PREMIUM */
+
+#mexaFeedList {
+  gap: 18px;
+}
+
+
+.mx-feed-card,
+.mx-post-card {
+
+  position: relative;
+
+  padding: 18px;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.05),
+      rgba(255,255,255,.01)
+    ),
+    var(--mx-panel);
+
+  border:1px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,.35);
+
+}
+
+
+/* HEADER POST */
+
+.mx-feed-header {
+
+  position:relative;
+
+  padding-right:45px;
+
+}
+
+
+/* NAMA */
+
+.mx-feed-name {
+
+ font-size:16px;
+ font-weight:800;
+
+}
+
+
+/* TANGGAL */
+
+.mx-feed-date {
+
+ opacity:.7;
+
+}
+
+
+/* TITIK TIGA POST */
+
+.mx-post-menu {
+
+ position:absolute;
+
+ right:10px;
+ top:10px;
+
+ width:38px;
+ height:38px;
+
+ border-radius:50%;
+
+ border:1px solid var(--mx-border);
+
+ background:#211a38;
+
+ color:white;
+
+ font-size:22px;
+
+ display:grid;
+ place-items:center;
+
+}
+
+
+/* HILANGKAN BUTTON STYLE LAMA */
+
+.mx-post-menu button {
+
+ all:unset;
+
+}
+
+
+/* MENU AKSI POST */
+
+.mx-post-control {
+
+ position:absolute;
+
+ right:10px;
+ top:55px;
+
+ z-index:50;
+
+ width:200px;
+
+ padding:10px;
+
+ border-radius:16px;
+
+ background:#17122b;
+
+ border:1px solid var(--mx-border);
+
+ box-shadow:
+ 0 15px 40px #0008;
+
+}
+
+
+/* EMPTY FEED */
+
+.mx-feed-empty {
+
+ padding:35px;
+
+ border-radius:20px;
+
+ background:#151027;
+
+}
+
+
+/* STATUS FEED */
+
+#mexaFeedStatus {
+
+ display:none;
+
+}
+
+
+/* SECTION HEADER */
+
+.mx-section-heading {
+
+ margin-bottom:14px;
+
+}
+
+
+/* TOMBOL KONTROL */
+
+.mx-control-btn {
+
+ display:flex;
+
+ align-items:center;
+
+ gap:10px;
+
+ padding:12px 15px;
+
+ border-radius:14px;
+
+ background:#211a38;
+
+ border:1px solid var(--mx-border);
+
+ color:white;
+
+}
+
+
+.mx-control-btn:hover {
+
+ border-color:var(--mx-cyan);
+
+}
+
+
+
+/* MOBILE PREMIUM */
+
+@media(max-width:700px){
+
+ .mx-feed-card,
+ .mx-post-card {
+
+  padding:14px;
+
+  border-radius:18px;
+
+ }
+
+
+ .mx-post-menu {
+
+  width:34px;
+  height:34px;
+
+ }
+
+   }
