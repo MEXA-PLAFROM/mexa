@@ -100,10 +100,15 @@
       <a href="./Profil.html">◯<span>Profil</span></a>
     </nav>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- KONEKSI SUPABASE MEXA -->
 <script src="./auth-client.js"></script>
+
+<!-- PENJAGA HALAMAN HOME -->
 <script>
-/* MEXA — PENJAGA HALAMAN HOME */
 (async function () {
   const app = document.getElementById("mexa-app");
 
@@ -133,8 +138,15 @@
   }
 })();
 </script>
-    
+
+<!-- FILE HOME -->
 <script src="./home.js"></script>
+
+<!-- FITUR POSTINGAN -->
+<script src="./functions-post.js"></script>
+<script src="./post-create.js"></script>
+
+<!-- FITUR LAINNYA -->
 <script src="./post-menu.js"></script>
 <script src="./post-share.js"></script>
 <script src="./komentar-premium.js"></script>
@@ -142,8 +154,6 @@
 <script src="./post-owner-fix.js"></script>
 <script src="./functions-feed.js"></script>
 <script src="./themes.js"></script>
-<script src="./post-create.js"></script>
-<script src="./functions-post.js"></script>
 <script src="./logout.js"></script>
 </body>
-</html>
+  </html>
