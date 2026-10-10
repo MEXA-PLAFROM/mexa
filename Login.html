@@ -1079,6 +1079,48 @@ async function handleAuth(event) {
 
 
   try {
+    
+/* =====================================================
+MEXA — LUPA PASSWORD
+===================================================== */
+
+async function mexaForgotPassword() {
+const emailInput = document.getElementById("email");
+const email = emailInput.value.trim().toLowerCase();
+
+if (!email) {
+showMessage("Masukkan email akun MEXA terlebih dahulu.");
+emailInput.focus();
+return;
+}
+
+try {
+showMessage("Sedang mengirim permintaan pemulihan...", "success");
+
+```
+const redirectTo =
+  window.location.origin + window.location.pathname;
+
+const { error } = await mexaSupabase.auth.resetPasswordForEmail(
+  email,
+  { redirectTo }
+);
+
+if (error) throw error;
+
+showMessage(
+  "Jika email terdaftar, tautan pemulihan akan dikirim. Periksa kotak masuk dan folder spam.",
+  "success"
+);
+```
+
+} catch (error) {
+console.error("MEXA RESET PASSWORD:", error);
+showMessage(
+error.message || "Gagal mengirim permintaan. Coba lagi nanti."
+);
+}
+}
 
     /* =====================================================
        LOGIN
