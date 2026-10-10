@@ -498,3 +498,193 @@ button {
   background: var(--mx-primary);
 
 }
+/* =========================================
+   MEXA THEME COMPONENT COLOR
+========================================= */
+
+
+/* SEMUA TEKS UTAMA */
+
+body,
+button,
+a,
+input,
+textarea {
+
+  color: var(--mx-text);
+
+}
+
+
+
+/* HEADER */
+
+.mx-app-header {
+
+  color: var(--mx-text);
+
+}
+
+
+
+.mx-header-buttons button,
+.mx-header-buttons a {
+
+  color: var(--mx-text);
+
+}
+
+
+
+/* ICON */
+
+.mx-header-buttons button:hover,
+.mx-header-buttons a:hover {
+
+  color: var(--mx-primary);
+
+}
+
+
+
+
+
+/* LOGO MEXA */
+
+.mx-m,
+.mx-a {
+
+  color: var(--mx-primary);
+
+}
+
+
+
+.mx-x {
+
+  color: var(--mx-secondary);
+
+}
+
+
+
+.mx-e i {
+
+  background: var(--mx-primary);
+
+}
+
+
+
+
+/* SEARCH */
+
+.mx-search-box {
+
+  background: var(--mx-panel);
+
+  border:1px solid var(--mx-border);
+
+}
+
+
+.mx-search-box input {
+
+  color:var(--mx-text);
+
+}
+
+
+
+
+/* MENU ☰ */
+
+#mx-main-menu {
+
+  background:var(--mx-panel);
+
+  color:var(--mx-text);
+
+  border:1px solid var(--mx-border);
+
+}
+
+
+
+#mx-main-menu:hover {
+
+  color:var(--mx-primary);
+
+}
+
+
+
+
+/* MENU KONTROL */
+
+#mx-control-panel button {
+
+  background:var(--mx-panel);
+
+  color:var(--mx-text);
+
+}
+
+
+
+#mx-control-panel button:hover {
+
+  color:var(--mx-primary);
+
+}
+
+
+
+/* NAVIGASI BAWAH */
+
+.mx-bottom-nav {
+
+  background:var(--mx-panel);
+
+}
+
+
+
+.mx-bottom-nav a,
+.mx-bottom-nav button {
+
+  color:var(--mx-text);
+
+}
+
+
+.mx-bottom-nav a:hover,
+.mx-bottom-nav button:hover {
+
+  color:var(--mx-primary);
+
+}
+
+
+
+/* POST BUTTON */
+
+#mexaPostButton {
+
+  background:var(--mx-primary);
+
+  color:#fff;
+
+}
+
+
+
+/* TEXTAREA */
+
+#mexaPostContent {
+
+  background:var(--mx-panel);
+
+  color:var(--mx-text);
+
+}
