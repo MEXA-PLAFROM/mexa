@@ -373,4 +373,84 @@
 }
    
 
+/* =========================================
+   MEXA PREMIUM — HEADER POSTINGAN
+   Foto dan nama di kiri, titik tiga di kanan
+========================================= */
+
+.mx-post-card .mx-post-header {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
 }
+
+/* Foto profil */
+.mx-post-card .mx-post-profile-link {
+  display: flex !important;
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  height: 44px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+.mx-post-card .mx-post-avatar:not([hidden]) {
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.mx-post-card .mx-post-avatar[hidden] {
+  display: none !important;
+}
+
+/* Nama panggilan dan username */
+.mx-post-card .mx-post-author-group {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  gap: 3px !important;
+  margin: 0 !important;
+}
+
+/* Tombol titik tiga di kanan atas */
+.mx-post-card .mx-post-menu {
+  display: flex !important;
+  flex: 0 0 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  position: static !important;
+  transform: none !important;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mx-post-card .mx-post-menu:hover {
+  background: rgba(140, 100, 255, 0.15);
+   }
+
