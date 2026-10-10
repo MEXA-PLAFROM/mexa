@@ -4,63 +4,47 @@
 
   if (window.MEXALogoutFixLoaded) return;
   window.MEXALogoutFixLoaded = true;
+  
+async function logout() {
+  if (!confirm("Yakin ingin keluar dari akun MEXA?")) return;
 
-  async function logout() {
-    if (!confirm("Yakin ingin keluar dari akun MEXA?")) return;
+  try {
+    // Gunakan client Supabase milik MEXA.
+    const client =
+      window.mexaSupabase ||
+      window.supabaseClient ||
+      window.supabase;
 
-    try {
-      // Keluar dari sesi Supabase jika client tersedia.
-      const client =
-        window.supabaseClient ||
-        window.mexaSupabase ||
-        window.supabase;
-
-      if (client?.auth?.signOut) {
-        const { error } = await client.auth.signOut();
-        if (error) throw error;
-      } else if (typeof window.mexaLogout === "function") {
-        await window.mexaLogout();
-      }
-
-      // Hapus data sesi lokal MEXA.
-      [
-        "mexa_user",
-        "currentUser",
-        "mexaCurrentUser"
-      ].forEach(function (key) {
-        localStorage.removeItem(key);
-        sessionStorage.removeItem(key);
-      });
-
-      window.currentUser = null;
-      window.mexaCurrentUser = null;
-
-      // Pindah ke Login dengan URL absolut.
-      window.location.replace(
-        new URL("./Login.html", window.location.href).href
-      );
-    } catch (error) {
-      console.error("MEXA logout error:", error);
-      alert("Logout gagal. Periksa Console untuk detail error.");
+    if (!client?.auth?.signOut) {
+      throw new Error("Client autentikasi Supabase tidak ditemukan.");
     }
-  }
 
-  window.MEXALogoutFix = logout;
+    // Akhiri sesi Supabase.
+    const { error } = await client.auth.signOut({
+      scope: "local"
+    });
 
-  document.addEventListener("click", function (event) {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
+    if (error) throw error;
 
-    const button = target.closest(
-      '#mexaLogout, [data-mexa-logout], [data-action="logout"]'
+    // Hapus data sesi lokal MEXA.
+    [
+      "mexa_user",
+      "currentUser",
+      "mexaCurrentUser"
+    ].forEach(function (key) {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+
+    window.currentUser = null;
+    window.mexaCurrentUser = null;
+
+    // Kembali ke Login.
+    window.location.replace(
+      new URL("./Login.html", window.location.href).href
     );
-
-    if (!button) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    logout();
-  }, true);
-
-  console.log("MEXA Logout Fix aktif.");
-})();
+  } catch (error) {
+    console.error("MEXA logout error:", error);
+    alert("Logout gagal: " + error.message);
+  }
+}
