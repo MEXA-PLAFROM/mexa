@@ -16,8 +16,7 @@
   window.MEXAPostCreateLoaded = true;
 
   const API_URL =
-    "https://mzcobvfvmhpleonncyrr.supabase.co/functions/v1/mexa-api";
-
+    https://mzcobvfvmhpleonncyrr.supabase.co/functions/v1/mexa-api
   let isSubmitting = false;
 
 async function getCurrentUser() {
