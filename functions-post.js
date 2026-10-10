@@ -111,38 +111,42 @@
 
     // Tidak menghapus atau mengubah postingan.
     // Menu akan dihubungkan ke sistem menu MEXA berikutnya.
-    menu.addEventListener("click", function () {
-      if (typeof window.openPostMenu === "function") {
-        window.openPostMenu(post.id);
-      } else {
-        alert("Menu postingan akan disambungkan berikutnya.");
-      }
-    });
+    
+menu.addEventListener("click", async function () {
+  try {
+    const client = getClient();
 
-    header.append(profileLink, authorGroup, menu);
-    card.appendChild(header);
+    // Periksa akun yang sedang login
+    const { data, error } = await client.auth.getUser();
 
-    // ISI POSTINGAN
-    const content = document.createElement("div");
-    content.className = "mx-post-content";
-    content.textContent = post.content || "";
-    card.appendChild(content);
+    if (error) throw error;
 
-    // FOTO POSTINGAN
-    if (post.image_url) {
-      const image = document.createElement("img");
+    const viewerId = data.user ? data.user.id : null;
+    const ownerId = post.user_id || "";
 
-      image.className = "mx-post-image";
-      image.src = post.image_url;
-      image.alt = "Foto postingan";
-      image.loading = "lazy";
+    // Apakah postingan ini milik akun yang sedang login?
+    const isOwner =
+      Boolean(viewerId) &&
+      String(viewerId) === String(ownerId);
 
-      image.onerror = function () {
-        image.remove();
-      };
-
-      card.appendChild(image);
+    // Kirim identitas pemilik dan pengunjung ke sistem menu
+    if (typeof window.openPostMenu === "function") {
+      window.openPostMenu(post.id, {
+        post: post,
+        viewerId: viewerId,
+        ownerId: ownerId,
+        isOwner: isOwner
+      });
+    } else {
+      console.error("MEXA: fungsi openPostMenu belum tersedia.");
+      alert("Menu postingan belum aktif.");
     }
+  } catch (error) {
+    console.error("MEXA: gagal memeriksa pemilik postingan:", error);
+    alert("Gagal memeriksa akun. Silakan coba lagi.");
+  }
+});
+         
 
     // WAKTU POSTINGAN
     if (post.created_at) {
