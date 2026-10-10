@@ -436,33 +436,7 @@ Profil
 <script src="./auth-client.js"></script>
 <script src="./js/mexa-api-client.js"></script>
 </script>
-  <!-- PENJAGA HALAMAN HOME -->
-<script>
-(async function () {
-  const app = document.getElementById("mexa-app");
-  if (app) {
-    app.style.visibility = "hidden";
-  }
-  try {
-    if (!window.mexaSupabase?.auth) {
-      throw new Error("Klien autentikasi MEXA belum tersedia.");
-    }
-    const { data, error } =
-      await window.mexaSupabase.auth.getSession();
-    if (error || !data?.session?.user) {
-      window.location.replace("./Login.html");
-      return;
-    }
-    if (app) {
-      app.style.visibility = "visible";
-    }
-  } catch (error) {
-    console.error("MEXA penjaga login:", error);
-    window.location.replace("./Login.html");
-  }
-})();
   
-
 
 <!-- MESIN TEMA -->
 
