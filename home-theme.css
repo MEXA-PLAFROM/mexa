@@ -388,3 +388,122 @@ body {
   background:#151025;
   color:white;
 }
+
+/* =========================================
+   MEXA TEXT SYSTEM
+   MENGIKUTI TEMA
+========================================= */
+
+
+body {
+  color: var(--mx-text);
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+label,
+div {
+  color: inherit;
+}
+
+
+/* Judul */
+
+.mx-title h2,
+.mx-card h2 {
+
+  color: var(--mx-text);
+
+}
+
+
+/* Teks kecil */
+
+.mx-muted {
+
+  color: var(--mx-muted);
+
+}
+
+
+
+/* Input */
+
+input,
+textarea {
+
+  color: var(--mx-text);
+
+}
+
+
+input::placeholder,
+textarea::placeholder {
+
+  color: var(--mx-muted);
+
+}
+
+
+
+/* Tombol */
+
+button {
+
+  color: var(--mx-text);
+
+}
+
+
+
+/* Navigasi bawah */
+
+.mx-bottom-nav a,
+.mx-bottom-nav button {
+
+  color: var(--mx-text);
+
+}
+
+
+
+/* Tombol aktif */
+
+.mx-bottom-nav a:hover,
+.mx-bottom-nav button:hover {
+
+  color: var(--mx-primary);
+
+}
+
+
+
+/* Logo */
+
+.mx-m,
+.mx-a {
+
+  color: var(--mx-primary);
+
+}
+
+
+.mx-x {
+
+  color: var(--mx-secondary);
+
+}
+
+
+.mx-e i {
+
+  background: var(--mx-primary);
+
+}
