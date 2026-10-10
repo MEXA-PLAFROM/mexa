@@ -156,5 +156,16 @@
 <script src="./functions-feed.js"></script>
 <script src="./themes.js"></script>
 <script src="./logout.js"></script>
+<script src="./js/functions-post-feed.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.MEXAPostFeed) {
+    window.MEXAPostFeed.loadHome("#homeFeed")
+      .catch(function (error) {
+        console.error("MEXA Home Feed:", error);
+      });
+  }
+});
+</script>
 </body>
   </html>
