@@ -789,6 +789,7 @@
    MEXA SUPABASE
    ========================================================= */
 
+
 const MEXA_SUPABASE_URL =
   "https://yozylignolfvkemuhfse.supabase.co";
 
@@ -796,12 +797,13 @@ const MEXA_SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo";
 
 const mexaSupabase =
+  window.mexaSupabase ||
   window.supabase.createClient(
     MEXA_SUPABASE_URL,
     MEXA_SUPABASE_PUBLISHABLE_KEY
   );
 
-
+window.mexaSupabase = mexaSupabase;
 /* =========================================================
    STATE
    ========================================================= */
