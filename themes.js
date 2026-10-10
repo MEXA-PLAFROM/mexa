@@ -1,86 +1,247 @@
-/* MEXA THEMES */
+/* =========================================
+   MEXA THEMES JS
+========================================= */
+
+
 (function () {
-  "use strict";
 
-  const STORAGE_KEY = "mexa-theme";
 
-  const THEMES = [
-    "midnight",
-    "arctic",
-    "emerald",
-    "sunset",
-    "cyberpunk"
-  ];
+const THEMES = [
 
-  function setTheme(theme) {
-    if (!THEMES.includes(theme)) return false;
+  {
+    id: "midnight",
+    name: "Midnight Neon"
+  },
 
-    document.documentElement.dataset.theme = theme;
-    document.body.dataset.theme = theme;
+  {
+    id: "arctic",
+    name: "Arctic Light"
+  },
 
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch (error) {
-      console.warn("Tema tidak dapat disimpan:", error);
-    }
+  {
+    id: "emerald",
+    name: "Emerald"
+  },
 
-    window.dispatchEvent(
-      new CustomEvent("mexa:themechange", {
-        detail: { theme: theme }
-      })
-    );
+  {
+    id: "sunset",
+    name: "Sunset"
+  },
 
-    return true;
+  {
+    id: "cyberpunk",
+    name: "Cyberpunk"
   }
 
-  function getAutoTheme() {
-    const hour = new Date().getHours();
+];
 
-    if (hour >= 5 && hour < 10) return "arctic";
-    if (hour >= 10 && hour < 16) return "emerald";
-    if (hour >= 16 && hour < 19) return "sunset";
-    if (hour >= 19 || hour < 5) return "midnight";
 
-    return "cyberpunk";
-  }
 
-  function loadTheme() {
-    let savedTheme = null;
+const STORAGE_KEY = "mexa-theme";
 
-    try {
-      savedTheme = localStorage.getItem(STORAGE_KEY);
-    } catch (error) {}
 
-    setTheme(
-      THEMES.includes(savedTheme)
-        ? savedTheme
-        : getAutoTheme()
-    );
-  }
 
-  window.MEXA_THEME = {
-    set: setTheme,
 
-    auto: function () {
-      return setTheme(getAutoTheme());
-    },
 
-    current: function () {
-      return document.body.dataset.theme || "midnight";
-    },
+function applyTheme(theme){
 
-    available: function () {
-      return THEMES.slice();
-    }
-  };
 
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      loadTheme,
-      { once: true }
-    );
-  } else {
-    loadTheme();
-  }
+  document.body.dataset.theme = theme;
+
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    theme
+  );
+
+
+}
+
+
+
+
+
+
+
+function getSavedTheme(){
+
+
+  return localStorage.getItem(
+    STORAGE_KEY
+  ) || "midnight";
+
+
+}
+
+
+
+
+
+
+
+
+function createThemePanel(){
+
+
+const container =
+document.getElementById(
+"mexa-theme-container"
+);
+
+
+
+if(!container) return;
+
+
+
+
+const panel =
+document.createElement("div");
+
+
+
+panel.id =
+"mexa-theme-panel";
+
+
+
+panel.hidden = true;
+
+
+
+
+const title =
+document.createElement("h3");
+
+
+title.textContent =
+"Tema MEXA";
+
+
+
+panel.appendChild(title);
+
+
+
+
+
+
+THEMES.forEach(theme=>{
+
+
+const button =
+document.createElement("button");
+
+
+
+button.type =
+"button";
+
+
+
+button.textContent =
+theme.name;
+
+
+
+
+button.onclick =
+()=>{
+
+
+applyTheme(theme.id);
+
+
+
+panel.hidden = true;
+
+
+
+};
+
+
+
+panel.appendChild(button);
+
+
+
+});
+
+
+
+
+
+
+container.appendChild(panel);
+
+
+
+
+
+
+const themeButton =
+document.getElementById(
+"mx-theme-button"
+);
+
+
+
+
+if(themeButton){
+
+
+themeButton.onclick =
+()=>{
+
+
+panel.hidden =
+!panel.hidden;
+
+
+
+};
+
+
+
+}
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function initTheme(){
+
+
+applyTheme(
+getSavedTheme()
+);
+
+
+createThemePanel();
+
+
+}
+
+
+
+
+
+
+
+document.addEventListener(
+"DOMContentLoaded",
+initTheme
+);
+
+
+
 })();
