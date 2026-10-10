@@ -1,165 +1,199 @@
 /* =====================================================
-   MEXA — FUNCTIONS POST
-   File: functions-post.js
-   Fungsi: membuat, menyimpan, dan memuat postingan.
-   ===================================================== */
+MEXA PLATFORM — POST CREATE
+File: post-create.js
+===================================================== */
 
 (function () {
-  "use strict";
+"use strict";
 
-  const API_URL =
-    "https://mzcobvfvmhpleonncyrr.supabase.co/functions/v1/mexa-api";
+if (window.MEXAPostCreateLoaded) return;
+window.MEXAPostCreateLoaded = true;
 
-  const app = document.getElementById("mexa-app");
-  const feed = document.getElementById("mexaFeedList");
-  const status = document.getElementById("mexaFeedStatus");
+const API_URL =
+"https://yozylignolfvkemuhfse.supabase.co/functions/v1/mexa-api";
 
-  if (!app || !feed) {
-    console.warn("MEXA Post: elemen Home/feed tidak ditemukan.");
-    return;
+let isSubmitting = false;
+
+async function getCurrentUser() {
+const client = window.mexaSupabase;
+if (!client?.auth) return null;
+
+const { data, error } = await client.auth.getSession();
+
+if (error || !data?.session?.user) return null;
+
+window.currentUser = data.session.user;
+window.mexaCurrentUser = data.session.user;
+
+return data.session.user;
+
+}
+
+function getComposer() {
+return document.querySelector(
+"#mexaPostContent, #postContent, #postText, " +
+"#mexaComposerInput, textarea[name='content'], " +
+"[contenteditable='true'][data-post-content]"
+);
+}
+
+function getContent(input) {
+if (!input) return "";
+
+return String(
+  input.isContentEditable
+    ? input.innerText
+    : input.value || ""
+).trim();
+
+}
+
+function setStatus(message, isError) {
+let status = document.getElementById("mexaPostCreateStatus");
+
+if (!status) {
+  status = document.createElement("div");
+  status.id = "mexaPostCreateStatus";
+  status.setAttribute("role", "status");
+  status.style.cssText =
+    "margin:8px 0;padding:10px;border-radius:10px;font-size:14px;";
+
+  const composer = document.getElementById("mexa-composer");
+  (composer || document.body).appendChild(status);
+}
+
+status.textContent = message;
+status.style.color = isError ? "#ff667a" : ""
+
+}
+
+async function createPost() {
+if (isSubmitting) return;
+
+const input = getComposer();
+const content = getContent(input);
+
+if (!content) {
+  setStatus("Tulis sesuatu sebelum memposting.", true);
+  input?.focus();
+  return;
+}
+
+isSubmitting = true;
+
+const buttons = Array.from(document.querySelectorAll(
+  "#mexaPublishPost, #mexaSubmitPost, " +
+  "[data-create-post]"
+));
+
+buttons.forEach(button => {
+  button.dataset.wasDisabled = String(button.disabled);
+  button.disabled = true;
+});
+
+try {
+  setStatus("Memeriksa sesi login...", false);
+
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error("Sesi login tidak ditemukan. Silakan login kembali.");
   }
 
-  function showStatus(message, isError) {
-    if (!status) return;
-    status.textContent = message;
-    status.style.color = isError ? "#ff667a" : "";
+  setStatus("Menyimpan postingan...", false);
+
+  const sessionResult =
+    await window.mexaSupabase.auth.getSession();
+
+  const accessToken = sessionResult.data?.session?.access_token;
+
+  if (!accessToken) {
+    throw new Error("Token login tidak tersedia. Silakan login kembali.");
   }
 
-  async function callAPI(action, body) {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        action: action,
-        ...(body || {})
-      })
-    });
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + accessToken,
+      "apikey": "sb_publishable_XTj3R7a5ItH0lo3pVLomrQ_-mZ-I-Uo"
+    },
+    body: JSON.stringify({
+      action: "create_post",
+      user_id: user.id,
+      content: content
+    })
+  });
 
-    const result = await response.json().catch(() => ({}));
+  const result = await response.json().catch(() => ({}));
 
-    if (!response.ok || result.success === false || result.error) {
-      throw new Error(
-        result.error || result.message || "Permintaan postingan gagal."
-      );
-    }
-
-    return result;
+  if (!response.ok || result.success === false || result.error) {
+    throw new Error(
+      result.error ||
+      result.message ||
+      "Server gagal menyimpan postingan (HTTP " +
+      response.status + ")."
+    );
   }
 
-  function getPosts(result) {
-    if (Array.isArray(result)) return result;
-    if (Array.isArray(result.posts)) return result.posts;
-    if (Array.isArray(result.data)) return result.data;
-    return [];
+  if (input.isContentEditable) {
+    input.innerText = "";
+  } else {
+    input.value = "";
   }
 
-  function makePostCard(post) {
-    const card = document.createElement("article");
-    card.className = "mx-post-card";
-    card.dataset.postId = String(post.id || "");
+  setStatus("Postingan berhasil disimpan!", false);
 
-    const author = document.createElement("div");
-    author.className = "mx-post-author";
-    author.textContent =
-      post.display_name ||
-      post.username ||
-      post.profiles?.display_name ||
-      post.profiles?.username ||
-      "Pengguna MEXA";
-
-    const content = document.createElement("div");
-    content.className = "mx-post-content";
-    content.textContent = post.content || "";
-
-    const date = document.createElement("time");
-    date.className = "mx-post-date";
-
-    if (post.created_at) {
-      const parsedDate = new Date(post.created_at);
-      if (!Number.isNaN(parsedDate.getTime())) {
-        date.dateTime = parsedDate.toISOString();
-        date.textContent = parsedDate.toLocaleString("id-ID");
-      }
-    }
-
-    card.append(author, content, date);
-
-    if (post.image_url) {
-      const image = document.createElement("img");
-      image.className = "mx-post-image";
-      image.src = post.image_url;
-      image.alt = "Foto postingan";
-      image.loading = "lazy";
-      image.onerror = function () {
-        image.remove();
-      };
-      card.insertBefore(image, date);
-    }
-
-    return card;
+  if (typeof window.MEXA_LOAD_FEED === "function") {
+    await window.MEXA_LOAD_FEED();
+  } else {
+    document.dispatchEvent(new CustomEvent("mexa:refresh-feed"));
   }
+} catch (error) {
+  console.error("MEXA gagal membuat postingan:", error);
+  setStatus(
+    "Postingan gagal: " + (error.message || "Kesalahan server."),
+    true
+  );
+} finally {
+  isSubmitting = false;
 
-  async function loadPosts() {
-    showStatus("Memuat postingan...", false);
+  buttons.forEach(button => {
+    button.disabled = button.dataset.wasDisabled === "true";
+    delete button.dataset.wasDisabled;
+  });
+}
 
-    try {
-      // Sesuaikan nama action ini jika API memakai nama berbeda.
-      const result = await callAPI("get_posts");
-      const posts = getPosts(result);
-      const fragment = document.createDocumentFragment();
+}
 
-      posts.forEach(function (post) {
-        fragment.appendChild(makePostCard(post));
-      });
+window.MEXACreatePost = createPost;
 
-      feed.replaceChildren(fragment);
-      showStatus(
-        posts.length ? "" : "Belum ada postingan.",
-        false
-      );
+document.addEventListener("click", function (event) {
+if (!(event.target instanceof Element)) return;
 
-      return posts;
-    } catch (error) {
-      console.error("MEXA load posts:", error);
-      showStatus("Gagal memuat postingan: " + error.message, true);
-      return [];
-    }
-  }
+const button = event.target.closest(
+  "#mexaPublishPost, #mexaSubmitPost, [data-create-post]"
+);
 
-  async function createPost(content) {
-    const cleanContent = String(content || "").trim();
+if (!button) return;
 
-    if (!cleanContent) {
-      showStatus("Tulis sesuatu sebelum memposting.", true);
-      return false;
-    }
+event.preventDefault();
+createPost();
 
-    showStatus("Menyimpan postingan...", false);
+});
 
-    try {
-      // Sesuaikan nama action ini jika API memakai nama berbeda.
-      await callAPI("create_post", {
-        content: cleanContent
-      });
+document.addEventListener("submit", function (event) {
+const form = event.target;
 
-      showStatus("Postingan berhasil disimpan.", false);
-      await loadPosts();
-      return true;
-    } catch (error) {
-      console.error("MEXA create post:", error);
-      showStatus("Gagal membuat postingan: " + error.message, true);
-      return false;
-    }
-  }
+if (
+  form instanceof HTMLFormElement &&
+  form.matches("#mexaPostForm, #mexaPostFormHome")
+) {
+  event.preventDefault();
+  createPost();
+}
 
-  // API publik untuk dihubungkan ke form Home.
-  window.MEXAPosts = {
-    load: loadPosts,
-    create: createPost
-  };
+});
 
-  // Memuat feed saat file dijalankan.
-  loadPosts();
+console.log("MEXA PLATFORM: post-create siap.");
 })();
