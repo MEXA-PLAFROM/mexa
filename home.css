@@ -615,6 +615,129 @@ button {
     border-radius:18px;
     padding:15px;
   }
+/* ==================================================
+   MEXA SHELL PREMIUM LAYOUT
+   ================================================== */
+
+#mexa-app {
+  min-height:100vh;
+}
+
+
+/* HEADER RAPAT TAPI RAPI */
+
+.mx-header {
+  gap:14px;
+  padding:12px 24px;
+}
+
+
+.mx-brand {
+  min-width:120px;
+}
+
+
+/* AREA UTAMA */
+
+.mx-layout {
+  width:min(1200px,94%);
+  margin:24px auto 100px;
+}
+
+
+/* MAIN CONTENT */
+
+#mexa-main {
+  max-width:760px;
+  margin:auto;
+}
+
+
+/* SEMUA SECTION */
+
+#mexa-main > section {
+
+  margin-bottom:20px;
+
+  padding:20px;
+
+  border-radius:22px;
+
+}
+
+
+/* JUDUL SECTION */
+
+.mx-section-heading {
+
+  margin-bottom:16px;
+
+}
+
+
+.mx-section-heading h2 {
+
+  font-size:20px;
+
+  font-weight:800;
+
+}
+
+
+/* CERITA */
+
+#mexa-stories {
+
+  min-height:120px;
+
+}
+
+
+/* POST COMPOSER */
+
+.mx-composer {
+
+  margin-bottom:20px;
+
+}
+
+
+/* FEED */
+
+#mexaFeedList {
+
+  gap:20px;
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+.mx-header{
+
+ padding:10px 12px;
+
+}
+
+
+.mx-layout{
+
+ width:auto;
+
+ margin:12px 8px 90px;
+
+}
+
+
+#mexa-main > section{
+
+ padding:14px;
+
+ border-radius:18px;
+
+}
 
 }
 
