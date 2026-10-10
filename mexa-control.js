@@ -209,4 +209,66 @@
     toggleMenu: toggleMenu,
     openTheme: openTheme
   };
+
+// ===============================
+// MENU TAMBAHAN MEXA
+// ===============================
+
+const logoutBtn = document.getElementById("mx-logout-menu");
+
+if (logoutBtn) {
+
+  logoutBtn.addEventListener("click", function () {
+
+    const yakin = confirm(
+      "Keluar dari akun MEXA?"
+    );
+
+    if (yakin) {
+
+      localStorage.removeItem("mexa-user");
+
+      alert(
+        "Kamu sudah keluar dari akun."
+      );
+
+      location.href = "index.html";
+
+    }
+
+  });
+
+}
+
+
+
+const reportBtn = document.getElementById("mx-report-menu");
+
+if (reportBtn) {
+
+  reportBtn.addEventListener("click", function () {
+
+    alert(
+      "Menu laporan MEXA siap dikembangkan."
+    );
+
+  });
+
+}
+
+
+
+const gameBtn = document.getElementById("mx-game-menu");
+
+if (gameBtn) {
+
+  gameBtn.addEventListener("click", function () {
+
+    alert(
+      "Game MEXA akan tersedia."
+    );
+
+  });
+
+}
 })();
