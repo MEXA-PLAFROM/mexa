@@ -431,39 +431,41 @@ Profil
 
 <!-- ================= SCRIPT ================= -->
 
-  
-<!-- SUPABASE SDK -->
+<!-- 1. SUPABASE SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- KONEKSI SUPABASE MEXA -->
+<!-- 2. KONEKSI DAN SESI LOGIN -->
 <script src="./auth-client.js"></script>
 <script src="./js/mexa-api-client.js"></script>
 
-<!-- MESIN TEMA -->
+<!-- 3. SISTEM TEMA -->
 <script src="./themes.js"></script>
-
-<!-- KONTROL MENU -->
 <script src="./mexa-control.js"></script>
 
-<!-- HOME -->
-<script src="./home.js"></script>
+<!-- 4. SISTEM KONTROL UTAMA -->
+<script src="./mexa-system-control.js"></script>
 
-<!-- FEED POSTINGAN LAMA -->
+<!-- 5. FUNGSI BERBAGI POSTINGAN -->
+<script src="./post-share.js"></script>
+
+<!-- 6. KONTROL PEMILIK DAN PENGUNJUNG -->
+<script src="./mexa-post-system-control.js"></script>
+
+<!-- 7. FEED DAN RENDER POSTINGAN -->
 <script src="./functions-post.js"></script>
 
-<!-- MENU DAN BAGIKAN POSTINGAN -->
-<script src="./post-menu.js"></script>
-<script src="./post-share.js"></script>
-<script src="./functions-feed.js"></script>
+<!-- 8. INTERAKSI FEED LAMA
+     Aktifkan setelah memastikan file ini
+     tidak membuat ulang kartu atau feed. -->
+<!-- <script src="./functions-feed.js"></script> -->
 
-<!-- FITUR POSTINGAN -->
-<script src="./post-create.js"></script>
-<script src="./post-owner-fix.js"></script>
-<script src="./js/mexa-post-owner-actions.js"></script>
+<!-- 9. TOMBOL HOME DAN POSTING -->
+<script src="./home.js"></script>
 
-<!-- SISTEM MEXA -->
-<script src="./mexa-system-control.js"></script>
+<!-- 10. LOGOUT -->
 <script src="./logout.js"></script>
 
 </body>
 </html>
+  
+  
