@@ -1,12 +1,7 @@
 /* =====================================================
    MEXA — POST CREATE
    File: post-create.js
-
-   Fungsi:
-   - Membuat postingan
-   - Mengirim postingan ke Supabase melalui mexa-api
-   - Memuat ulang feed setelah berhasil
-   - Tidak mengganti sistem login atau backend
+   Membuat postingan melalui Edge Function mexa-api
    ===================================================== */
 
 (function () {
@@ -15,50 +10,44 @@
   if (window.MEXAPostCreateLoaded) return;
   window.MEXAPostCreateLoaded = true;
 
+  // URL harus berupa string dan memakai tanda kutip.
   const API_URL =
-    https://mzcobvfvmhpleonncyrr.supabase.co/functions/v1/mexa-api
+    "https://mzcobvfvmhpleonncyrr.supabase.co/functions/v1/mexa-api";
+
   let isSubmitting = false;
 
-async function getCurrentUser() {
-  // Baca sesi autentikasi Supabase yang sebenarnya.
-  const client = window.mexaSupabase;
+  async function getCurrentUser() {
+    const client = window.mexaSupabase;
 
-  if (client?.auth?.getSession) {
-    try {
-      const { data, error } = await client.auth.getSession();
+    if (client && client.auth && client.auth.getSession) {
+      try {
+        const { data, error } = await client.auth.getSession();
 
-      if (!error && data?.session?.user) {
-        window.currentUser = data.session.user;
-        window.mexaCurrentUser = data.session.user;
-        return data.session.user;
+        if (!error && data && data.session && data.session.user) {
+          window.currentUser = data.session.user;
+          window.mexaCurrentUser = data.session.user;
+          return data.session.user;
+        }
+      } catch (error) {
+        console.error("MEXA: gagal membaca sesi:", error);
       }
-    } catch (error) {
-      console.error("MEXA: gagal membaca sesi.", error);
     }
-  }
 
-  // Fallback untuk kode lama.
-  if (window.currentUser?.id) return window.currentUser;
-  if (window.mexaCurrentUser?.id) {
-    return window.mexaCurrentUser;
-  }
+    if (window.currentUser && window.currentUser.id) {
+      return window.currentUser;
+    }
 
-  return null;
-}
+    if (window.mexaCurrentUser && window.mexaCurrentUser.id) {
+      return window.mexaCurrentUser;
+    }
 
-   function getUserId(user) {
-    return user && (
-      user.id ||
-      user.user_id ||
-      user.userId
-    );
+    return null;
   }
 
   function getComposer() {
     return document.querySelector(
-      "#mexaPostContent, #postContent, " +
-      "#postText, #mexaComposerInput, " +
-      "textarea[name='content'], " +
+      "#mexaPostContent, #postContent, #postText, " +
+      "#mexaComposerInput, textarea[name='content'], " +
       "[contenteditable='true'][data-post-content]"
     );
   }
@@ -85,12 +74,7 @@ async function getCurrentUser() {
         "font-size:14px;";
 
       const composer = document.getElementById("mexa-composer");
-
-      if (composer) {
-        composer.appendChild(status);
-      } else {
-        document.body.appendChild(status);
-      }
+      (composer || document.body).appendChild(status);
     }
 
     status.textContent = message;
@@ -98,42 +82,53 @@ async function getCurrentUser() {
   }
 
   async function callAPI(action, body) {
-    // Gunakan helper API MEXA yang sudah tersedia bila ada.
-    if (typeof window.mexaAPI === "function") {
-      return await window.mexaAPI(action, body);
+    let response;
+
+    try {
+      response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: action,
+          ...body
+        })
+      });
+    } catch (error) {
+      console.error("MEXA API tidak dapat dijangkau:", error);
+
+      throw new Error(
+        "Gagal terhubung ke server. Periksa URL API, " +
+        statusCORSHint()
+      );
     }
 
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        action: action,
-        ...body
-      })
+    const result = await response.json().catch(function () {
+      return {};
     });
-
-    const result = await response.json().catch(() => ({}));
 
     if (!response.ok || result.success === false || result.error) {
       throw new Error(
         result.message ||
         result.error ||
-        "Permintaan postingan gagal."
+        ("Server mengembalikan HTTP " + response.status)
       );
     }
 
     return result;
   }
 
+  function statusCORSHint() {
+    return "CORS atau koneksi jaringan Supabase.";
+  }
+
   async function createPost() {
     if (isSubmitting) return;
 
     const user = await getCurrentUser();
-    const userId = getUserId(user);
 
-    if (!userId) {
+    if (!user || !user.id) {
       setStatus(
         "Sesi login tidak ditemukan. Silakan login kembali.",
         true
@@ -153,14 +148,15 @@ async function getCurrentUser() {
     isSubmitting = true;
     setStatus("Sedang mengirim postingan...", false);
 
-    const submitButtons = Array.from(
+    const buttons = Array.from(
       document.querySelectorAll(
+        "#mexaPublishPost, #mexaSubmitPost, " +
         "#mexaOpenComposer, #mexaMobileCreate, " +
-        "[data-create-post], #mexaSubmitPost"
+        "[data-create-post]"
       )
     );
 
-    submitButtons.forEach(function (button) {
+    buttons.forEach(function (button) {
       button.dataset.previousDisabled = button.disabled
         ? "true"
         : "false";
@@ -168,20 +164,15 @@ async function getCurrentUser() {
     });
 
     try {
-      /*
-       * Nama action "create_post" harus didukung oleh
-       * handler action di Edge Function mexa-api.
-       */
       const result = await callAPI("create_post", {
-        user_id: userId,
+        user_id: user.id,
         content: content
       });
 
-      if (!result || result.success === false || result.error) {
+      if (!result || result.success !== true) {
         throw new Error(
-          result?.message ||
-          result?.error ||
-          "Server belum menerima postingan."
+          (result && (result.message || result.error)) ||
+          "Server belum mengonfirmasi keberhasilan postingan."
         );
       }
 
@@ -195,8 +186,10 @@ async function getCurrentUser() {
 
       setStatus("Postingan berhasil dikirim!", false);
 
-      // Beri kesempatan modul feed yang sudah ada memuat ulang.
-      if (typeof window.loadFeed === "function") {
+      // Muat ulang feed tanpa mengubah sistem login.
+      if (typeof window.MEXA_LOAD_FEED === "function") {
+        await window.MEXA_LOAD_FEED();
+      } else if (typeof window.loadFeed === "function") {
         await window.loadFeed();
       } else if (typeof window.loadPosts === "function") {
         await window.loadPosts();
@@ -212,13 +205,13 @@ async function getCurrentUser() {
 
       setStatus(
         "Postingan gagal dikirim: " +
-        (error.message || "Periksa koneksi dan action API."),
+        (error.message || "Terjadi kesalahan."),
         true
       );
     } finally {
       isSubmitting = false;
 
-      submitButtons.forEach(function (button) {
+      buttons.forEach(function (button) {
         button.disabled =
           button.dataset.previousDisabled === "true";
         delete button.dataset.previousDisabled;
@@ -226,56 +219,45 @@ async function getCurrentUser() {
     }
   }
 
-  // API publik untuk dipanggil dari tombol atau modul lain.
   window.MEXACreatePost = createPost;
 
-// MEXA — PEMANGGIL TOMBOL POSTING
-document.addEventListener("click", function (event) {
-  const target = event.target;
+  // Tombol posting.
+  document.addEventListener("click", function (event) {
+    const target = event.target;
 
-  if (!(target instanceof Element)) return;
+    if (!(target instanceof Element)) return;
 
-  const button = target.closest(
-    "#mexaSubmitPost, #mexaPublishPost, [data-create-post]"
-  );
+    const button = target.closest(
+      "#mexaPublishPost, #mexaSubmitPost, [data-create-post]"
+    );
 
-  if (!button) return;
+    if (!button) return;
 
-  event.preventDefault();
+    event.preventDefault();
+    createPost();
+  });
 
-  if (typeof window.MEXACreatePost === "function") {
-    window.MEXACreatePost();
-  } else {
-    console.error("MEXA: fungsi MEXACreatePost belum dimuat.");
-  }
-});
-// MEXA — PEMANGGIL FORM POSTINGAN
-document.addEventListener("submit", function (event) {
-  const form = event.target;
+  // Form posting, jika digunakan.
+  document.addEventListener("submit", function (event) {
+    const form = event.target;
 
-  if (!(form instanceof HTMLFormElement)) return;
+    if (!(form instanceof HTMLFormElement)) return;
 
-  if (!form.matches("#mexaPostForm, #mexaPostFormHome")) {
-    return;
-  }
+    if (!form.matches("#mexaPostForm, #mexaPostFormHome")) {
+      return;
+    }
 
-  event.preventDefault();
+    event.preventDefault();
+    createPost();
+  });
 
-  if (typeof window.MEXACreatePost === "function") {
-    window.MEXACreatePost();
-  } else {
-    console.error("MEXA: fungsi posting belum dimuat.");
-  }
-});
-
-  // Modul feed boleh mendengarkan event ini untuk refresh.
   document.addEventListener("mexa:refresh-feed", function () {
-    if (typeof window.loadFeed === "function") {
+    if (typeof window.MEXA_LOAD_FEED === "function") {
+      window.MEXA_LOAD_FEED();
+    } else if (typeof window.loadFeed === "function") {
       window.loadFeed();
     } else if (typeof window.loadPosts === "function") {
       window.loadPosts();
-    } else if (typeof window.mexaLoadFeed === "function") {
-      window.mexaLoadFeed();
     }
   });
 
