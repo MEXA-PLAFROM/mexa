@@ -180,6 +180,30 @@ card.append(
           card.appendChild(date);
         }
 
+         // =============================
+// AKSI POST
+// =============================
+
+const actions =
+document.createElement("div");
+
+actions.className =
+"mx-post-actions";
+
+
+actions.innerHTML = `
+
+<button>♡ Suka</button>
+
+<button>💬 Komentar</button>
+
+<button>↗ Bagikan</button>
+
+`;
+
+
+card.appendChild(actions);
+         
         // Data ini juga dipakai untuk pemeriksaan pemilik postingan.
         card.dataset.userId = post.user_id || "";
 
