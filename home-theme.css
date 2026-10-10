@@ -1,119 +1,277 @@
-/* ==================================================
-MEXA PREMIUM THEMES
-5 pilihan tema + siap untuk tema otomatis
-================================================== */
+/* ==========================================
+   MEXA HOME THEMES
+   WARNA ONLY
+========================================== */
 
-:root {
---mx-bg: #0b0818;
---mx-panel: #141027;
---mx-card: #17132b;
---mx-border: #30284d;
---mx-text: #f6f3ff;
---mx-muted: #aaa4c2;
---mx-cyan: #00e5ff;
---mx-purple: #8b5cf6;
+
+/* DEFAULT TEMA */
+
+:root{
+
+--mx-bg:#0b0818;
+--mx-card:#141027;
+--mx-panel:#100c22;
+
+--mx-text:#ffffff;
+--mx-muted:#aaa4c2;
+
+--mx-border:#30264d;
+
+--mx-primary:#00e5ff;
+--mx-secondary:#8b5cf6;
+
+--mx-shadow:0 10px 30px #0008;
+
 }
 
-/* 1. MIDNIGHT NEON */
-html[data-mexa-theme="midnight"] {
-color-scheme: dark;
---mx-bg: #0b0818;
---mx-panel: #141027;
---mx-card: #17132b;
---mx-border: #30284d;
---mx-text: #f6f3ff;
---mx-muted: #aaa4c2;
---mx-cyan: #00e5ff;
---mx-purple: #8b5cf6;
+
+
+/* =========================
+   MIDNIGHT NEON
+========================= */
+
+body[data-theme="midnight"]{
+
+--mx-bg:#090615;
+--mx-card:#151026;
+--mx-panel:#100b20;
+
+--mx-text:#ffffff;
+--mx-muted:#aaa3c5;
+
+--mx-border:#34245b;
+
+--mx-primary:#00e5ff;
+--mx-secondary:#8b5cf6;
+
 }
 
-/* 2. ARCTIC LIGHT */
-html[data-mexa-theme="arctic"] {
-color-scheme: light;
---mx-bg: #f1f6ff;
---mx-panel: #ffffff;
---mx-card: #ffffff;
---mx-border: #d7e3f5;
---mx-text: #17243b;
---mx-muted: #65748b;
---mx-cyan: #087ff5;
---mx-purple: #6554d9;
+
+
+/* =========================
+   ARCTIC LIGHT
+========================= */
+
+body[data-theme="arctic"]{
+
+--mx-bg:#edf7ff;
+--mx-card:#ffffff;
+--mx-panel:#f8fcff;
+
+--mx-text:#101827;
+--mx-muted:#64748b;
+
+--mx-border:#cbdff5;
+
+--mx-primary:#0284c7;
+--mx-secondary:#2563eb;
+
 }
 
-/* 3. OCEAN PULSE */
-html[data-mexa-theme="ocean"] {
-color-scheme: dark;
---mx-bg: #06141d;
---mx-panel: #0c202b;
---mx-card: #102b37;
---mx-border: #204957;
---mx-text: #e8fbff;
---mx-muted: #9bbac4;
---mx-cyan: #38f0d0;
---mx-purple: #438cff;
+
+
+/* =========================
+   EMERALD
+========================= */
+
+body[data-theme="emerald"]{
+
+--mx-bg:#06120e;
+--mx-card:#0d2119;
+--mx-panel:#081812;
+
+--mx-text:#f0fff8;
+--mx-muted:#9ccbb8;
+
+--mx-border:#14532d;
+
+--mx-primary:#34d399;
+--mx-secondary:#10b981;
+
 }
 
-/* 4. CYBER VIOLET */
-html[data-mexa-theme="violet"] {
-color-scheme: dark;
---mx-bg: #150a22;
---mx-panel: #21112f;
---mx-card: #2a163b;
---mx-border: #56316b;
---mx-text: #fff2ff;
---mx-muted: #c7a9d2;
---mx-cyan: #f06cff;
---mx-purple: #a78bfa;
+
+
+/* =========================
+   SUNSET
+========================= */
+
+body[data-theme="sunset"]{
+
+--mx-bg:#180914;
+--mx-card:#271025;
+--mx-panel:#210b20;
+
+--mx-text:#fff7fb;
+--mx-muted:#d7a8c2;
+
+--mx-border:#6b3055;
+
+--mx-primary:#fb7185;
+--mx-secondary:#f97316;
+
 }
 
-/* 5. SUNSET EMBER */
-html[data-mexa-theme="sunset"] {
-color-scheme: dark;
---mx-bg: #211016;
---mx-panel: #32151d;
---mx-card: #401c24;
---mx-border: #69333a;
---mx-text: #fff4e9;
---mx-muted: #d9b5a8;
---mx-cyan: #ffb45e;
---mx-purple: #ff704d;
+
+
+/* =========================
+   CYBERPUNK
+========================= */
+
+body[data-theme="cyberpunk"]{
+
+--mx-bg:#050509;
+--mx-card:#101020;
+--mx-panel:#090914;
+
+--mx-text:#ffffff;
+--mx-muted:#9ca3af;
+
+--mx-border:#312e81;
+
+--mx-primary:#22d3ee;
+--mx-secondary:#c026d3;
+
 }
 
-/* TERAPKAN WARNA KE KOMPONEN */
-body,
-#mexa-app {
-background-color: var(--mx-bg);
-color: var(--mx-text);
+
+
+/* =========================
+   TERAPKAN WARNA
+========================= */
+
+
+body{
+
+background:var(--mx-bg);
+color:var(--mx-text);
+
 }
 
-.mx-header,
-.mx-app-header,
-.mx-composer,
-.mx-feed-card,
-.mx-post-card,
-.mx-feed-empty {
-color: var(--mx-text);
-border-color: var(--mx-border);
+
+
+.mx-card,
+.mx-search-box,
+#mx-control-panel{
+
+background:var(--mx-card);
+
+border:1px solid var(--mx-border);
+
+box-shadow:var(--mx-shadow);
+
 }
 
-.mx-composer,
-.mx-feed-card,
-.mx-post-card {
-background-color: var(--mx-panel);
-}
+
 
 input,
-textarea,
-select {
-color: var(--mx-text);
+textarea{
+
+background:var(--mx-panel);
+
+color:var(--mx-text);
+
+border:1px solid var(--mx-border);
+
 }
 
-input::placeholder,
-textarea::placeholder {
-color: var(--mx-muted);
+
+
+button,
+a{
+
+color:var(--mx-text);
+
 }
 
-.mx-post-menu {
-color: var(--mx-text);
-border-color: var(--mx-border);
+
+
+button:hover,
+a:hover{
+
+color:var(--mx-primary);
+
 }
+
+
+
+.mx-brand,
+.mx-primary{
+
+color:var(--mx-primary);
+
+}
+
+
+
+.mx-x{
+
+color:var(--mx-secondary);
+
+}
+
+
+
+.mx-bottom-nav{
+
+background:var(--mx-panel);
+
+border-top:1px solid var(--mx-border);
+
+}
+
+
+
+.mx-bottom-nav span{
+
+color:var(--mx-muted);
+
+}
+
+
+
+.mx-bottom-nav a:hover,
+.mx-bottom-nav button:hover{
+
+color:var(--mx-primary);
+
+}
+
+
+
+/* tombol posting */
+
+#mexaPostButton{
+
+background:var(--mx-primary);
+
+color:#000;
+
+border:0;
+
+}
+
+
+
+/* garis ikon logo E */
+
+.mx-e i{
+
+background:var(--mx-primary);
+
+}
+
+
+
+/* icon kotak header */
+
+.mx-header-buttons button,
+.mx-header-buttons a{
+
+background:var(--mx-card);
+
+border:1px solid var(--mx-border);
+
+}
+
+
