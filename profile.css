@@ -1,0 +1,141 @@
+
+/* MEXA PROFILE — PREMIUM THEME */
+:root {
+  --bg: #080612;
+  --panel: #130d23;
+  --line: #382253;
+  --purple: #a855f7;
+  --blue: #36cfff;
+  --text: #f8f5ff;
+  --muted: #b4a7ca;
+  --card: #ffffff06;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--purple) 32%, transparent), transparent 38%),
+    radial-gradient(ellipse at 100% 35%, color-mix(in srgb, var(--blue) 20%, transparent), transparent 35%),
+    var(--bg);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background .2s ease, color .2s ease;
+}
+
+.header {
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  border-bottom-color: var(--line);
+}
+
+.card,
+.editor {
+  color: var(--text);
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+.stat,
+.section {
+  background: var(--card);
+  border-color: var(--line);
+}
+
+.stat span,
+.username,
+.empty p,
+.editor-note,
+.loading {
+  color: var(--muted);
+}
+
+.nav a,
+.btn,
+.close-editor {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.nav .home,
+.cyan { color: var(--blue); }
+
+.primary {
+  color: #fff;
+  background: linear-gradient(110deg, var(--purple), color-mix(in srgb, var(--purple) 50%, var(--blue)));
+}
+
+.tab.active {
+  color: var(--text);
+  background: color-mix(in srgb, var(--purple) 20%, transparent);
+  border-color: var(--purple);
+}
+
+.field input,
+.field textarea {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--line);
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.media-item {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--bg);
+}
+
+.media-item img,
+.media-item video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.media-caption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 25px 8px 8px;
+  color: white;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  background: linear-gradient(transparent, #000d);
+}
+
+.media-type {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  padding: 4px 7px;
+  border-radius: 7px;
+  background: #080612cc;
+  color: white;
+  font-size: 10px;
+}
+
+.media-state {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .media-grid { gap: 5px; }
+  .media-item { border-radius: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { transition: none; }
+}
