@@ -533,3 +533,489 @@
     transition: none;
   }
 }
+
+/* =====================================================
+   MEXA PREMIUM EDITOR + MENU SYSTEM
+   Pelengkap mexa-post-system-control.js
+   Mengikuti warna tema MEXA
+===================================================== */
+
+:root {
+  --mx-edit-glow: rgba(139, 92, 246, .18);
+  --mx-edit-cyan-glow: rgba(0, 229, 255, .12);
+  --mx-edit-danger: #ff7085;
+}
+
+/* =====================================================
+   1. PANEL EDIT DI DALAM POSTINGAN
+===================================================== */
+
+#mexaFeedList .mx-post-inline-editor {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  isolation: isolate;
+  overflow: hidden;
+
+  margin: 14px 0;
+  padding: 18px;
+
+  color: var(--mx-text, #f6f3ff) !important;
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      var(--mx-edit-glow),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      var(--mx-panel, #211a35),
+      var(--mx-card, #151025)
+    ) !important;
+
+  border: 1px solid var(--mx-secondary, #8b5cf6) !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 0 0 1px rgba(139, 92, 246, .08),
+    0 12px 30px rgba(0, 0, 0, .20),
+    inset 0 1px 0 rgba(255, 255, 255, .035);
+
+  animation: mxEditEnter .22s ease-out;
+}
+
+/* Aksen neon pada panel editor */
+
+#mexaFeedList .mx-post-inline-editor::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mx-primary, #00e5ff),
+    var(--mx-secondary, #8b5cf6),
+    transparent
+  );
+
+  border-radius: 0 0 10px 10px;
+  pointer-events: none;
+}
+
+/* Animasi masuk editor */
+
+@keyframes mxEditEnter {
+  from {
+    opacity: 0;
+    transform: translateY(7px) scale(.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =====================================================
+   2. JUDUL EDIT + BADGE PEMILIK
+===================================================== */
+
+.mx-post-edit-heading {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+
+  margin: 0 0 15px !important;
+}
+
+.mx-post-edit-heading-text {
+  color: var(--mx-text, #ffffff) !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.25px;
+}
+
+.mx-post-edit-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+
+  padding: 6px 10px !important;
+
+  color: var(--mx-primary, #00e5ff) !important;
+  background: var(--mx-edit-cyan-glow) !important;
+
+  border: 1px solid rgba(0, 229, 255, .28) !important;
+  border-radius: 30px !important;
+
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: .65px !important;
+}
+
+/* =====================================================
+   3. KOLOM KETIK LANGSUNG
+===================================================== */
+
+#mexaFeedList .mx-post-inline-textarea {
+  display: block !important;
+  width: 100% !important;
+  min-height: 145px !important;
+  box-sizing: border-box !important;
+
+  margin: 0 !important;
+  padding: 15px 16px !important;
+
+  color: var(--mx-text, #ffffff) !important;
+  caret-color: var(--mx-primary, #00e5ff) !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--mx-bg, #0b0818),
+      var(--mx-card, #151025)
+    ) !important;
+
+  border: 1px solid var(--mx-border, #33294b) !important;
+  border-radius: 14px !important;
+
+  outline: none !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, .12);
+
+  font-family: inherit !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 1.75 !important;
+
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  resize: vertical !important;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background .2s ease;
+}
+
+#mexaFeedList .mx-post-inline-textarea:focus {
+  border-color: var(--mx-primary, #00e5ff) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(0, 229, 255, .09),
+    0 0 22px rgba(0, 229, 255, .055),
+    inset 0 2px 8px rgba(0, 0, 0, .10) !important;
+}
+
+#mexaFeedList .mx-post-inline-textarea::placeholder {
+  color: var(--mx-muted, #aaa4c2) !important;
+  opacity: .8;
+}
+
+/* Petunjuk di bawah kolom */
+
+.mx-post-edit-hint {
+  margin-top: 10px !important;
+  color: var(--mx-muted, #aaa4c2) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+}
+
+/* Status menyimpan atau error */
+
+.mx-post-edit-status {
+  min-height: 18px;
+  margin-top: 10px !important;
+
+  color: var(--mx-primary, #00e5ff) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  overflow-wrap: anywhere;
+}
+
+.mx-post-edit-status.is-error {
+  color: var(--mx-edit-danger) !important;
+}
+
+/* =====================================================
+   4. TOMBOL SIMPAN DAN BATAL
+===================================================== */
+
+.mx-post-edit-footer {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 9px !important;
+
+  margin-top: 15px !important;
+}
+
+.mx-post-edit-footer .mx-post-edit-cancel,
+.mx-post-edit-footer .mx-post-edit-save {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  min-width: 100px !important;
+  min-height: 42px !important;
+  box-sizing: border-box !important;
+
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+
+  cursor: pointer !important;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    border-color .18s ease,
+    opacity .18s ease;
+}
+
+/* Tombol batal */
+
+.mx-post-edit-footer .mx-post-edit-cancel {
+  color: var(--mx-text, #ffffff) !important;
+  background: var(--mx-card, #151025) !important;
+  border: 1px solid var(--mx-border, #33294b) !important;
+}
+
+/* Tombol simpan neon */
+
+.mx-post-edit-footer .mx-post-edit-save {
+  color: #07111b !important;
+  background: var(--mx-primary, #00e5ff) !important;
+  border: 1px solid var(--mx-primary, #00e5ff) !important;
+
+  box-shadow: 0 4px 16px rgba(0, 229, 255, .12);
+}
+
+.mx-post-edit-footer .mx-post-edit-save:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 20px rgba(0, 229, 255, .20);
+}
+
+.mx-post-edit-footer .mx-post-edit-cancel:hover:not(:disabled) {
+  border-color: var(--mx-secondary, #8b5cf6) !important;
+  transform: translateY(-1px);
+}
+
+.mx-post-edit-footer button:disabled {
+  opacity: .55 !important;
+  cursor: wait !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Notifikasi perubahan tersimpan */
+
+.mx-post-edit-success {
+  display: block;
+  box-sizing: border-box;
+
+  margin: 10px 0;
+  padding: 10px 13px;
+
+  color: var(--mx-primary, #00e5ff) !important;
+  background: var(--mx-edit-cyan-glow);
+  border: 1px solid rgba(0, 229, 255, .24);
+  border-radius: 11px;
+
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.mx-post-edit-success.is-error {
+  color: var(--mx-edit-danger) !important;
+  border-color: rgba(255, 112, 133, .35);
+  background: rgba(255, 112, 133, .07);
+}
+
+/* =====================================================
+   5. MENU TITIK TIGA PREMIUM
+===================================================== */
+
+#mexa-post-menu-overlay {
+  padding: 16px !important;
+
+  background: rgba(5, 3, 15, .76) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#mexa-post-menu-overlay > .mx-post-menu-panel {
+  width: 100% !important;
+  max-width: 390px !important;
+  max-height: 88vh !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+
+  padding: 20px !important;
+  box-sizing: border-box !important;
+
+  color: var(--mx-text, #ffffff) !important;
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      var(--mx-edit-glow),
+      transparent 45%
+    ),
+    var(--mx-card, #151025) !important;
+
+  border: 1px solid var(--mx-border, #33294b) !important;
+  border-radius: 20px !important;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, .45),
+    0 0 28px rgba(139, 92, 246, .07) !important;
+
+  animation: mxEditEnter .2s ease-out;
+}
+
+/* Semua tombol menu */
+
+#mexa-post-menu-overlay .mx-post-menu-item {
+  display: flex !important;
+  align-items: center !important;
+
+  width: 100% !important;
+  min-height: 46px !important;
+  box-sizing: border-box !important;
+
+  margin-top: 8px !important;
+  padding: 12px 14px !important;
+
+  color: var(--mx-text, #ffffff) !important;
+  background: var(--mx-panel, #211a35) !important;
+
+  border: 1px solid var(--mx-border, #33294b) !important;
+  border-radius: 12px !important;
+
+  font-family: inherit !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  line-height: 1.45 !important;
+  text-align: left !important;
+
+  overflow-wrap: anywhere;
+  cursor: pointer !important;
+
+  transition:
+    color .18s ease,
+    background .18s ease,
+    border-color .18s ease,
+    transform .18s ease;
+}
+
+#mexa-post-menu-overlay .mx-post-menu-item:hover {
+  color: var(--mx-primary, #00e5ff) !important;
+
+  background: var(--mx-card, #151025) !important;
+  border-color: var(--mx-primary, #00e5ff) !important;
+
+  transform: translateX(2px);
+}
+
+/* Tombol hapus dan laporkan */
+
+#mexa-post-menu-overlay .mx-post-menu-item.is-danger {
+  color: #ff9caf !important;
+  background: rgba(255, 70, 110, .075) !important;
+  border-color: rgba(255, 70, 110, .25) !important;
+}
+
+#mexa-post-menu-overlay .mx-post-menu-item.is-danger:hover {
+  color: #ffc2ce !important;
+  background: rgba(255, 70, 110, .15) !important;
+  border-color: #ff7085 !important;
+}
+
+/* Fokus keyboard */
+
+.mx-post-inline-editor button:focus-visible,
+.mx-post-inline-editor textarea:focus-visible,
+#mexa-post-menu-overlay button:focus-visible {
+  outline: 2px solid var(--mx-primary, #00e5ff) !important;
+  outline-offset: 3px !important;
+}
+
+/* =====================================================
+   6. RESPONSIVE — PONSEL
+===================================================== */
+
+@media (max-width: 600px) {
+  #mexaFeedList .mx-post-inline-editor {
+    margin: 10px 0 !important;
+    padding: 13px !important;
+    border-radius: 14px !important;
+  }
+
+  .mx-post-edit-heading-text {
+    font-size: 15px !important;
+  }
+
+  #mexaFeedList .mx-post-inline-textarea {
+    min-height: 125px !important;
+    padding: 12px !important;
+    font-size: 14px !important;
+  }
+
+  .mx-post-edit-footer {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px !important;
+  }
+
+  .mx-post-edit-footer .mx-post-edit-cancel,
+  .mx-post-edit-footer .mx-post-edit-save {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 10px 8px !important;
+    font-size: 12px !important;
+  }
+
+  #mexa-post-menu-overlay {
+    padding: 13px !important;
+  }
+
+  #mexa-post-menu-overlay > .mx-post-menu-panel {
+    max-width: 100% !important;
+    padding: 16px !important;
+    border-radius: 17px !important;
+  }
+}
+
+/* =====================================================
+   7. AKSESIBILITAS
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  #mexaFeedList .mx-post-inline-editor,
+  #mexa-post-menu-overlay > .mx-post-menu-panel,
+  #mexa-post-menu-overlay .mx-post-menu-item,
+  .mx-post-edit-footer button {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+      
