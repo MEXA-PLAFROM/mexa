@@ -1,51 +1,81 @@
+
 (function (window, document) {
   "use strict";
 
-  if (window.MEXA_STORY_CONTROL) {
-    console.warn("MEXA STORY CONTROL sudah aktif.");
+  /* =====================================================
+     MEXA CERITA CONTROL — V3.0.0
+     Data: Supabase posts + profiles
+     Masa aktif: 24 jam per postingan
+     Tidak menghapus postingan asli.
+  ===================================================== */
+
+  const VERSION = "3.0.0";
+  const LIFETIME = 24 * 60 * 60 * 1000;
+  const CACHE_MS = 15000;
+  const MAX_POSTS = 500;
+
+  if (
+    window.MEXA_STORY_CONTROL &&
+    window.MEXA_STORY_CONTROL.version === VERSION
+  ) {
+    console.warn("MEXA STORY CONTROL V3 sudah aktif.");
     return;
   }
 
-  const VERSION = "2.0.0";
-  const LIFETIME = 24 * 60 * 60 * 1000;
-  const CACHE_MS = 15000;
-
-  let stories = [];
+  let cache = [];
+  let cacheTime = 0;
   let loadingPromise = null;
-  let lastLoaded = 0;
 
   function getClient() {
-    const client = window.mexaSupabase;
+    const client =
+      window.mexaSupabase ||
+      window.MEXA_SUPABASE;
 
-    if (!client || typeof client.from !== "function" || !client.auth) {
-      throw new Error("Koneksi Supabase belum tersedia.");
+    if (
+      !client ||
+      typeof client.from !== "function"
+    ) {
+      throw new Error(
+        "Koneksi Supabase belum tersedia. Periksa auth-client.js."
+      );
     }
 
     return client;
   }
 
-  function emit(name, detail = {}) {
-    document.dispatchEvent(new CustomEvent(
-      "mexa:story-" + name,
-      { detail }
-    ));
-  }
+  function jsonTime(value) {
+    if (typeof value === "number") {
+      if (!Number.isFinite(value) || value <= 0) return 0;
 
-  function createdTime(item) {
-    const time = new Date(
-      item.created_at || item.createdAt || 0
-    ).getTime();
+      return value < 1000000000000
+        ? value * 1000
+        : value;
+    }
+
+    const time = new Date(value || 0).getTime();
 
     return Number.isFinite(time) ? time : 0;
   }
 
-  function isActive(item) {
-    const time = createdTime(item);
+  function createdTime(story) {
+    if (!story) return 0;
+
+    return jsonTime(
+      story.createdAt ??
+      story.created_at ??
+      story.created_at_ms
+    );
+  }
+
+  function isActive(story) {
+    const created = createdTime(story);
     const now = Date.now();
 
-    return time > 0 &&
-      time <= now &&
-      now - time < LIFETIME;
+    return (
+      created > 0 &&
+      created <= now &&
+      now - created < LIFETIME
+    );
   }
 
   function normalize(post, profile) {
@@ -54,215 +84,310 @@
     return {
       id: String(post.id),
       userId: String(post.user_id || ""),
-      content: post.content || "",
-      imageUrl: post.image_url || "",
-      createdAt,
+      content: String(post.content || ""),
+      imageUrl: String(post.image_url || ""),
+      createdAt: createdAt,
       expiresAt: createdAt + LIFETIME,
+
       displayName:
         profile?.display_name ||
         profile?.username ||
         "Pengguna MEXA",
+
       username: profile?.username || "",
       avatarUrl: profile?.avatar_url || ""
     };
   }
 
   function groupByUser(items) {
-    const groups = new Map();
+    const grouped = new Map();
 
-    items.filter(isActive).forEach(story => {
-      if (!groups.has(story.userId)) {
-        groups.set(story.userId, []);
-      }
+    items
+      .filter(isActive)
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .forEach(story => {
+        if (!story.userId) return;
 
-      groups.get(story.userId).push(story);
-    });
+        if (!grouped.has(story.userId)) {
+          grouped.set(story.userId, []);
+        }
 
-    return Array.from(groups.entries()).map(([userId, items]) => {
-      items.sort((a, b) => b.createdAt - a.createdAt);
+        grouped.get(story.userId).push(story);
+      });
 
-      return {
-        userId,
-        displayName: items[0].displayName,
-        username: items[0].username,
-        avatarUrl: items[0].avatarUrl,
-        cover: items[0],
-        stories: items,
-        count: items.length,
-        latestAt: items[0].createdAt
-      };
-    }).sort((a, b) => b.latestAt - a.latestAt);
+    return Array.from(grouped.entries())
+      .map(([userId, stories]) => {
+        stories.sort((a, b) => b.createdAt - a.createdAt);
+
+        return {
+          userId,
+          displayName:
+            stories[0]?.displayName || "Pengguna MEXA",
+          username: stories[0]?.username || "",
+          avatarUrl: stories[0]?.avatarUrl || "",
+          cover: stories[0],
+          stories,
+          count: stories.length
+        };
+      })
+      .filter(group => group.stories.length > 0);
+  }
+
+  function emitUpdate(groups) {
+    try {
+      document.dispatchEvent(
+        new CustomEvent("mexa:story-updated", {
+          detail: {
+            stories: groups,
+            version: VERSION
+          }
+        })
+      );
+    } catch (error) {
+      console.warn(
+        "[MEXA CERITA] Gagal memperbarui tampilan.",
+        error
+      );
+    }
   }
 
   async function fetchStories() {
     const client = getClient();
     const now = Date.now();
+    const cutoff = now - LIFETIME;
 
-    const response = await client
+    /*
+     * Cerita berasal dari postingan yang masih berumur
+     * kurang dari 24 jam. Tidak ada operasi DELETE.
+     */
+    const { data: posts, error: postsError } = await client
       .from("posts")
-      .select("id,user_id,content,image_url,created_at")
-      .gte(
-        "created_at",
-        new Date(now - LIFETIME).toISOString()
+      .select(
+        "id,user_id,content,image_url,created_at"
       )
+      .gte("created_at", new Date(cutoff).toISOString())
       .lte("created_at", new Date(now).toISOString())
       .order("created_at", { ascending: false })
-      .limit(500);
+      .limit(MAX_POSTS);
 
-    if (response.error) throw response.error;
-
-    const posts = (response.data || []).filter(isActive);
-    const userIds = [
-      ...new Set(posts.map(post => post.user_id).filter(Boolean))
-    ];
-
-    const profileMap = Object.create(null);
-
-    if (userIds.length) {
-      const profileResponse = await client
-        .from("profiles")
-        .select("id,username,display_name,avatar_url")
-        .in("id", userIds);
-
-      if (profileResponse.error) {
-        console.warn(
-          "[MEXA STORY] Profil tidak tersedia:",
-          profileResponse.error.message
-        );
-      } else {
-        (profileResponse.data || []).forEach(profile => {
-          profileMap[String(profile.id)] = profile;
-        });
-      }
+    if (postsError) {
+      throw new Error(
+        "Gagal mengambil postingan cerita: " +
+        postsError.message
+      );
     }
 
-    stories = posts
-      .map(post => normalize(
-        post,
-        profileMap[String(post.user_id)]
-      ))
-      .filter(isActive);
-
-    lastLoaded = Date.now();
-
-    emit("updated", {
-      stories: getAll(),
-      count: stories.length
+    const validPosts = (posts || []).filter(post => {
+      return (
+        post.id != null &&
+        post.user_id != null &&
+        isActive(post)
+      );
     });
 
-    return getAll();
-  }
-
-  function load(options = {}) {
-    if (loadingPromise) return loadingPromise;
-
-    if (
-      !options.force &&
-      lastLoaded &&
-      Date.now() - lastLoaded < CACHE_MS
-    ) {
-      stories = stories.filter(isActive);
-      return Promise.resolve(getAll());
+    if (!validPosts.length) {
+      cache = [];
+      cacheTime = Date.now();
+      return [];
     }
 
-    loadingPromise = fetchStories()
-      .catch(error => {
-        emit("error", { message: error.message });
-        throw error;
-      })
-      .finally(() => {
-        loadingPromise = null;
-      });
+    const userIds = [
+      ...new Set(
+        validPosts.map(post => String(post.user_id))
+      )
+    ];
 
-    return loadingPromise;
+    let profiles = [];
+    const { data: profileData, error: profileError } =
+      await client
+        .from("profiles")
+        .select(
+          "id,username,display_name,avatar_url"
+        )
+        .in("id", userIds);
+
+    if (profileError) {
+      /*
+       * Jika profil gagal diambil, cerita tetap dapat
+       * ditampilkan dengan nama pengguna standar.
+       */
+      console.warn(
+        "[MEXA CERITA] Data profil tidak tersedia:",
+        profileError.message
+      );
+    } else {
+      profiles = profileData || [];
+    }
+
+    const profileMap = new Map(
+      profiles.map(profile => [
+        String(profile.id),
+        profile
+      ])
+    );
+
+    const normalized = validPosts.map(post =>
+      normalize(
+        post,
+        profileMap.get(String(post.user_id))
+      )
+    );
+
+    cache = normalized;
+    cacheTime = Date.now();
+
+    return cache;
+  }
+
+  async function load(options = {}) {
+    const force = options === true || options?.force === true;
+
+    if (
+      !force &&
+      cacheTime &&
+      Date.now() - cacheTime < CACHE_MS
+    ) {
+      return getAll();
+    }
+
+    if (loadingPromise) {
+      const result = await loadingPromise;
+      return groupByUser(result);
+    }
+
+    loadingPromise = fetchStories();
+
+    try {
+      await loadingPromise;
+      return getAll();
+    } finally {
+      loadingPromise = null;
+    }
   }
 
   function getAll() {
-    stories = stories.filter(isActive);
-    return groupByUser(stories);
+    const active = cache.filter(isActive);
+    return groupByUser(active);
   }
 
-  function getById(id) {
-    return stories.find(
-      story => story.id === String(id) && isActive(story)
+  function getById(storyId) {
+    return cache.find(
+      story =>
+        String(story.id) === String(storyId) &&
+        isActive(story)
     ) || null;
   }
 
   function getRemainingTime(story) {
-    return story
-      ? Math.max(0, story.expiresAt - Date.now())
-      : 0;
+    const item =
+      typeof story === "object"
+        ? story
+        : getById(story);
+
+    if (!item) return 0;
+
+    return Math.max(
+      0,
+      createdTime(item) + LIFETIME - Date.now()
+    );
   }
 
   function formatRemainingTime(story) {
     const remaining = getRemainingTime(story);
 
-    if (!remaining) return "Kedaluwarsa";
+    if (remaining <= 0) return "Kedaluwarsa";
 
-    const hours = Math.floor(remaining / 3600000);
-    const minutes = Math.floor(
-      (remaining % 3600000) / 60000
-    );
+    const totalMinutes = Math.ceil(remaining / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
 
-    return hours > 0
-      ? hours + " jam lagi"
-      : Math.max(1, minutes) + " menit lagi";
+    if (hours > 0) {
+      return hours + " jam " + minutes + " menit";
+    }
+
+    return minutes + " menit";
   }
 
   function invalidate() {
-    lastLoaded = 0;
+    cacheTime = 0;
   }
 
-  async function onPostCreated() {
+  /*
+   * Dipanggil oleh sistem lain jika postingan baru dibuat.
+   * Tidak mengubah atau menghapus postingan.
+   */
+  function onPostCreated() {
     invalidate();
-    return load({ force: true });
+
+    return load({ force: true }).then(groups => {
+      emitUpdate(groups);
+      return groups;
+    });
   }
 
   async function reply(storyId, message) {
     const story = getById(storyId);
+
+    if (!story || !isActive(story)) {
+      throw new Error(
+        "Cerita sudah tidak aktif atau tidak ditemukan."
+      );
+    }
+
     const text = String(message || "").trim();
 
-    if (!story) {
-      throw new Error("Status sudah kedaluwarsa.");
-    }
-
     if (!text) {
-      throw new Error("Tulis pesan terlebih dahulu.");
-    }
-
-    if (text.length > 2000) {
-      throw new Error("Pesan maksimal 2.000 karakter.");
+      throw new Error("Pesan balasan masih kosong.");
     }
 
     const client = getClient();
-    const auth = await client.auth.getUser();
 
-    if (auth.error) throw auth.error;
+    const { data: authData, error: authError } =
+      await client.auth.getUser();
 
-    const user = auth.data.user;
-
-    if (!user) {
-      throw new Error("Silakan login untuk membalas.");
+    if (authError || !authData?.user) {
+      throw new Error(
+        "Sesi login tidak ditemukan. Silakan login kembali."
+      );
     }
 
-    if (String(user.id) === story.userId) {
-      throw new Error("Kamu tidak dapat membalas status sendiri.");
+    if (
+      String(authData.user.id) === String(story.userId)
+    ) {
+      throw new Error(
+        "Kamu tidak perlu mengirim balasan cerita kepada akun sendiri."
+      );
     }
 
     const messenger = window.MEXA_MESSENGER;
 
-    if (!messenger || typeof messenger.sendMessage !== "function") {
+    if (
+      !messenger ||
+      typeof messenger.sendMessage !== "function"
+    ) {
       throw new Error(
         "Messenger MEXA belum terhubung. Pesan belum dikirim."
       );
     }
 
-    return messenger.sendMessage({
+    /*
+     * Menggunakan integrasi Messenger yang sudah tersedia.
+     * Tidak membuat klaim berhasil sebelum fungsi selesai.
+     */
+    const result = await messenger.sendMessage({
       recipientId: story.userId,
       text,
       storyId: story.id,
       storyReply: true
     });
+
+    if (result === false || result?.success === false) {
+      throw new Error(
+        result?.message || "Messenger gagal mengirim pesan."
+      );
+    }
+
+    return result;
   }
 
   window.MEXA_STORY_CONTROL = {
@@ -279,5 +404,7 @@
     reply
   };
 
-  console.log("MEXA STORY CONTROL " + VERSION + " aktif.");
+  console.info(
+    "[MEXA CERITA] Control V" + VERSION + " siap."
+  );
 })(window, document);
