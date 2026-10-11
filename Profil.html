@@ -971,10 +971,17 @@ loadProfile().catch(error => {
     (error?.message || "Periksa koneksi dan izin tabel profiles.")
   );
 }); 
-    </script>
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./profile-theme.js"></script>
-<script src="./profile-posts.js"></script>
-<script src="./profile-control.js"></script>
+  
+  <!-- MEXA: koneksi login dan API -->
+  <script src="./auth-client.js"></script>
+  <script src="./js/mexa-api-client.js"></script>
+
+  <!-- MEXA: modul profil -->
+  <script src="./profile-theme.js"></script>
+  <script src="./profile-posts.js"></script>
+  <script src="./profile-control.js"></script>
+  <script src="./profile-posts-bridge.js"></script>
 </body>
 </html>
