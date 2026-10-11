@@ -1,23 +1,23 @@
 
 /* =====================================================
    MEXA POST SYSTEM CONTROL
-   Versi 2.0.0
-   Pemilik, pengunjung, menu, edit, hapus, dan bagikan.
+   Versi 2.2.0
+   Terhubung dengan functions-post.js
    ===================================================== */
 
 (function (window, document) {
   "use strict";
 
-  // Hindari memuat versi yang sama dua kali.
+  const VERSION = "2.2.0";
+
+  // Cegah pemuatan ganda versi yang sama.
   if (
     window.MEXA_POST_SYSTEM &&
-    window.MEXA_POST_SYSTEM.version === "2.0.0"
+    window.MEXA_POST_SYSTEM.version === VERSION
   ) {
     console.warn("MEXA POST SYSTEM CONTROL sudah aktif.");
     return;
   }
-
-  const VERSION = "2.0.0";
 
   /* =====================================================
      KONEKSI SUPABASE
@@ -38,39 +38,31 @@
   }
 
   /* =====================================================
-     BACA IDENTITAS LOGIN DAN PEMILIK POSTINGAN
+     PERIKSA PENGUNJUNG DAN PEMILIK POSTINGAN
      ===================================================== */
 
   async function getPostContext(postId) {
     const client = getClient();
 
-    const sessionResponse = await client.auth.getSession();
+    const authResult = await client.auth.getUser();
 
-    if (sessionResponse.error) {
-      throw sessionResponse.error;
+    if (authResult.error) {
+      throw authResult.error;
     }
 
-    const session =
-      sessionResponse.data &&
-      sessionResponse.data.session;
+    const viewer = authResult.data.user || null;
 
-    const viewer =
-      session && session.user
-        ? session.user
-        : null;
-
-    // Pemilik diambil langsung dari database.
-    const postResponse = await client
+    const postResult = await client
       .from("posts")
       .select("id,user_id,content,image_url,created_at")
       .eq("id", postId)
       .maybeSingle();
 
-    if (postResponse.error) {
-      throw postResponse.error;
+    if (postResult.error) {
+      throw postResult.error;
     }
 
-    const post = postResponse.data;
+    const post = postResult.data;
 
     if (!post) {
       throw new Error(
@@ -78,10 +70,9 @@
       );
     }
 
-    const viewerId =
-      viewer && viewer.id
-        ? String(viewer.id)
-        : "";
+    const viewerId = viewer && viewer.id
+      ? String(viewer.id)
+      : "";
 
     const ownerId = post.user_id
       ? String(post.user_id)
@@ -93,7 +84,6 @@
       viewerId === ownerId
     );
 
-    // Catat hasil pemeriksaan tanpa mencetak ID pengguna.
     console.info("[MEXA POST CONTROL]", {
       loginTerdeteksi: Boolean(viewerId),
       pemilikTerdeteksi: Boolean(ownerId),
@@ -111,51 +101,73 @@
   }
 
   /* =====================================================
-     MUAT ULANG FEED SETELAH AKSI
+     NOTIFIKASI PREMIUM
      ===================================================== */
 
-  function refreshFeed() {
+  function showToast(message, isError) {
+    const oldToast = document.getElementById(
+      "mexa-post-control-toast"
+    );
+
+    if (oldToast) oldToast.remove();
+
+    const toast = document.createElement("div");
+
+    toast.id = "mexa-post-control-toast";
+    toast.textContent = message;
+
+    Object.assign(toast.style, {
+      position: "fixed",
+      left: "50%",
+      bottom: "28px",
+      transform: "translateX(-50%)",
+      zIndex: "100001",
+      width: "max-content",
+      maxWidth: "calc(100vw - 32px)",
+      boxSizing: "border-box",
+      padding: "13px 18px",
+      borderRadius: "14px",
+      border: "1px solid " + (
+        isError
+          ? "rgba(255,112,133,.45)"
+          : "rgba(0,229,255,.30)"
+      ),
+      background: "var(--mx-card, #151025)",
+      color: isError
+        ? "#ff9caf"
+        : "var(--mx-text, #ffffff)",
+      boxShadow: "0 12px 35px rgba(0,0,0,.35)",
+      fontFamily: "inherit",
+      fontSize: "13px",
+      fontWeight: "650",
+      lineHeight: "1.5",
+      textAlign: "center"
+    });
+
+    document.body.appendChild(toast);
+
+    window.setTimeout(function () {
+      if (toast.parentNode) toast.remove();
+    }, 3200);
+  }
+
+  /* =====================================================
+     MUAT ULANG FEED
+     ===================================================== */
+
+  async function refreshFeed() {
     if (
       window.MEXAPosts &&
       typeof window.MEXAPosts.load === "function"
     ) {
-      return window.MEXAPosts.load();
+      return await window.MEXAPosts.load();
     }
 
     if (typeof window.MEXA_LOAD_FEED === "function") {
-      return window.MEXA_LOAD_FEED();
+      return await window.MEXA_LOAD_FEED();
     }
 
-    return Promise.resolve([]);
-  }
-
-  /* =====================================================
-     PESAN STATUS PREMIUM
-     ===================================================== */
-
-  function makeStatusNotice(card, message, isError) {
-    const notice = document.createElement("div");
-
-    notice.className = isError
-      ? "mx-post-edit-success is-error"
-      : "mx-post-edit-success";
-
-    notice.setAttribute("role", "status");
-    notice.textContent = message;
-
-    const header = card.querySelector(".mx-post-header");
-
-    if (header && header.parentNode === card) {
-      header.insertAdjacentElement("afterend", notice);
-    } else {
-      card.insertAdjacentElement("afterbegin", notice);
-    }
-
-    window.setTimeout(function () {
-      if (notice.parentNode) {
-        notice.remove();
-      }
-    }, 3500);
+    throw new Error("Fungsi feed MEXA belum tersedia.");
   }
 
   /* =====================================================
@@ -172,7 +184,7 @@
       const ownerId = context.ownerId;
       const isOwner = context.isOwner;
 
-      // Tutup menu sebelumnya jika masih terbuka.
+      // Tutup menu yang mungkin masih terbuka.
       const oldOverlay = document.getElementById(
         "mexa-post-menu-overlay"
       );
@@ -185,11 +197,10 @@
         }
       }
 
-      // Latar menu.
+      // LATAR MENU.
       const overlay = document.createElement("div");
 
       overlay.id = "mexa-post-menu-overlay";
-      overlay.setAttribute("role", "presentation");
 
       Object.assign(overlay.style, {
         position: "fixed",
@@ -201,14 +212,15 @@
         padding: "18px",
         boxSizing: "border-box",
         background: "rgba(5,3,15,.76)",
-        backdropFilter: "blur(7px)",
-        WebkitBackdropFilter: "blur(7px)"
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)"
       });
 
-      // Panel menu.
+      // PANEL MENU.
       const panel = document.createElement("div");
 
       panel.className = "mx-post-menu-panel";
+
       panel.setAttribute("role", "dialog");
       panel.setAttribute("aria-modal", "true");
       panel.setAttribute("aria-label", "Menu postingan");
@@ -251,9 +263,7 @@
       overlay._mexaClose = closeMenu;
 
       overlay.addEventListener("click", function (event) {
-        if (event.target === overlay) {
-          closeMenu();
-        }
+        if (event.target === overlay) closeMenu();
       });
 
       panel.addEventListener("click", function (event) {
@@ -266,7 +276,7 @@
       );
 
       /* =================================================
-         PEMBUAT TOMBOL MENU
+         PEMBUAT TOMBOL PREMIUM
          ================================================= */
 
       function makeButton(label, callback, danger) {
@@ -291,7 +301,7 @@
           borderRadius: "12px",
           border: "1px solid " + (
             danger
-              ? "#743649"
+              ? "rgba(255,100,130,.38)"
               : "var(--mx-border, #393052)"
           ),
           background: danger
@@ -304,7 +314,8 @@
           fontSize: "14px",
           fontWeight: "650",
           textAlign: "left",
-          cursor: "pointer"
+          cursor: "pointer",
+          transition: "background .18s ease, border-color .18s ease"
         });
 
         button.addEventListener("click", callback);
@@ -314,21 +325,87 @@
       }
 
       /* =================================================
-         EDITOR LANGSUNG DI KARTU POSTINGAN
-         Dibuat sebelum showMenu agar dapat dipanggil menu.
+         HEADER MENU
+         ================================================= */
+
+      function showMenuHeader() {
+        const headingRow = document.createElement("div");
+
+        Object.assign(headingRow.style, {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+          marginBottom: "10px"
+        });
+
+        const title = document.createElement("h3");
+
+        title.textContent = "Menu Postingan";
+
+        Object.assign(title.style, {
+          margin: "0",
+          color: "var(--mx-text, #ffffff)",
+          fontSize: "19px",
+          fontWeight: "800"
+        });
+
+        const closeButton = document.createElement("button");
+
+        closeButton.type = "button";
+        closeButton.textContent = "×";
+        closeButton.setAttribute("aria-label", "Tutup menu");
+
+        Object.assign(closeButton.style, {
+          width: "35px",
+          height: "35px",
+          flex: "0 0 35px",
+          borderRadius: "50%",
+          border: "1px solid var(--mx-border, #393052)",
+          background: "var(--mx-panel, #211b37)",
+          color: "var(--mx-text, #ffffff)",
+          fontSize: "23px",
+          cursor: "pointer"
+        });
+
+        closeButton.addEventListener("click", closeMenu);
+
+        headingRow.append(title, closeButton);
+        panel.appendChild(headingRow);
+
+        const description = document.createElement("p");
+
+        description.textContent = isOwner
+          ? "Postingan ini milik akun kamu."
+          : "Kamu sedang melihat postingan pengguna lain.";
+
+        Object.assign(description.style, {
+          margin: "0 0 14px",
+          color: "var(--mx-muted, #b9b1d0)",
+          fontSize: "13px",
+          lineHeight: "1.55"
+        });
+
+        panel.appendChild(description);
+      }
+
+      /* =================================================
+         EDIT LANGSUNG DI KARTU POSTINGAN
          ================================================= */
 
       async function showEditor() {
         if (!isOwner) {
-          alert(
-            "Kamu hanya bisa mengedit postingan milik sendiri."
+          closeMenu();
+
+          showToast(
+            "Kamu hanya bisa mengedit postingan milik sendiri.",
+            true
           );
 
-          closeMenu();
           return;
         }
 
-        // Periksa ulang pemilik sebelum membuka editor.
+        // Verifikasi ulang pemilik.
         try {
           const fresh = await getPostContext(post.id);
 
@@ -337,11 +414,13 @@
             fresh.viewerId !== viewerId ||
             fresh.ownerId !== ownerId
           ) {
-            alert(
-              "Hak pemilik postingan tidak terverifikasi."
+            closeMenu();
+
+            showToast(
+              "Hak pemilik postingan tidak terverifikasi.",
+              true
             );
 
-            closeMenu();
             return;
           }
         } catch (error) {
@@ -350,7 +429,11 @@
             error
           );
 
-          alert("Gagal memeriksa akun. Coba lagi.");
+          showToast(
+            "Gagal memeriksa akun. Coba lagi.",
+            true
+          );
+
           return;
         }
 
@@ -360,7 +443,12 @@
 
         if (!card) {
           closeMenu();
-          alert("Kartu postingan tidak ditemukan.");
+
+          showToast(
+            "Kartu postingan tidak ditemukan.",
+            true
+          );
+
           return;
         }
 
@@ -370,7 +458,12 @@
 
         if (!contentElement) {
           closeMenu();
-          alert("Isi postingan tidak ditemukan.");
+
+          showToast(
+            "Isi postingan tidak ditemukan.",
+            true
+          );
+
           return;
         }
 
@@ -384,7 +477,6 @@
         const originalDisplay =
           contentElement.style.display;
 
-        // Buat editor di dalam kartu yang sama.
         const editor = document.createElement("section");
 
         editor.className = "mx-post-inline-editor";
@@ -393,75 +485,162 @@
           "Edit postingan MEXA"
         );
 
+        Object.assign(editor.style, {
+          display: "block",
+          width: "100%",
+          boxSizing: "border-box",
+          margin: "12px 0",
+          padding: "16px",
+          borderRadius: "16px",
+          border: "1px solid var(--mx-secondary, #8b5cf6)",
+          background: "var(--mx-panel, #211a35)",
+          color: "var(--mx-text, #ffffff)",
+          boxShadow: "0 12px 30px rgba(0,0,0,.18)"
+        });
+
         const heading = document.createElement("div");
+
         heading.className = "mx-post-edit-heading";
+
+        Object.assign(heading.style, {
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "8px",
+          marginBottom: "12px"
+        });
 
         const headingText = document.createElement("div");
 
-        headingText.className =
-          "mx-post-edit-heading-text";
-
+        headingText.className = "mx-post-edit-heading-text";
         headingText.textContent = "✏️ Edit postingan";
+
+        Object.assign(headingText.style, {
+          fontSize: "16px",
+          fontWeight: "800"
+        });
 
         const badge = document.createElement("span");
 
         badge.className = "mx-post-edit-badge";
         badge.textContent = "POSTINGAN KAMU";
 
+        Object.assign(badge.style, {
+          padding: "5px 8px",
+          borderRadius: "20px",
+          border: "1px solid rgba(139,92,246,.4)",
+          background: "rgba(139,92,246,.12)",
+          color: "var(--mx-primary, #00e5ff)",
+          fontSize: "10px",
+          fontWeight: "800",
+          letterSpacing: ".5px"
+        });
+
         heading.append(headingText, badge);
 
-        // Area untuk mengetik langsung.
+        // Kolom edit langsung di dalam kartu.
         const textarea = document.createElement("textarea");
 
         textarea.className = "mx-post-inline-textarea";
-        textarea.value =
-          contentElement.textContent ||
-          post.content ||
-          "";
-
+        textarea.value = contentElement.textContent || "";
         textarea.placeholder = "Tulis perubahan postingan...";
-
-        textarea.setAttribute(
-          "aria-label",
-          "Isi postingan"
-        );
-
+        textarea.setAttribute("aria-label", "Isi postingan");
         textarea.spellcheck = true;
+
+        Object.assign(textarea.style, {
+          display: "block",
+          width: "100%",
+          minHeight: "135px",
+          boxSizing: "border-box",
+          padding: "13px 14px",
+          resize: "vertical",
+          color: "var(--mx-text, #ffffff)",
+          background: "var(--mx-bg, #0b0818)",
+          border: "1px solid var(--mx-border, #393052)",
+          borderRadius: "12px",
+          outline: "none",
+          fontFamily: "inherit",
+          fontSize: "15px",
+          lineHeight: "1.7"
+        });
 
         const hint = document.createElement("div");
 
         hint.className = "mx-post-edit-hint";
-
         hint.textContent =
-          "Edit tulisan di sini. Perubahan akan tersimpan setelah kamu menekan Simpan.";
+          "Edit isi postinganmu di sini. Tekan Simpan perubahan untuk menerbitkan.";
+
+        Object.assign(hint.style, {
+          marginTop: "8px",
+          color: "var(--mx-muted, #aaa4c2)",
+          fontSize: "12px",
+          lineHeight: "1.5"
+        });
 
         const status = document.createElement("div");
 
         status.className = "mx-post-edit-status";
         status.setAttribute("role", "status");
+        status.setAttribute("aria-live", "polite");
 
-        status.setAttribute(
-          "aria-live",
-          "polite"
-        );
+        Object.assign(status.style, {
+          minHeight: "18px",
+          marginTop: "9px",
+          color: "var(--mx-primary, #00e5ff)",
+          fontSize: "12px",
+          lineHeight: "1.5"
+        });
 
         const footer = document.createElement("div");
+
         footer.className = "mx-post-edit-footer";
 
-        const cancelButton =
-          document.createElement("button");
+        Object.assign(footer.style, {
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "flex-end",
+          gap: "8px",
+          marginTop: "12px"
+        });
+
+        const cancelButton = document.createElement("button");
 
         cancelButton.type = "button";
         cancelButton.className = "mx-post-edit-cancel";
         cancelButton.textContent = "Batal";
 
-        const saveButton =
-          document.createElement("button");
+        const saveButton = document.createElement("button");
 
         saveButton.type = "button";
         saveButton.className = "mx-post-edit-save";
-
         saveButton.textContent = "Simpan perubahan";
+
+        Object.assign(cancelButton.style, {
+          minHeight: "40px",
+          padding: "10px 14px",
+          borderRadius: "11px",
+          border: "1px solid var(--mx-border, #393052)",
+          background: "var(--mx-card, #151025)",
+          color: "var(--mx-text, #ffffff)",
+          fontFamily: "inherit",
+          fontSize: "13px",
+          fontWeight: "700",
+          cursor: "pointer"
+        });
+
+        Object.assign(saveButton.style, {
+          minHeight: "40px",
+          padding: "10px 14px",
+          borderRadius: "11px",
+          border: "1px solid var(--mx-primary, #00e5ff)",
+          background: "var(--mx-primary, #00e5ff)",
+          color: "#07111b",
+          fontFamily: "inherit",
+          fontSize: "13px",
+          fontWeight: "800",
+          cursor: "pointer"
+        });
 
         footer.append(cancelButton, saveButton);
 
@@ -473,7 +652,6 @@
           footer
         );
 
-        // Sembunyikan teks lama sementara editor aktif.
         contentElement.insertAdjacentElement(
           "afterend",
           editor
@@ -484,9 +662,7 @@
         closeMenu();
 
         function cancelEditing() {
-          contentElement.style.display =
-            originalDisplay;
-
+          contentElement.style.display = originalDisplay;
           editor.remove();
         }
 
@@ -512,20 +688,19 @@
           }
         );
 
-        // SIMPAN EDIT
+        // SIMPAN POSTINGAN.
         saveButton.addEventListener(
           "click",
           async function () {
             if (saveButton.disabled) return;
 
-            const newContent =
-              textarea.value.trim();
+            const newContent = textarea.value.trim();
 
             if (!newContent) {
               status.textContent =
                 "Isi postingan tidak boleh kosong.";
 
-              status.classList.add("is-error");
+              status.style.color = "#ff7085";
               textarea.focus();
 
               return;
@@ -533,16 +708,15 @@
 
             saveButton.disabled = true;
             cancelButton.disabled = true;
-
             saveButton.textContent = "Menyimpan...";
 
-            status.classList.remove("is-error");
+            status.style.color =
+              "var(--mx-primary, #00e5ff)";
 
             status.textContent =
               "Memeriksa akun dan menyimpan perubahan...";
 
             try {
-              // Validasi ulang agar pengunjung tidak dapat mengedit.
               const latest =
                 await getPostContext(post.id);
 
@@ -576,7 +750,7 @@
                 );
               }
 
-              // Perbarui kartu yang sama tanpa memuat ulang feed.
+              // Perbarui isi kartu tanpa memuat ulang seluruh feed.
               contentElement.textContent =
                 result.data.content;
 
@@ -585,11 +759,22 @@
 
               post.content = result.data.content;
 
+              // Perbarui cache feed jika tersedia.
+              if (Array.isArray(window.MEXA_POSTS)) {
+                window.MEXA_POSTS =
+                  window.MEXA_POSTS.map(function (item) {
+                    return String(item.id) === String(post.id)
+                      ? Object.assign({}, item, {
+                          content: result.data.content
+                        })
+                      : item;
+                  });
+              }
+
               editor.remove();
 
-              makeStatusNotice(
-                card,
-                "✓ Perubahan postingan tersimpan",
+              showToast(
+                "✓ Perubahan postingan berhasil disimpan.",
                 false
               );
             } catch (error) {
@@ -602,13 +787,11 @@
                 error.message ||
                 "Gagal menyimpan perubahan.";
 
-              status.classList.add("is-error");
+              status.style.color = "#ff7085";
 
               saveButton.disabled = false;
               cancelButton.disabled = false;
-
-              saveButton.textContent =
-                "Coba simpan lagi";
+              saveButton.textContent = "Coba simpan lagi";
             }
           }
         );
@@ -627,17 +810,157 @@
       }
 
       /* =================================================
-         ISI MENU TITIK TIGA
+         KONFIRMASI HAPUS PREMIUM
+         ================================================= */
+
+      function showDeleteConfirmation() {
+        panel.replaceChildren();
+
+        const icon = document.createElement("div");
+
+        icon.textContent = "🗑️";
+
+        Object.assign(icon.style, {
+          fontSize: "34px",
+          textAlign: "center",
+          marginBottom: "8px"
+        });
+
+        const title = document.createElement("h3");
+
+        title.textContent = "Hapus postingan?";
+
+        Object.assign(title.style, {
+          margin: "0",
+          fontSize: "19px",
+          textAlign: "center",
+          color: "var(--mx-text, #ffffff)"
+        });
+
+        const description = document.createElement("p");
+
+        description.textContent =
+          "Postingan ini akan dihapus dari MEXA. Tindakan ini tidak dapat dibatalkan.";
+
+        Object.assign(description.style, {
+          margin: "12px 0 16px",
+          color: "var(--mx-muted, #aaa4c2)",
+          fontSize: "13px",
+          lineHeight: "1.6",
+          textAlign: "center"
+        });
+
+        panel.append(icon, title, description);
+
+        const cancelButton = makeButton(
+          "Batal",
+          function () {
+            showMenu();
+          }
+        );
+
+        const deleteButton = makeButton(
+          "🗑️ Ya, hapus postingan",
+          async function () {
+            if (deleteButton.disabled) return;
+
+            deleteButton.disabled = true;
+            cancelButton.disabled = true;
+            deleteButton.textContent = "Menghapus...";
+
+            try {
+              const fresh =
+                await getPostContext(post.id);
+
+              if (
+                !fresh.isOwner ||
+                fresh.viewerId !== viewerId ||
+                fresh.ownerId !== ownerId
+              ) {
+                throw new Error(
+                  "Akun login bukan pemilik postingan."
+                );
+              }
+
+              const result = await fresh.client
+                .from("posts")
+                .delete()
+                .eq("id", post.id)
+                .eq("user_id", viewerId)
+                .select("id")
+                .maybeSingle();
+
+              if (result.error) {
+                throw result.error;
+              }
+
+              if (!result.data) {
+                throw new Error(
+                  "Penghapusan ditolak. Periksa izin RLS Supabase."
+                );
+              }
+
+              closeMenu();
+
+              const card = document.getElementById(
+                "post-" + post.id
+              );
+
+              if (card) card.remove();
+
+              if (Array.isArray(window.MEXA_POSTS)) {
+                window.MEXA_POSTS =
+                  window.MEXA_POSTS.filter(function (item) {
+                    return String(item.id) !== String(post.id);
+                  });
+              }
+
+              try {
+                await refreshFeed();
+              } catch (refreshError) {
+                console.warn(
+                  "MEXA gagal menyegarkan feed setelah penghapusan:",
+                  refreshError
+                );
+              }
+
+              showToast(
+                "Postingan berhasil dihapus.",
+                false
+              );
+            } catch (error) {
+              console.error(
+                "MEXA gagal menghapus postingan:",
+                error
+              );
+
+              showToast(
+                error.message ||
+                "Postingan gagal dihapus.",
+                true
+              );
+
+              showMenu();
+            }
+          },
+          true
+        );
+
+        cancelButton.style.textAlign = "center";
+        cancelButton.style.justifyContent = "center";
+
+        deleteButton.style.textAlign = "center";
+        deleteButton.style.justifyContent = "center";
+      }
+
+      /* =================================================
+         MENU UTAMA
          ================================================= */
 
       function showMenu() {
         panel.replaceChildren();
 
-        // Header menu.
-        const headingRow =
-          document.createElement("div");
-
-        headingRow.className = "mx-post-menu-heading";
+        const headingRow = document.createElement("div");
 
         Object.assign(headingRow.style, {
           display: "flex",
@@ -655,43 +978,33 @@
           margin: "0",
           fontSize: "19px",
           fontWeight: "800",
-          color: "var(--mx-text, #fff)"
+          color: "var(--mx-text, #ffffff)"
         });
 
-        const closeButton =
-          document.createElement("button");
+        const closeButton = document.createElement("button");
 
         closeButton.type = "button";
-        closeButton.className = "mx-post-menu-close";
         closeButton.textContent = "×";
-
-        closeButton.setAttribute(
-          "aria-label",
-          "Tutup menu"
-        );
+        closeButton.setAttribute("aria-label", "Tutup menu");
 
         Object.assign(closeButton.style, {
-          width: "34px",
-          height: "34px",
+          width: "35px",
+          height: "35px",
+          flex: "0 0 35px",
           borderRadius: "50%",
           border: "1px solid var(--mx-border, #393052)",
           background: "var(--mx-panel, #211b37)",
-          color: "var(--mx-text, #fff)",
+          color: "var(--mx-text, #ffffff)",
           fontSize: "23px",
           cursor: "pointer"
         });
 
-        closeButton.addEventListener(
-          "click",
-          closeMenu
-        );
+        closeButton.addEventListener("click", closeMenu);
 
         headingRow.append(title, closeButton);
         panel.appendChild(headingRow);
 
-        // Keterangan pemilik/pengunjung.
-        const description =
-          document.createElement("p");
+        const description = document.createElement("p");
 
         description.textContent = isOwner
           ? "Postingan ini milik akun kamu."
@@ -699,58 +1012,56 @@
 
         Object.assign(description.style, {
           margin: "0 0 14px",
-          color: "var(--mx-muted, #b9b1d0)",
+          color: "var(--mx-muted, #aaa4c2)",
           fontSize: "13px",
-          lineHeight: "1.5"
+          lineHeight: "1.55"
         });
 
         panel.appendChild(description);
 
-        // BAGIKAN KE TEMAN
+        // BAGIKAN KE TEMAN.
         makeButton(
           "👤  Bagikan ke Teman",
           function () {
             closeMenu();
 
             if (
-              typeof window.openShareToFriend ===
-              "function"
+              typeof window.openShareToFriend === "function"
             ) {
               window.openShareToFriend(post);
             } else {
-              alert(
-                "Fitur Bagikan ke Teman belum terhubung."
+              showToast(
+                "Fitur Bagikan ke Teman belum terhubung.",
+                true
               );
             }
           }
         );
 
-        // BAGIKAN KE GRUP
+        // BAGIKAN KE GRUP.
         makeButton(
           "👨‍👩‍👧  Bagikan ke Grup",
           function () {
             closeMenu();
 
             if (
-              typeof window.openShareToGroup ===
-              "function"
+              typeof window.openShareToGroup === "function"
             ) {
               window.openShareToGroup(post);
             } else {
-              alert(
-                "Fitur Bagikan ke Grup belum terhubung."
+              showToast(
+                "Fitur Bagikan ke Grup belum terhubung.",
+                true
               );
             }
           }
         );
 
-        // SALIN TAUTAN
+        // SALIN TAUTAN.
         makeButton(
           "🔗  Salin tautan",
           async function () {
-            const url = new URL(
-              window.location.href
-            );
+            const url = new URL(window.location.href);
 
             url.hash = "post-" + post.id;
 
@@ -765,8 +1076,9 @@
 
                 closeMenu();
 
-                alert(
-                  "Tautan postingan berhasil disalin."
+                showToast(
+                  "Tautan postingan berhasil disalin.",
+                  false
                 );
               } else {
                 closeMenu();
@@ -793,7 +1105,7 @@
         );
 
         if (isOwner) {
-          // EDIT HANYA UNTUK PEMILIK
+          // EDIT HANYA UNTUK PEMILIK.
           makeButton(
             "✏️  Edit postingan",
             function () {
@@ -801,93 +1113,39 @@
             }
           );
 
-          // HAPUS HANYA UNTUK PEMILIK
+          // HAPUS HANYA UNTUK PEMILIK.
           makeButton(
             "🗑️  Hapus postingan",
-            async function () {
-              const confirmed = window.confirm(
-                "Yakin ingin menghapus postingan ini?"
-              );
-
-              if (!confirmed) return;
-
-              try {
-                const fresh =
-                  await getPostContext(post.id);
-
-                if (
-                  !fresh.isOwner ||
-                  fresh.viewerId !== viewerId ||
-                  fresh.ownerId !== ownerId
-                ) {
-                  throw new Error(
-                    "Akun login bukan pemilik postingan."
-                  );
-                }
-
-                const result = await fresh.client
-                  .from("posts")
-                  .delete()
-                  .eq("id", post.id)
-                  .eq("user_id", viewerId)
-                  .select("id")
-                  .maybeSingle();
-
-                if (result.error) {
-                  throw result.error;
-                }
-
-                if (!result.data) {
-                  throw new Error(
-                    "Penghapusan ditolak. Periksa izin RLS Supabase."
-                  );
-                }
-
-                closeMenu();
-
-                await refreshFeed();
-
-                alert(
-                  "Postingan berhasil dihapus."
-                );
-              } catch (error) {
-                console.error(
-                  "MEXA gagal menghapus postingan:",
-                  error
-                );
-
-                alert(
-                  "Postingan gagal dihapus. Pastikan kamu pemiliknya dan izin RLS aktif."
-                );
-              }
+            function () {
+              showDeleteConfirmation();
             },
             true
           );
         } else {
-          // LAPORKAN UNTUK PENGUNJUNG
+          // LAPOR HANYA UNTUK PENGUNJUNG.
           makeButton(
             "⚑  Laporkan postingan",
             function () {
               closeMenu();
 
               if (
-                typeof window.openReportPost ===
-                "function"
+                typeof window.openReportPost === "function"
               ) {
                 window.openReportPost(post);
               } else {
-                alert(
-                  "Fitur laporan belum terhubung ke sistem moderasi MEXA."
+                showToast(
+                  "Fitur laporan belum terhubung ke sistem moderasi.",
+                  true
                 );
               }
-            }
+            },
+            true
           );
         }
 
         makeButton("Tutup", closeMenu);
       }
 
-      // Buka menu setelah semua fungsi siap.
       showMenu();
     } catch (error) {
       console.error(
@@ -895,14 +1153,15 @@
         error
       );
 
-      alert(
-        "Menu gagal dibuka. Periksa sesi login dan akses postingan."
+      showToast(
+        "Menu gagal dibuka. Periksa sesi login dan akses postingan.",
+        true
       );
     }
   }
 
   /* =====================================================
-     API GLOBAL KONTROL POSTINGAN
+     SAMBUNGAN UNTUK functions-post.js
      ===================================================== */
 
   window.MEXA_POST_SYSTEM = {
@@ -911,7 +1170,7 @@
     getPostContext: getPostContext
   };
 
-  // Kompatibilitas dengan tombol titik tiga lama.
+  // Kompatibilitas untuk kode lama.
   window.openPostMenu = openMenu;
 
   console.log(
