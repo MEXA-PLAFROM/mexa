@@ -1,0 +1,432 @@
+/* =====================================================
+   MEXA STORIES — PREMIUM DESIGN V1
+   Mendukung Midnight, Arctic, Emerald, Sunset, Cyberpunk
+   ===================================================== */
+
+#mexa-stories {
+  --m-story-accent: var(--mx-purple, #8b5cf6);
+  --m-story-bg: var(--mx-bg, #0b0818);
+  --m-story-card: var(--mx-card, var(--mx-panel, #141027));
+  --m-story-text: var(--mx-text, #f6f3ff);
+  --m-story-muted: var(--mx-muted, #aaa4c2);
+  --m-story-border: var(--mx-border, #33294b);
+  width: 100%;
+  margin: 14px 0;
+  color: var(--m-story-text);
+  font-family: inherit;
+}
+
+#mexa-stories,
+#mexa-stories * {
+  box-sizing: border-box;
+}
+
+#mexa-stories .mstory-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+#mexa-stories .mstory-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.3px;
+}
+
+#mexa-stories .mstory-subtitle {
+  margin-top: 3px;
+  color: var(--m-story-muted);
+  font-size: 11px;
+}
+
+#mexa-stories .mstory-refresh {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid var(--m-story-border);
+  border-radius: 12px;
+  background: var(--m-story-card);
+  color: var(--m-story-text);
+  cursor: pointer;
+}
+
+#mexa-stories .mstory-list {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 3px 2px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--m-story-border) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+#mexa-stories .mstory-item {
+  display: flex;
+  flex: 0 0 76px;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--m-story-text);
+  text-align: center;
+  cursor: pointer;
+}
+
+#mexa-stories .mstory-ring {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  padding: 3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 20deg,
+    var(--m-story-accent),
+    #00e5ff,
+    var(--m-story-accent)
+  );
+  box-shadow: 0 0 16px color-mix(
+    in srgb,
+    var(--m-story-accent) 22%,
+    transparent
+  );
+  transition: transform .2s ease;
+}
+
+#mexa-stories .mstory-item:hover .mstory-ring {
+  transform: scale(1.06);
+}
+
+#mexa-stories .mstory-avatar {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 3px solid var(--m-story-card);
+  border-radius: 50%;
+  background: var(--m-story-bg);
+  color: var(--m-story-text);
+  font-size: 23px;
+  font-weight: 800;
+}
+
+#mexa-stories .mstory-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#mexa-stories .mstory-caption {
+  width: 100%;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#mexa-stories .mstory-time {
+  display: block;
+  margin-top: 2px;
+  color: var(--m-story-muted);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+#mexa-stories .mstory-state {
+  padding: 16px 12px;
+  border: 1px dashed var(--m-story-border);
+  border-radius: 14px;
+  color: var(--m-story-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Penampil Cerita layar penuh */
+
+#mexa-story-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 100100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(4, 3, 12, .94);
+  color: #fff;
+  font-family: inherit;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#mexa-story-viewer[hidden] {
+  display: none !important;
+}
+
+#mexa-story-viewer .mstory-viewer-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 440px);
+  height: min(92dvh, 850px);
+  min-height: 420px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 24px;
+  background: #100c1c;
+  box-shadow: 0 24px 90px rgba(0,0,0,.55);
+}
+
+#mexa-story-viewer .mstory-progress-list {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 5;
+  display: flex;
+  gap: 4px;
+}
+
+#mexa-story-viewer .mstory-progress-track {
+  height: 3px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(255,255,255,.28);
+}
+
+#mexa-story-viewer .mstory-progress-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: #fff;
+}
+
+#mexa-story-viewer .mstory-viewer-head {
+  position: absolute;
+  top: 24px;
+  left: 12px;
+  right: 12px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+#mexa-story-viewer .mstory-owner-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  font-weight: 800;
+}
+
+#mexa-story-viewer .mstory-owner-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#mexa-story-viewer .mstory-owner-info {
+  flex: 1;
+  min-width: 0;
+}
+
+#mexa-story-viewer .mstory-owner-name {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#mexa-story-viewer .mstory-owner-time {
+  margin-top: 3px;
+  color: rgba(255,255,255,.72);
+  font-size: 10px;
+}
+
+#mexa-story-viewer .mstory-icon-button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 12px;
+  background: rgba(0,0,0,.25);
+  color: #fff;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+#mexa-story-viewer .mstory-media {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      var(--mx-purple, #8b5cf6),
+      transparent 55%
+    ),
+    linear-gradient(145deg, #151025, #070610);
+}
+
+#mexa-story-viewer .mstory-media-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#mexa-story-viewer .mstory-media-text {
+  width: 100%;
+  max-height: 75%;
+  overflow-y: auto;
+  padding: 70px 25px 110px;
+  font-size: clamp(21px, 5vw, 32px);
+  font-weight: 750;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+#mexa-story-viewer .mstory-tap-zone {
+  position: absolute;
+  top: 75px;
+  bottom: 100px;
+  z-index: 2;
+  width: 32%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+#mexa-story-viewer .mstory-tap-prev {
+  left: 0;
+}
+
+#mexa-story-viewer .mstory-tap-next {
+  right: 0;
+}
+
+#mexa-story-viewer .mstory-bottom {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 18px;
+  background: rgba(8,6,17,.78);
+  backdrop-filter: blur(12px);
+}
+
+#mexa-story-viewer .mstory-reply-input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 13px;
+  border: 1px solid rgba(255,255,255,.23);
+  border-radius: 13px;
+  outline: none;
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+#mexa-story-viewer .mstory-reply-input::placeholder {
+  color: rgba(255,255,255,.7);
+}
+
+#mexa-story-viewer .mstory-reply-input:focus {
+  border-color: var(--mx-purple, #8b5cf6);
+}
+
+#mexa-story-viewer .mstory-send-button {
+  height: 42px;
+  padding: 0 15px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 13px;
+  background: var(--mx-purple, #8b5cf6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#mexa-story-viewer .mstory-send-button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+#mexa-story-viewer .mstory-feedback {
+  position: absolute;
+  right: 12px;
+  bottom: 76px;
+  left: 12px;
+  z-index: 6;
+  padding: 9px 12px;
+  border-radius: 11px;
+  background: rgba(0,0,0,.75);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#mexa-story-viewer .mstory-feedback[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
+  #mexa-story-viewer {
+    padding: 0;
+  }
+
+  #mexa-story-viewer .mstory-viewer-card {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  #mexa-stories .mstory-list {
+    gap: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mexa-stories *,
+  #mexa-story-viewer * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
