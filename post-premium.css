@@ -1018,4 +1018,339 @@
     transition: none !important;
   }
 }
-      
+ 
+/* =====================================================
+   MEXA ULTRA PREMIUM INLINE EDITOR
+   Override gaya inline dari system control
+===================================================== */
+
+/* PANEL EDITOR */
+.mx-post-inline-editor {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+
+  margin: 16px 0 !important;
+  padding: 20px !important;
+
+  background:
+    radial-gradient(
+      ellipse at top right,
+      rgba(139, 92, 246, .20),
+      transparent 55%
+    ),
+    linear-gradient(
+      145deg,
+      var(--mx-panel, #211a35),
+      var(--mx-card, #151025)
+    ) !important;
+
+  color: var(--mx-text, #fff) !important;
+  border: 1px solid var(--mx-secondary, #8b5cf6) !important;
+  border-radius: 20px !important;
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, .25),
+    0 0 24px rgba(139, 92, 246, .09) !important;
+}
+
+/* GARIS NEON DI ATAS PANEL */
+.mx-post-inline-editor::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 20px !important;
+  right: 20px !important;
+  height: 3px !important;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mx-primary, #00e5ff),
+    var(--mx-secondary, #8b5cf6),
+    transparent
+  ) !important;
+
+  border-radius: 0 0 10px 10px !important;
+  pointer-events: none !important;
+}
+
+/* JUDUL EDIT */
+.mx-post-inline-editor .mx-post-edit-heading {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin: 0 0 16px !important;
+}
+
+.mx-post-inline-editor .mx-post-edit-heading-text {
+  color: var(--mx-text, #fff) !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.4px !important;
+}
+
+/* BADGE POSTINGAN KAMU */
+.mx-post-inline-editor .mx-post-edit-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+
+  padding: 6px 10px !important;
+  border-radius: 30px !important;
+
+  color: var(--mx-primary, #00e5ff) !important;
+  background: rgba(0, 229, 255, .09) !important;
+  border: 1px solid rgba(0, 229, 255, .35) !important;
+
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: .6px !important;
+}
+
+/* =====================================================
+   KOLOM KETIK PREMIUM
+===================================================== */
+
+.mx-post-inline-editor .mx-post-inline-textarea {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 180px !important;
+  box-sizing: border-box !important;
+
+  margin: 0 !important;
+  padding: 18px !important;
+
+  color: var(--mx-text, #fff) !important;
+  caret-color: var(--mx-primary, #00e5ff) !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--mx-bg, #0b0818),
+      var(--mx-card, #151025)
+    ) !important;
+
+  border: 1px solid var(--mx-border, #393052) !important;
+  border-radius: 16px !important;
+  outline: none !important;
+
+  box-shadow:
+    inset 0 3px 10px rgba(0, 0, 0, .16),
+    0 1px 0 rgba(255, 255, 255, .025) !important;
+
+  font-family: inherit !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1.8 !important;
+
+  resize: vertical !important;
+  overflow-wrap: anywhere !important;
+
+  transition:
+    border-color .22s ease,
+    box-shadow .22s ease,
+    background .22s ease !important;
+}
+
+.mx-post-inline-editor .mx-post-inline-textarea:focus {
+  border-color: var(--mx-primary, #00e5ff) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(0, 229, 255, .10),
+    0 0 25px rgba(0, 229, 255, .08),
+    inset 0 3px 10px rgba(0, 0, 0, .12) !important;
+}
+
+.mx-post-inline-editor .mx-post-inline-textarea::placeholder {
+  color: var(--mx-muted, #aaa4c2) !important;
+  opacity: .8 !important;
+}
+
+/* PETUNJUK EDIT */
+.mx-post-inline-editor .mx-post-edit-hint {
+  margin: 11px 0 0 !important;
+  color: var(--mx-muted, #aaa4c2) !important;
+  font-size: 12px !important;
+  line-height: 1.65 !important;
+}
+
+/* STATUS SIMPAN */
+.mx-post-inline-editor .mx-post-edit-status {
+  display: block !important;
+  min-height: 18px !important;
+
+  margin: 10px 0 0 !important;
+
+  color: var(--mx-primary, #00e5ff) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.mx-post-inline-editor .mx-post-edit-status.is-error {
+  color: #ff7085 !important;
+}
+
+/* AREA TOMBOL */
+.mx-post-inline-editor .mx-post-edit-footer {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+
+  margin: 17px 0 0 !important;
+  padding: 0 !important;
+}
+
+/* TOMBOL BATAL */
+.mx-post-inline-editor .mx-post-edit-cancel {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  min-width: 105px !important;
+  min-height: 46px !important;
+  padding: 11px 17px !important;
+  box-sizing: border-box !important;
+
+  color: var(--mx-text, #fff) !important;
+  background: var(--mx-card, #151025) !important;
+  border: 1px solid var(--mx-border, #393052) !important;
+  border-radius: 13px !important;
+
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 750 !important;
+
+  cursor: pointer !important;
+  transition: all .2s ease !important;
+}
+
+.mx-post-inline-editor .mx-post-edit-cancel:hover:not(:disabled) {
+  border-color: var(--mx-secondary, #8b5cf6) !important;
+  background: var(--mx-panel, #211a35) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* TOMBOL SIMPAN NEON */
+.mx-post-inline-editor .mx-post-edit-save {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  min-width: 165px !important;
+  min-height: 46px !important;
+  padding: 11px 19px !important;
+  box-sizing: border-box !important;
+
+  color: #07111b !important;
+  background: linear-gradient(
+    110deg,
+    var(--mx-primary, #00e5ff),
+    #72f4ff
+  ) !important;
+
+  border: 1px solid var(--mx-primary, #00e5ff) !important;
+  border-radius: 13px !important;
+
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 850 !important;
+  letter-spacing: .15px !important;
+
+  box-shadow: 0 5px 18px rgba(0, 229, 255, .17) !important;
+  cursor: pointer !important;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    opacity .2s ease !important;
+}
+
+.mx-post-inline-editor .mx-post-edit-save:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+
+  box-shadow:
+    0 8px 25px rgba(0, 229, 255, .28) !important;
+}
+
+/* KEADAAN MENYIMPAN */
+.mx-post-inline-editor .mx-post-edit-save:disabled,
+.mx-post-inline-editor .mx-post-edit-cancel:disabled {
+  opacity: .55 !important;
+  cursor: wait !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* NOTIFIKASI BERHASIL */
+.mx-post-edit-success {
+  display: block !important;
+  margin: 10px 0 !important;
+  padding: 12px 14px !important;
+
+  color: var(--mx-primary, #00e5ff) !important;
+  background: rgba(0, 229, 255, .08) !important;
+  border: 1px solid rgba(0, 229, 255, .25) !important;
+  border-radius: 12px !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+}
+
+.mx-post-edit-success.is-error {
+  color: #ff7085 !important;
+  border-color: rgba(255, 112, 133, .35) !important;
+  background: rgba(255, 112, 133, .08) !important;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 600px) {
+  .mx-post-inline-editor {
+    padding: 14px !important;
+    border-radius: 15px !important;
+  }
+
+  .mx-post-inline-editor .mx-post-edit-heading-text {
+    font-size: 16px !important;
+  }
+
+  .mx-post-inline-editor .mx-post-inline-textarea {
+    min-height: 150px !important;
+    padding: 13px !important;
+    font-size: 14px !important;
+  }
+
+  .mx-post-inline-editor .mx-post-edit-footer {
+    display: grid !important;
+    grid-template-columns: 1fr 1.4fr !important;
+    gap: 8px !important;
+  }
+
+  .mx-post-inline-editor .mx-post-edit-footer button {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    padding: 10px 7px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-post-inline-editor,
+  .mx-post-inline-editor * {
+    animation: none !important;
+    transition: none !important;
+  }
+   }
+             
