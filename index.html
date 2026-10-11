@@ -7,14 +7,19 @@
 
   <title>MEXA</title>
 
-  <!-- LAYOUT -->
+    <!-- 1. LAYOUT HOME MEXA -->
   <link rel="stylesheet" href="./home.css">
 
-  <!-- WARNA TEMA -->
+  <!-- 2. WARNA DAN TEMA MEXA -->
   <link rel="stylesheet" href="./home-theme.css">
-  <link rel="stylesheet" href="./post-premium.css">
-</head>
 
+  <!-- 3. TAMPILAN PREMIUM POSTINGAN -->
+  <link rel="stylesheet" href="./post-premium.css">
+
+  <!-- 4. TAMPILAN CERITA MEXA -->
+  <link rel="stylesheet" href="./cerita.css">
+
+</head>
 
 <body>
 
@@ -442,30 +447,31 @@ Profil
 <script src="./themes.js"></script>
 <script src="./mexa-control.js"></script>
 
-<!-- 4. SISTEM KONTROL UTAMA -->
+<!-- 4. KONTROL CERITA MEXA -->
+<script src="./cerita-control.js"></script>
+<script src="./cerita.js"></script>
+
+<!-- 5. SISTEM KONTROL UTAMA -->
 <script src="./mexa-system-control.js"></script>
 
-<!-- 5. FUNGSI BERBAGI POSTINGAN -->
+<!-- 6. FUNGSI BERBAGI POSTINGAN -->
 <script src="./post-share.js"></script>
 
-<!-- 6. KONTROL PEMILIK DAN PENGUNJUNG -->
+<!-- 7. KONTROL PEMILIK DAN PENGUNJUNG -->
 <script src="./mexa-post-system-control.js"></script>
 
-<!-- 7. FEED DAN RENDER POSTINGAN -->
+<!-- 8. FEED DAN RENDER POSTINGAN -->
 <script src="./functions-post.js"></script>
 
-<!-- 8. INTERAKSI FEED LAMA
-     Aktifkan setelah memastikan file ini
-     tidak membuat ulang kartu atau feed. -->
+<!-- 9. INTERAKSI FEED LAMA
+     Tetap nonaktif untuk mencegah feed ganda. -->
 <!-- <script src="./functions-feed.js"></script> -->
 
-<!-- 9. TOMBOL HOME DAN POSTING -->
+<!-- 10. TOMBOL HOME DAN POSTING -->
 <script src="./home.js"></script>
 
-<!-- 10. LOGOUT -->
+<!-- 11. LOGOUT -->
 <script src="./logout.js"></script>
 
 </body>
 </html>
-  
-  
