@@ -120,7 +120,7 @@
       panel.hidden = true;
       panel.setAttribute("aria-label", "Hasil pencarian MEXA");
 
-      box.insertAdjacentElement("afterend", panel);
+      box.appendChild(panel);
     }
 
     return { input, box, panel };
