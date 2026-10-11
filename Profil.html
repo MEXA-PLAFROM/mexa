@@ -447,18 +447,15 @@
             <a class="tab" href="./reels.html">Reels</a>
           </div>
 
-          <div class="empty" id="postingan">
-            <div class="symbol">✦</div>
-            <h3>Ruang kreator</h3>
-            <p>Postingan akan ditampilkan setelah fitur posting profil dihubungkan.</p>
-          </div>
-        </section>
-      </div>
-    </article>
-  </main>
-
-  <footer>© MEXA Hub · Ruang untuk terhubung dan berkarya.</footer>
-
+         
+<div id="postingan" class="creator-posts">
+  <div class="empty">
+    <div class="symbol">✦</div>
+    <h3>Menyiapkan Ruang Kreator</h3>
+    <p>Postingan kreator akan dimuat dari MEXA.</p>
+  </div>
+</div>
+          
   <div class="editor-overlay" id="editorOverlay" role="dialog"
        aria-modal="true" aria-labelledby="editorTitle">
     <div class="editor">
@@ -799,7 +796,7 @@ async function loadProfile() {
 
   // Jika URL berisi ?user=ID, buka profil pemilik ID tersebut.
   const targetUserId = requestedUserId || currentUser.id;
-
+  window.MEXA_PROFILE_TARGET_ID = targetUserId;
   // Hanya pemilik akun yang boleh mengedit profilnya.
   const isOwnProfile = targetUserId === currentUser.id;
   
@@ -820,7 +817,11 @@ async function loadProfile() {
 
   // Tampilkan profil yang dipilih, bukan selalu profil sendiri.
   renderProfile(data, isOwnProfile ? metadata : {});
-
+   document.dispatchEvent(
+  new CustomEvent("mexa:profile-ready", {
+    detail: { userId: targetUserId }
+  })
+);
   document.getElementById("followers").textContent = "—";
   document.getElementById("friends").textContent = "—";
   document.getElementById("posts").textContent = "0";
