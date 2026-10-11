@@ -1,8 +1,3 @@
-/* =====================================================
-   MEXA STORY CONTROL — PREMIUM V1.1
-   Data Supabase • Masa aktif • Messenger bridge
-   ===================================================== */
-
 (function (window, document) {
   "use strict";
 
@@ -11,7 +6,7 @@
     return;
   }
 
-  const VERSION = "1.1.0";
+  const VERSION = "2.0.0";
   const LIFETIME = 24 * 60 * 60 * 1000;
   const CACHE_MS = 15000;
 
@@ -22,51 +17,46 @@
   function getClient() {
     const client = window.mexaSupabase;
 
-    if (
-      !client ||
-      typeof client.from !== "function" ||
-      !client.auth
-    ) {
+    if (!client || typeof client.from !== "function" || !client.auth) {
       throw new Error("Koneksi Supabase belum tersedia.");
     }
 
     return client;
   }
 
-  function emit(name, detail) {
+  function emit(name, detail = {}) {
     document.dispatchEvent(new CustomEvent(
       "mexa:story-" + name,
-      { detail: detail || {} }
+      { detail }
     ));
   }
 
-  function getCreatedTime(item) {
-    const value = item.created_at || item.createdAt;
-    const time = new Date(value).getTime();
+  function createdTime(item) {
+    const time = new Date(
+      item.created_at || item.createdAt || 0
+    ).getTime();
 
     return Number.isFinite(time) ? time : 0;
   }
 
   function isActive(item) {
-    if (!item) return false;
-
-    const created = getCreatedTime(item);
+    const time = createdTime(item);
     const now = Date.now();
 
-    return created > 0 &&
-      created <= now &&
-      now - created < LIFETIME;
+    return time > 0 &&
+      time <= now &&
+      now - time < LIFETIME;
   }
 
   function normalize(post, profile) {
-    const createdAt = getCreatedTime(post);
+    const createdAt = createdTime(post);
 
     return {
       id: String(post.id),
       userId: String(post.user_id || ""),
       content: post.content || "",
       imageUrl: post.image_url || "",
-      createdAt: createdAt,
+      createdAt,
       expiresAt: createdAt + LIFETIME,
       displayName:
         profile?.display_name ||
@@ -75,6 +65,33 @@
       username: profile?.username || "",
       avatarUrl: profile?.avatar_url || ""
     };
+  }
+
+  function groupByUser(items) {
+    const groups = new Map();
+
+    items.filter(isActive).forEach(story => {
+      if (!groups.has(story.userId)) {
+        groups.set(story.userId, []);
+      }
+
+      groups.get(story.userId).push(story);
+    });
+
+    return Array.from(groups.entries()).map(([userId, items]) => {
+      items.sort((a, b) => b.createdAt - a.createdAt);
+
+      return {
+        userId,
+        displayName: items[0].displayName,
+        username: items[0].username,
+        avatarUrl: items[0].avatarUrl,
+        cover: items[0],
+        stories: items,
+        count: items.length,
+        latestAt: items[0].createdAt
+      };
+    }).sort((a, b) => b.latestAt - a.latestAt);
   }
 
   async function fetchStories() {
@@ -90,30 +107,30 @@
       )
       .lte("created_at", new Date(now).toISOString())
       .order("created_at", { ascending: false })
-      .limit(100);
+      .limit(500);
 
     if (response.error) throw response.error;
 
     const posts = (response.data || []).filter(isActive);
-    const userIds = [...new Set(
-      posts.map(post => post.user_id).filter(Boolean)
-    )];
+    const userIds = [
+      ...new Set(posts.map(post => post.user_id).filter(Boolean))
+    ];
 
     const profileMap = Object.create(null);
 
     if (userIds.length) {
-      const profiles = await client
+      const profileResponse = await client
         .from("profiles")
         .select("id,username,display_name,avatar_url")
         .in("id", userIds);
 
-      if (profiles.error) {
+      if (profileResponse.error) {
         console.warn(
           "[MEXA STORY] Profil tidak tersedia:",
-          profiles.error.message
+          profileResponse.error.message
         );
       } else {
-        (profiles.data || []).forEach(profile => {
+        (profileResponse.data || []).forEach(profile => {
           profileMap[String(profile.id)] = profile;
         });
       }
@@ -136,13 +153,14 @@
     return getAll();
   }
 
-  function load(options) {
-    options = options || {};
-
+  function load(options = {}) {
     if (loadingPromise) return loadingPromise;
 
-    if (!options.force && lastLoaded &&
-        Date.now() - lastLoaded < CACHE_MS) {
+    if (
+      !options.force &&
+      lastLoaded &&
+      Date.now() - lastLoaded < CACHE_MS
+    ) {
       stories = stories.filter(isActive);
       return Promise.resolve(getAll());
     }
@@ -161,27 +179,30 @@
 
   function getAll() {
     stories = stories.filter(isActive);
-    return stories.slice();
+    return groupByUser(stories);
   }
 
   function getById(id) {
-    return getAll().find(
-      story => story.id === String(id)
+    return stories.find(
+      story => story.id === String(id) && isActive(story)
     ) || null;
   }
 
   function getRemainingTime(story) {
-    if (!story) return 0;
-    return Math.max(0, story.expiresAt - Date.now());
+    return story
+      ? Math.max(0, story.expiresAt - Date.now())
+      : 0;
   }
 
   function formatRemainingTime(story) {
     const remaining = getRemainingTime(story);
 
-    if (remaining <= 0) return "Kedaluwarsa";
+    if (!remaining) return "Kedaluwarsa";
 
     const hours = Math.floor(remaining / 3600000);
-    const minutes = Math.floor((remaining % 3600000) / 60000);
+    const minutes = Math.floor(
+      (remaining % 3600000) / 60000
+    );
 
     return hours > 0
       ? hours + " jam lagi"
@@ -201,8 +222,14 @@
     const story = getById(storyId);
     const text = String(message || "").trim();
 
-    if (!story) throw new Error("Cerita sudah tidak tersedia.");
-    if (!text) throw new Error("Tulis pesan terlebih dahulu.");
+    if (!story) {
+      throw new Error("Status sudah kedaluwarsa.");
+    }
+
+    if (!text) {
+      throw new Error("Tulis pesan terlebih dahulu.");
+    }
+
     if (text.length > 2000) {
       throw new Error("Pesan maksimal 2.000 karakter.");
     }
@@ -215,27 +242,24 @@
     const user = auth.data.user;
 
     if (!user) {
-      throw new Error("Silakan login untuk membalas Cerita.");
+      throw new Error("Silakan login untuk membalas.");
     }
 
     if (String(user.id) === story.userId) {
-      throw new Error("Kamu tidak dapat membalas Cerita sendiri.");
+      throw new Error("Kamu tidak dapat membalas status sendiri.");
     }
 
     const messenger = window.MEXA_MESSENGER;
 
-    if (!messenger ||
-        typeof messenger.sendMessage !== "function") {
+    if (!messenger || typeof messenger.sendMessage !== "function") {
       throw new Error(
-        "Messenger belum terhubung. Pesan belum dikirim."
+        "Messenger MEXA belum terhubung. Pesan belum dikirim."
       );
     }
 
-    // Messenger harus menyimpan pesan ke backend dan
-    // menolak Promise jika pengiriman gagal.
     return messenger.sendMessage({
       recipientId: story.userId,
-      text: text,
+      text,
       storyId: story.id,
       storyReply: true
     });
@@ -244,17 +268,16 @@
   window.MEXA_STORY_CONTROL = {
     version: VERSION,
     lifetimeMs: LIFETIME,
-    load: load,
-    getAll: getAll,
-    getById: getById,
-    isActive: isActive,
-    getRemainingTime: getRemainingTime,
-    formatRemainingTime: formatRemainingTime,
-    invalidate: invalidate,
-    onPostCreated: onPostCreated,
-    reply: reply
+    load,
+    getAll,
+    getById,
+    isActive,
+    getRemainingTime,
+    formatRemainingTime,
+    invalidate,
+    onPostCreated,
+    reply
   };
 
   console.log("MEXA STORY CONTROL " + VERSION + " aktif.");
-
 })(window, document);
