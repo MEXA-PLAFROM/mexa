@@ -1,0 +1,144 @@
+
+/* =====================================================
+   MEXA MEDIA CSS
+   Tombol, pratinjau, notifikasi, dan 5 tema
+   ===================================================== */
+
+.mx-create-buttons button {
+  color: var(--mx-text, inherit);
+  background: var(--mx-panel, rgba(127,127,127,.12));
+  border: 1px solid var(
+    --mx-media-accent,
+    var(--mx-border, rgba(127,127,127,.35))
+  );
+  cursor: pointer;
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    transform .18s ease;
+}
+
+.mx-create-buttons button:hover {
+  border-color: var(--mx-media-accent, #8b5cf6);
+  transform: translateY(-1px);
+}
+
+.mx-media-status {
+  margin-top: 12px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: var(--mx-panel, rgba(127,127,127,.12));
+  color: var(--mx-text, inherit);
+  border: 1px solid var(--mx-border, rgba(127,127,127,.3));
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.mx-media-status[hidden],
+.mx-media-preview[hidden] {
+  display: none !important;
+}
+
+.mx-media-status.mx-media-error {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.mx-media-status.mx-media-success {
+  border-color: var(--mx-media-accent, #8b5cf6);
+}
+
+.mx-media-preview {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--mx-panel, rgba(127,127,127,.1));
+  color: var(--mx-text, inherit);
+  border: 1px solid var(--mx-border, rgba(127,127,127,.25));
+}
+
+.mx-media-preview-item {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #080808;
+}
+
+.mx-media-preview-toolbar {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+
+.mx-media-remove {
+  flex: 0 0 auto;
+  border: 1px solid var(--mx-border, #777);
+  border-radius: 9px;
+  padding: 7px 12px;
+  color: var(--mx-text, inherit);
+  background: transparent;
+  cursor: pointer;
+}
+
+.mx-create-buttons button:focus-visible,
+#mexaPostButton:focus-visible,
+.mx-media-remove:focus-visible {
+  outline: 2px solid var(--mx-media-accent, #8b5cf6);
+  outline-offset: 2px;
+}
+
+.mx-create-buttons button:disabled,
+#mexaPostButton:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.mx-post-video {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #080808;
+}
+
+/* Aksen kelima tema MEXA */
+:root[data-theme="midnight"],
+body[data-theme="midnight"] {
+  --mx-media-accent: #8b5cf6;
+}
+
+:root[data-theme="arctic"],
+body[data-theme="arctic"] {
+  --mx-media-accent: #0891b2;
+}
+
+:root[data-theme="emerald"],
+body[data-theme="emerald"] {
+  --mx-media-accent: #10b981;
+}
+
+:root[data-theme="sunset"],
+body[data-theme="sunset"] {
+  --mx-media-accent: #f97316;
+}
+
+:root[data-theme="cyberpunk"],
+body[data-theme="cyberpunk"] {
+  --mx-media-accent: #ec4899;
+}
+
+@media (max-width: 600px) {
+  .mx-media-preview-item {
+    max-height: 280px;
+  }
+
+  .mx-media-preview-toolbar {
+    align-items: flex-start;
+  }
+}
