@@ -1,12 +1,25 @@
+
 (function (window, document) {
   "use strict";
 
-  if (window.MEXA_STORY_UI) {
-    console.warn("MEXA STORY UI sudah aktif.");
+  /* =====================================================
+     MEXA CERITA UI — V3
+     Hanya mengatur tampilan dan interaksi Cerita.
+     Tidak mengubah sistem postingan, profil, atau login.
+  ===================================================== */
+
+  const VERSION = "3.0.0";
+  const LIFETIME = 24 * 60 * 60 * 1000;
+  const STORY_DURATION = 7000;
+
+  if (
+    window.MEXA_STORY_UI &&
+    window.MEXA_STORY_UI.version === VERSION
+  ) {
+    console.warn("MEXA CERITA UI V3 sudah aktif.");
     return;
   }
 
-  const CONTROL = () => window.MEXA_STORY_CONTROL;
   const EMOJIS = [
     "😀","😃","😄","😁","😆","😅","😂","🤣",
     "🥹","😊","😇","🙂","🙃","😉","😍","🥰",
@@ -14,16 +27,16 @@
     "😎","🤩","🥳","😏","😌","🤗","🤭","🫢",
     "🤔","🫡","🤫","🤐","😶","😐","😑","😬",
     "🙄","😮","😯","😲","😳","🥺","😢","😭",
-    "😤","😠","😡","🤯","😱","😴","🤒","🤕",
-    "🤧","🥵","🥶","🤠","💩","👻","💀","🤖",
-    "👍","👎","👌","✌️","🤞","🤟","🤘","👏",
-    "🙌","🫶","🙏","💪","🫰","🤝","👋","💐",
-    "❤️","🧡","💛","💚","💙","💜","🖤","🤍",
-    "💖","💗","💓","💞","💕","💔","❤️‍🔥","💯",
-    "🔥","✨","⭐","🌟","💫","🎉","🎊","🎁",
-    "🌹","🌷","🌻","🌈","☀️","🌙","⚡","☕",
-    "🍰","🍕","🍔","🍟","🍜","🍉","🍓","🍒",
-    "⚽","🏀","🎮","🎧","🎵","🎶","🚀","🏆"
+    "😤","😠","😡","🤯","😱","😴","😎","🤕",
+    "🤧","🥵","🥶","🤠","👻","💀","🤖","👍",
+    "👎","👌","✌️","🤞","🤟","👏","🙌","🫶",
+    "🙏","💪","🤝","👋","💐","❤️","🧡","💛",
+    "💚","💙","💜","🖤","🤍","💖","💗","💓",
+    "💞","💕","💔","❤️‍🔥","💯","🔥","✨","⭐",
+    "🌟","💫","🎉","🎊","🎁","🌹","🌷","🌻",
+    "🌈","☀️","🌙","⚡","☕","🍰","🍕","🍔",
+    "🍜","🍉","🍓","🍒","⚽","🏀","🎮","🎧",
+    "🎵","🎶","🚀","🏆"
   ];
 
   let groups = [];
@@ -31,42 +44,124 @@
   let currentIndex = 0;
   let timer = null;
   let startedAt = 0;
-  let remaining = 7000;
+  let remaining = STORY_DURATION;
   let isPaused = false;
   let busy = false;
+  let refreshInterval = null;
 
   const $ = (selector, root = document) =>
     root.querySelector(selector);
 
+  function control() {
+    return window.MEXA_STORY_CONTROL || null;
+  }
+
   function el(tag, className, text) {
     const node = document.createElement(tag);
+
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
+
     return node;
   }
 
   function safeUrl(value) {
-    if (!value) return "";
+    if (!value || typeof value !== "string") return "";
+
     try {
       const url = new URL(value, window.location.href);
-      if (url.protocol === "https:" || url.protocol === "http:") {
-        return url.href;
+
+      if (
+        url.protocol !== "https:" &&
+        url.protocol !== "http:"
+      ) {
+        return "";
       }
-    } catch (_) {}
-    return "";
+
+      return url.href;
+    } catch (_) {
+      return "";
+    }
   }
 
   function isVideo(url) {
-    return /\.(mp4|webm|ogg|mov|m4v)(?:$|[?#])/i.test(url || "");
+    return /\.(mp4|webm|ogg|mov|m4v)(?:$|[?#])/i.test(
+      url || ""
+    );
+  }
+
+  /*
+   * Mencegah URL avatar yang tersimpan keliru di image_url
+   * dipakai sebagai sampul cerita.
+   */
+  function isProfileImageUrl(value) {
+    const url = safeUrl(value);
+    if (!url) return false;
+
+    try {
+      const parsed = new URL(url);
+      const path = parsed.pathname.toLowerCase();
+
+      return (
+        path.includes("/profile-media/") ||
+        path.includes("/avatar-") ||
+        path.includes("/avatars/")
+      );
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function storyMedia(story) {
+    const url = safeUrl(story?.imageUrl);
+
+    if (!url || isProfileImageUrl(url)) {
+      return "";
+    }
+
+    return url;
+  }
+
+  function storyTime(story) {
+    const raw =
+      story?.createdAt ??
+      story?.created_at ??
+      story?.created_at_ms ??
+      0;
+
+    if (typeof raw === "number") {
+      // Mendukung timestamp detik maupun milidetik.
+      return raw > 0 && raw < 1000000000000
+        ? raw * 1000
+        : raw;
+    }
+
+    const parsed = new Date(raw).getTime();
+
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function isStoryActive(story) {
+    const created = storyTime(story);
+    const now = Date.now();
+
+    return (
+      created > 0 &&
+      created <= now &&
+      now - created < LIFETIME
+    );
   }
 
   function fallbackAvatar() {
-    return "data:image/svg+xml," + encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">' +
-      '<rect width="80" height="80" rx="40" fill="#30254c"/>' +
-      '<circle cx="40" cy="29" r="15" fill="#b7a5df"/>' +
-      '<path d="M12 78c2-20 13-30 28-30s26 10 28 30" fill="#b7a5df"/>' +
-      '</svg>'
+    return (
+      "data:image/svg+xml;charset=UTF-8," +
+      encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">' +
+        '<rect width="80" height="80" rx="40" fill="#30254c"/>' +
+        '<circle cx="40" cy="29" r="15" fill="#b7a5df"/>' +
+        '<path d="M12 78c2-20 13-30 28-30s26 10 28 30" fill="#b7a5df"/>' +
+        "</svg>"
+      )
     );
   }
 
@@ -74,8 +169,41 @@
     return safeUrl(story?.avatarUrl) || fallbackAvatar();
   }
 
+  function getText(story) {
+    return String(story?.content || "").trim();
+  }
+
+  function getName(story) {
+    return (
+      story?.displayName ||
+      story?.username ||
+      "Pengguna MEXA"
+    );
+  }
+
+  function formatAge(story) {
+    const created = storyTime(story);
+
+    if (!created) return "Waktu tidak tersedia";
+
+    const minutes = Math.max(
+      0,
+      Math.floor((Date.now() - created) / 60000)
+    );
+
+    if (minutes < 1) return "Baru saja";
+    if (minutes < 60) return minutes + " menit lalu";
+
+    const hours = Math.floor(minutes / 60);
+
+    if (hours < 24) return hours + " jam lalu";
+
+    return "Kedaluwarsa";
+  }
+
   function ensureTray() {
     let tray = document.getElementById("mexa-stories");
+
     if (tray) return tray;
 
     tray = el("section");
@@ -88,7 +216,6 @@
     if (composer?.parentNode) {
       composer.insertAdjacentElement("afterend", tray);
     } else if (feed?.parentNode) {
-      feed.parentNode.insertBefore(feed, feed);
       feed.insertAdjacentElement("beforebegin", tray);
     } else {
       document.body.appendChild(tray);
@@ -97,40 +224,58 @@
     return tray;
   }
 
-  function renderMediaPreview(container, story) {
-    const media = safeUrl(story.imageUrl);
+  function makeCoverMedia(container, story) {
+    const media = storyMedia(story);
+    const text = getText(story);
 
     if (media && isVideo(media)) {
       const video = el("video");
+
       video.src = media;
       video.muted = true;
-      video.preload = "metadata";
+      video.loop = true;
       video.playsInline = true;
-      video.setAttribute("aria-label", "Pratinjau video status");
+      video.preload = "metadata";
+      video.setAttribute("aria-label", "Sampul video cerita");
+
       container.appendChild(video);
-      container.appendChild(el("span", "mx-story-play", "▶"));
-    } else if (media) {
+      container.appendChild(
+        el("span", "mx-story-play", "▶")
+      );
+
+      return;
+    }
+
+    if (media) {
       const img = el("img");
+
       img.src = media;
-      img.alt = "Foto status";
+      img.alt = "Sampul cerita";
       img.loading = "lazy";
+
       img.onerror = () => {
         img.remove();
         container.appendChild(
-          el("span", "mx-story-cover-text",
-            story.content || "Status foto")
+          el(
+            "span",
+            "mx-story-cover-text",
+            text || "Cerita MEXA"
+          )
         );
       };
+
       container.appendChild(img);
-    } else {
-      container.appendChild(
-        el(
-          "span",
-          "mx-story-cover-text",
-          story.content || "Status MEXA"
-        )
-      );
+      return;
     }
+
+    // Status teks atau image_url yang ternyata URL avatar.
+    container.appendChild(
+      el(
+        "span",
+        "mx-story-cover-text",
+        text || "Cerita MEXA"
+      )
+    );
   }
 
   function renderTray() {
@@ -139,12 +284,18 @@
 
     const heading = el("div", "mx-story-heading");
     const headingText = el("div");
+
     headingText.append(
       el("h3", "mx-story-title", "Cerita MEXA"),
-      el("div", "mx-story-subtitle", "Cerita terbaru · Aktif 24 jam")
+      el(
+        "div",
+        "mx-story-subtitle",
+        "Cerita terbaru · Aktif 24 jam"
+      )
     );
 
     const refresh = el("button", "mx-story-refresh", "↻");
+
     refresh.type = "button";
     refresh.title = "Muat ulang cerita";
     refresh.setAttribute("aria-label", "Muat ulang cerita");
@@ -155,31 +306,56 @@
 
     const list = el("div", "mx-story-list");
 
+    // Hanya kelompok dengan cerita yang masih aktif.
+    groups = groups
+      .map(group => {
+        const stories = (group.stories || [])
+          .filter(isStoryActive)
+          .sort((a, b) => storyTime(b) - storyTime(a));
+
+        return {
+          ...group,
+          stories,
+          count: stories.length,
+          cover: stories[0] || null
+        };
+      })
+      .filter(group => group.count > 0);
+
     if (!groups.length) {
       list.appendChild(
-        el("div", "mx-story-empty", "Belum ada status aktif.")
+        el(
+          "div",
+          "mx-story-empty",
+          "Belum ada cerita aktif. Buat postingan baru untuk memulai."
+        )
       );
     }
 
     groups.forEach(group => {
-      if (!group.stories.length) return;
+      const coverStory = group.cover;
+
+      if (!coverStory) return;
 
       const button = el("button", "mx-story-item");
       button.type = "button";
+
       button.setAttribute(
         "aria-label",
-        "Lihat cerita " + group.displayName
+        "Lihat cerita " + getName(coverStory)
       );
 
       const cover = el("span", "mx-story-cover");
       const inner = el("span", "mx-story-cover-inner");
 
-      // Sampul besar adalah status terbaru, bukan foto profil.
-      renderMediaPreview(inner, group.cover);
+      // Sampul berasal dari postingan terbaru pengguna.
+      makeCoverMedia(inner, coverStory);
 
+      // Avatar profil hanya muncul sebagai badge kecil.
       const avatar = el("img", "mx-story-owner-avatar");
-      avatar.src = avatarUrl(group.cover);
-      avatar.alt = "Foto profil " + group.displayName;
+
+      avatar.src = avatarUrl(coverStory);
+      avatar.alt = "Foto profil " + getName(coverStory);
       avatar.onerror = () => {
         avatar.onerror = null;
         avatar.src = fallbackAvatar();
@@ -190,17 +366,21 @@
       const name = el(
         "span",
         "mx-story-owner-name",
-        group.displayName || "Pengguna MEXA"
+        getName(coverStory)
       );
 
       const count = el(
         "span",
         "mx-story-count",
-        group.count + (group.count === 1 ? " status" : " status")
+        group.count + (group.count === 1 ? " cerita" : " cerita")
       );
 
       button.append(cover, name, count);
-      button.addEventListener("click", () => openGroup(group.userId));
+
+      button.addEventListener("click", () => {
+        openGroup(group.userId);
+      });
+
       list.appendChild(button);
     });
 
@@ -209,10 +389,20 @@
 
   function ensureViewer() {
     let viewer = document.getElementById("mexa-story-viewer");
-    if (viewer) return viewer;
+
+    if (
+      viewer &&
+      viewer.dataset.mexaStoryVersion === VERSION
+    ) {
+      return viewer;
+    }
+
+    // Hapus viewer dari versi lama supaya elemen tidak tercampur.
+    if (viewer) viewer.remove();
 
     viewer = el("div");
     viewer.id = "mexa-story-viewer";
+    viewer.dataset.mexaStoryVersion = VERSION;
     viewer.setAttribute("role", "dialog");
     viewer.setAttribute("aria-modal", "true");
     viewer.setAttribute("aria-label", "Penampil Cerita MEXA");
@@ -220,6 +410,7 @@
     const screen = el("div", "mx-story-screen");
     const progress = el("div", "mx-story-progress");
     const header = el("div", "mx-story-viewer-header");
+
     const avatar = el("img", "mx-story-viewer-avatar");
     const details = el("div");
     const name = el("div", "mx-story-viewer-name");
@@ -227,13 +418,17 @@
     const spacer = el("div", "mx-story-viewer-spacer");
 
     const pause = el("button", "mx-story-icon-button", "Ⅱ");
+
     pause.type = "button";
-    pause.title = "Tahan atau lanjutkan cerita";
+    pause.title = "Jeda atau lanjutkan cerita";
+    pause.setAttribute("aria-label", "Jeda atau lanjutkan");
     pause.addEventListener("click", togglePause);
 
     const close = el("button", "mx-story-icon-button", "×");
+
     close.type = "button";
     close.title = "Tutup cerita";
+    close.setAttribute("aria-label", "Tutup cerita");
     close.addEventListener("click", closeViewer);
 
     details.append(name, time);
@@ -249,6 +444,7 @@
     next.setAttribute("aria-label", "Cerita berikutnya");
     prev.addEventListener("click", previousStory);
     next.addEventListener("click", nextStory);
+
     nav.append(prev, next);
     stage.appendChild(nav);
 
@@ -260,36 +456,49 @@
 
     EMOJIS.forEach(emoji => {
       const button = el("button", "mx-story-emoji", emoji);
+
       button.type = "button";
       button.addEventListener("click", () => insertEmoji(emoji));
       emojiPanel.appendChild(button);
     });
 
     const input = el("input", "mx-story-message-input");
+
     input.type = "text";
     input.maxLength = 2000;
-    input.placeholder = "Pesan...";
+    input.placeholder = "Balas cerita...";
     input.autocomplete = "off";
     input.setAttribute("aria-label", "Balas cerita");
 
     const emojiButton = el("button", "mx-story-emoji-button", "☺");
+
     emojiButton.type = "button";
     emojiButton.title = "Pilih emoji";
     emojiButton.setAttribute("aria-label", "Pilih emoji");
+
     emojiButton.addEventListener("click", () => {
       emojiPanel.classList.toggle("mx-story-emoji-open");
       input.focus();
     });
 
     const send = el("button", "mx-story-send-button", "➤");
+
     send.type = "submit";
-    send.title = "Kirim pesan";
-    send.setAttribute("aria-label", "Kirim pesan");
+    send.title = "Kirim balasan";
+    send.setAttribute("aria-label", "Kirim balasan");
 
     reply.append(input, emojiButton, send);
     reply.addEventListener("submit", sendReply);
 
-    screen.append(progress, header, stage, feedback, emojiPanel, reply);
+    screen.append(
+      progress,
+      header,
+      stage,
+      feedback,
+      emojiPanel,
+      reply
+    );
+
     viewer.appendChild(screen);
     document.body.appendChild(viewer);
 
@@ -305,7 +514,7 @@
   }
 
   function stopTimer() {
-    if (timer) {
+    if (timer !== null) {
       clearTimeout(timer);
       timer = null;
     }
@@ -317,7 +526,9 @@
     if (isPaused || !viewerStories[currentIndex]) return;
 
     const progress = viewerElement(".mx-story-progress");
-    const fills = progress.querySelectorAll(".mx-story-progress-fill");
+    const fills = progress.querySelectorAll(
+      ".mx-story-progress-fill"
+    );
 
     fills.forEach((fill, index) => {
       fill.style.transition = "none";
@@ -325,28 +536,28 @@
     });
 
     const currentFill = fills[currentIndex];
+
     if (currentFill) {
       void currentFill.offsetWidth;
-      currentFill.style.transition = `width ${remaining}ms linear`;
+      currentFill.style.transition =
+        "width " + remaining + "ms linear";
       currentFill.style.width = "100%";
     }
 
     startedAt = Date.now();
 
-    timer = setTimeout(() => {
-      remaining = 7000;
+    timer = window.setTimeout(() => {
+      remaining = STORY_DURATION;
       nextStory();
     }, remaining);
   }
 
   function renderCurrentStory() {
-    const control = CONTROL();
-    if (!control) return closeViewer();
-
-    viewerStories = viewerStories.filter(control.isActive);
+    viewerStories = viewerStories.filter(isStoryActive);
 
     if (!viewerStories.length || currentIndex >= viewerStories.length) {
-      return closeViewer();
+      closeViewer();
+      return;
     }
 
     if (currentIndex < 0) currentIndex = 0;
@@ -366,8 +577,10 @@
     );
 
     stopTimer();
-    stage.querySelectorAll("img, video, .mx-story-stage-text")
-      .forEach(node => node.remove());
+
+    stage.querySelectorAll(
+      "img, video, .mx-story-stage-text"
+    ).forEach(node => node.remove());
 
     progress.replaceChildren();
 
@@ -375,7 +588,10 @@
       const segment = el("div", "mx-story-progress-segment");
       const fill = el("div", "mx-story-progress-fill");
 
-      if (index < currentIndex) fill.classList.add("mx-story-done");
+      if (index < currentIndex) {
+        fill.style.width = "100%";
+      }
+
       segment.appendChild(fill);
       progress.appendChild(segment);
     });
@@ -386,111 +602,140 @@
       avatar.src = fallbackAvatar();
     };
 
-    name.textContent = story.displayName || "Pengguna MEXA";
-    time.textContent = formatAge(story.createdAt);
+    name.textContent = getName(story);
+    time.textContent = formatAge(story);
 
-    const media = safeUrl(story.imageUrl);
+    const media = storyMedia(story);
 
     if (media && isVideo(media)) {
       const video = el("video");
+
       video.src = media;
       video.autoplay = true;
       video.controls = true;
       video.playsInline = true;
       video.preload = "metadata";
+
       video.addEventListener("ended", nextStory);
-      video.addEventListener("play", stopTimer);
+      video.addEventListener("play", () => {
+        stopTimer();
+      });
+
       video.addEventListener("pause", () => {
-        if (!isPaused && viewer.classList.contains("mx-story-open")) {
+        if (
+          !isPaused &&
+          viewer.classList.contains("mx-story-open") &&
+          !video.ended
+        ) {
+          remaining = STORY_DURATION;
           startTimer();
         }
       });
+
       stage.insertBefore(video, stage.firstChild);
-      video.play().catch(() => {});
-      remaining = 7000;
+      remaining = STORY_DURATION;
+
+      video.play().catch(() => {
+        // Jika autoplay ditolak browser, kontrol video tetap tersedia.
+      });
     } else if (media) {
       const img = el("img");
+
       img.src = media;
-      img.alt = "Status foto dari " + story.displayName;
+      img.alt = "Cerita dari " + getName(story);
+
       img.onerror = () => {
         img.remove();
+
         stage.insertBefore(
-          el("div", "mx-story-stage-text",
-            story.content || "Foto tidak dapat ditampilkan."),
+          el(
+            "div",
+            "mx-story-stage-text",
+            getText(story) || "Media cerita tidak dapat ditampilkan."
+          ),
           stage.firstChild
         );
       };
+
       stage.insertBefore(img, stage.firstChild);
-      remaining = 7000;
+      remaining = STORY_DURATION;
       startTimer();
     } else {
       stage.insertBefore(
         el(
           "div",
           "mx-story-stage-text",
-          story.content || "Status MEXA"
+          getText(story) || "Cerita MEXA"
         ),
         stage.firstChild
       );
-      remaining = 7000;
+
+      remaining = STORY_DURATION;
       startTimer();
     }
 
     input.value = "";
     emojiPanel.classList.remove("mx-story-emoji-open");
     feedback.classList.remove("mx-story-feedback-show");
-    pauseButton.textContent = isPaused ? "▶" : "Ⅱ";
-  }
+    feedback.textContent = "";
 
-  function formatAge(timestamp) {
-    const diff = Math.max(0, Date.now() - timestamp);
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(minutes / 60);
-
-    if (hours > 0) return hours + " jam lalu";
-    if (minutes > 0) return minutes + " menit lalu";
-    return "Baru saja";
+    if (pauseButton) {
+      pauseButton.textContent = isPaused ? "▶" : "Ⅱ";
+    }
   }
 
   function openGroup(userId) {
-    const group = groups.find(item => item.userId === String(userId));
+    const group = groups.find(
+      item => String(item.userId) === String(userId)
+    );
+
     if (!group) return;
 
-    viewerStories = group.stories
-      .filter(story => CONTROL().isActive(story))
-      .sort((a, b) => a.createdAt - b.createdAt);
+    viewerStories = (group.stories || [])
+      .filter(isStoryActive)
+      .sort((a, b) => storyTime(a) - storyTime(b));
 
-    if (!viewerStories.length) return;
+    if (!viewerStories.length) {
+      loadStories(true);
+      return;
+    }
 
     currentIndex = 0;
     isPaused = false;
-    remaining = 7000;
+    remaining = STORY_DURATION;
 
     ensureViewer().classList.add("mx-story-open");
     document.body.style.overflow = "hidden";
+
     renderCurrentStory();
   }
 
   function closeViewer() {
     stopTimer();
+
     const viewer = document.getElementById("mexa-story-viewer");
 
     if (viewer) {
       viewer.classList.remove("mx-story-open");
-      const video = viewer.querySelector("video");
-      if (video) video.pause();
+
+      viewer.querySelectorAll("video").forEach(video => {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      });
     }
 
     document.body.style.overflow = "";
     viewerStories = [];
     currentIndex = 0;
     isPaused = false;
+    remaining = STORY_DURATION;
   }
 
   function nextStory() {
     if (currentIndex + 1 < viewerStories.length) {
       currentIndex++;
-      remaining = 7000;
+      remaining = STORY_DURATION;
       renderCurrentStory();
     } else {
       closeViewer();
@@ -500,12 +745,10 @@
   function previousStory() {
     if (currentIndex > 0) {
       currentIndex--;
-      remaining = 7000;
-      renderCurrentStory();
-    } else {
-      remaining = 7000;
-      renderCurrentStory();
     }
+
+    remaining = STORY_DURATION;
+    renderCurrentStory();
   }
 
   function togglePause() {
@@ -514,12 +757,16 @@
 
     if (isPaused) {
       isPaused = false;
-      if (video) video.play().catch(() => {});
-      else startTimer();
+
+      if (video) {
+        video.play().catch(() => {});
+      } else {
+        startTimer();
+      }
     } else {
       isPaused = true;
 
-      if (timer) {
+      if (timer !== null) {
         remaining = Math.max(
           500,
           remaining - (Date.now() - startedAt)
@@ -527,13 +774,17 @@
       }
 
       stopTimer();
+
       if (video) video.pause();
     }
 
     const button = viewer.querySelector(
       ".mx-story-viewer-header button"
     );
-    if (button) button.textContent = isPaused ? "▶" : "Ⅱ";
+
+    if (button) {
+      button.textContent = isPaused ? "▶" : "Ⅱ";
+    }
   }
 
   function insertEmoji(emoji) {
@@ -547,6 +798,7 @@
       input.value.slice(end);
 
     const position = start + emoji.length;
+
     input.focus();
     input.setSelectionRange(position, position);
   }
@@ -563,12 +815,22 @@
 
     if (!story || !message) return;
 
+    const api = control();
+
+    if (!api || typeof api.reply !== "function") {
+      feedback.textContent =
+        "Fitur balasan belum terhubung ke sistem Cerita.";
+      feedback.classList.add("mx-story-feedback-show");
+      return;
+    }
+
     busy = true;
     feedback.textContent = "Mengirim pesan...";
     feedback.classList.add("mx-story-feedback-show");
 
     try {
-      await CONTROL().reply(story.id, message);
+      await api.reply(story.id, message);
+
       input.value = "";
       feedback.textContent = "Pesan berhasil dikirim.";
     } catch (error) {
@@ -580,34 +842,60 @@
   }
 
   async function loadStories(force = false) {
-    const control = CONTROL();
+    const api = control();
 
-    if (!control) {
-      console.error("MEXA_STORY_CONTROL belum dimuat.");
+    if (!api || typeof api.load !== "function") {
+      console.error(
+        "[MEXA CERITA] MEXA_STORY_CONTROL belum tersedia."
+      );
       return;
     }
 
-    const tray = ensureTray();
-
     try {
-      const result = await control.load({ force });
-      groups = result || [];
-      renderTray();
-    } catch (error) {
-      console.error("[MEXA STORY]", error);
+      const result = await api.load({ force });
 
-      tray.replaceChildren();
-      const message = el(
-        "div",
-        "mx-story-empty",
-        "Cerita belum dapat dimuat. Periksa koneksi atau izin Supabase."
+      groups = Array.isArray(result) ? result : [];
+      renderTray();
+
+      // Jika penampil sedang terbuka, perbarui status yang tersisa.
+      if (viewerStories.length) {
+        const activeIds = new Set(
+          groups.flatMap(group =>
+            (group.stories || [])
+              .filter(isStoryActive)
+              .map(story => String(story.id))
+          )
+        );
+
+        viewerStories = viewerStories.filter(story =>
+          activeIds.has(String(story.id)) &&
+          isStoryActive(story)
+        );
+
+        if (!viewerStories.length) {
+          closeViewer();
+        } else if (currentIndex >= viewerStories.length) {
+          currentIndex = viewerStories.length - 1;
+          renderCurrentStory();
+        }
+      }
+    } catch (error) {
+      console.error("[MEXA CERITA]", error);
+
+      const tray = ensureTray();
+      tray.replaceChildren(
+        el(
+          "div",
+          "mx-story-empty",
+          "Cerita belum dapat dimuat. Periksa koneksi dan izin Supabase."
+        )
       );
-      tray.appendChild(message);
     }
   }
 
   document.addEventListener("keydown", event => {
     const viewer = document.getElementById("mexa-story-viewer");
+
     if (!viewer?.classList.contains("mx-story-open")) return;
 
     if (event.key === "Escape") closeViewer();
@@ -616,31 +904,41 @@
   });
 
   document.addEventListener("mexa:story-updated", event => {
-    groups = event.detail?.stories || groups;
-    renderTray();
+    const updated = event.detail?.stories;
+
+    if (Array.isArray(updated)) {
+      groups = updated;
+      renderTray();
+    }
   });
 
-  document.addEventListener("mexa:themechange", () => {
-    renderTray();
-  });
+  document.addEventListener("mexa:themechange", renderTray);
+
+  function init() {
+    ensureTray();
+    ensureViewer();
+    loadStories(true);
+
+    if (refreshInterval !== null) {
+      clearInterval(refreshInterval);
+    }
+
+    refreshInterval = window.setInterval(() => {
+      loadStories(true);
+    }, 60000);
+  }
 
   window.MEXA_STORY_UI = {
+    version: VERSION,
     refresh: () => loadStories(true),
     open: openGroup,
     close: closeViewer
   };
 
-  function init() {
-    ensureTray();
-    ensureViewer();
-    loadStories();
-
-    // Periksa status baru dan kedaluwarsa secara berkala.
-    window.setInterval(() => loadStories(true), 60000);
-  }
-
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
+    document.addEventListener("DOMContentLoaded", init, {
+      once: true
+    });
   } else {
     init();
   }
