@@ -1,0 +1,85 @@
+
+/* =====================================================
+   MEXA PROFILE — POSTINGAN DARI HOME
+   Mengambil data melalui MEXAApi yang sudah tersedia
+===================================================== */
+(function () {
+  "use strict";
+
+  let loading = false;
+
+  function showMessage(message) {
+    const container = document.getElementById("postingan");
+    if (!container) return;
+
+    container.textContent = message;
+    container.classList.add("media-state");
+  }
+
+  async function loadProfilePosts() {
+    if (loading) return;
+    loading = true;
+
+    try {
+      if (!window.MEXAApi ||
+          typeof window.MEXAApi.request !== "function") {
+        throw new Error("MEXA API belum dimuat.");
+      }
+
+      if (!window.MEXAProfilePosts ||
+          typeof window.MEXAProfilePosts.setPosts !== "function") {
+        throw new Error("Modul galeri profil belum dimuat.");
+      }
+
+      const user = await window.MEXAApi.currentUser();
+
+      if (!user) {
+        throw new Error("Sesi login tidak ditemukan.");
+      }
+
+      // ?user=ID membuka profil pengguna lain.
+      // Tanpa parameter, tampilkan profil sendiri.
+      const params = new URLSearchParams(window.location.search);
+      const profileId = params.get("user") || user.id;
+
+      const result = await window.MEXAApi.request("get_posts");
+
+      if (!result || !Array.isArray(result.posts)) {
+        throw new Error("Format data postingan dari server tidak sesuai.");
+      }
+
+      // Ambil hanya postingan milik profil yang sedang dibuka.
+      const profilePosts = result.posts.filter(function (post) {
+        return String(post.user_id) === String(profileId);
+      });
+
+      // Galeri menggunakan image_url dari API.
+      // Modul galeri akan memeriksa apakah URL merupakan foto/video.
+      window.MEXAProfilePosts.setPosts(profilePosts);
+
+      console.info(
+        "MEXA Profile: postingan berhasil dimuat.",
+        profilePosts.length
+      );
+    } catch (error) {
+      console.error("MEXA Profile Posts:", error);
+      showMessage(error.message || "Postingan gagal dimuat.");
+    } finally {
+      loading = false;
+    }
+  }
+
+  window.MEXAProfilePostsBridge = Object.freeze({
+    load: loadProfilePosts
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      loadProfilePosts,
+      { once: true }
+    );
+  } else {
+    loadProfilePosts();
+  }
+})();
